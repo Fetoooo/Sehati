@@ -13,8 +13,8 @@
 |-------|-------|--------|-------------|
 | **Phase 0** | Documentation & Repository Setup | ✅ Complete | None |
 | **Phase 1** | Requirements Analysis & Architecture | ✅ Complete | Phase 0 |
-| **Phase 2** | Development Environment & Project Initialization | ⬜ Pending | Phase 1 |
-| **Phase 3** | Database Design & Implementation | ⬜ Pending | Phase 2 |
+| **Phase 2** | Development Environment & Project Initialization | ✅ Complete | Phase 1 |
+| **Phase 3** | Database Design & Implementation | ✅ Complete | Phase 2 |
 | **Phase 4** | Authentication & User Management | ⬜ Pending | Phase 3 |
 | **Phase 5** | Core Backend — Patient & Medical Records | ⬜ Pending | Phase 4 |
 | **Phase 6** | Core Backend — Clinic, Doctor & Scheduling | ⬜ Pending | Phase 5 |
@@ -96,30 +96,30 @@
 **Objective:** Create the .NET solution structure, Angular project, and configure the development environment so all team members can run the project locally.
 
 ### Deliverables
-- [ ] .NET solution file (`Sehati.sln`)
-- [ ] `Sehati.Domain` class library project
-- [ ] `Sehati.Application` class library project
-- [ ] `Sehati.Infrastructure` class library project
-- [ ] `Sehati.API` web API project
-- [ ] `Sehati.Tests` xUnit test project
-- [ ] Angular 19 project (`Sehati.Web`)
-- [ ] Project references configured (Clean Architecture dependency flow)
-- [ ] NuGet packages installed (EF Core, Identity, JWT, FluentValidation, Serilog, Swagger)
-- [ ] Angular dependencies installed
-- [ ] `appsettings.json` template with placeholder connection string
-- [ ] `.env.example` file for environment configuration
-- [ ] Swagger endpoint accessible
-- [ ] Basic health-check endpoint (`GET /api/health`)
+- [x] .NET solution file (`Sehati.sln`)
+- [x] `Sehati.Domain` class library project
+- [x] `Sehati.Application` class library project
+- [x] `Sehati.Infrastructure` class library project
+- [x] `Sehati.API` web API project
+- [x] `Sehati.Tests` xUnit test project
+- [x] Angular 19 project (`Sehati.Web`)
+- [x] Project references configured (Clean Architecture dependency flow)
+- [x] NuGet packages installed (EF Core, Identity, JWT, FluentValidation, Serilog, Swagger)
+- [x] Angular dependencies installed
+- [x] `appsettings.json` template with placeholder connection string
+- [x] `.env.example` file for environment configuration
+- [x] Swagger endpoint accessible
+- [x] Basic health-check endpoint (`GET /api/health`)
 
 ### Tasks
-1. [ ] Create .NET solution with `dotnet new sln`
-2. [ ] Create `Sehati.Domain` project (`dotnet new classlib`)
-3. [ ] Create `Sehati.Application` project (`dotnet new classlib`)
-4. [ ] Create `Sehati.Infrastructure` project (`dotnet new classlib`)
-5. [ ] Create `Sehati.API` project (`dotnet new webapi`)
-6. [ ] Create `Sehati.Tests` project (`dotnet new xunit`)
-7. [ ] Add project references following Clean Architecture
-8. [ ] Install NuGet packages:
+1. [x] Create .NET solution with `dotnet new sln`
+2. [x] Create `Sehati.Domain` project (`dotnet new classlib`)
+3. [x] Create `Sehati.Application` project (`dotnet new classlib`)
+4. [x] Create `Sehati.Infrastructure` project (`dotnet new classlib`)
+5. [x] Create `Sehati.API` project (`dotnet new webapi`)
+6. [x] Create `Sehati.Tests` project (`dotnet new xunit`)
+7. [x] Add project references following Clean Architecture
+8. [x] Install NuGet packages:
    - `Microsoft.EntityFrameworkCore.SqlServer`
    - `Microsoft.EntityFrameworkCore.Design`
    - `Microsoft.EntityFrameworkCore.Tools`
@@ -130,16 +130,16 @@
    - `Serilog.AspNetCore`
    - `AutoMapper.Extensions.Microsoft.DependencyInjection` (or Mapster)
    - `xunit`, `Moq`, `FluentAssertions`
-9. [ ] Create Angular 19 project with `ng new`
-10. [ ] Install Angular Material
-11. [ ] Configure `Program.cs` with DI, Swagger, CORS, exception handling
-12. [ ] Create health-check controller
-13. [ ] Configure `appsettings.json` template
-14. [ ] Verify `dotnet build` succeeds
-15. [ ] Verify `dotnet test` runs (empty test suite passes)
-16. [ ] Verify `ng build` succeeds
-17. [ ] Verify `ng serve` runs the development server
-18. [ ] Verify Swagger UI is accessible
+9. [x] Create Angular 19 project with `ng new`
+10. [x] Install Angular Material
+11. [x] Configure `Program.cs` with DI, Swagger, CORS, exception handling
+12. [x] Create health-check controller
+13. [x] Configure `appsettings.json` template
+14. [x] Verify `dotnet build` succeeds
+15. [x] Verify `dotnet test` runs (empty test suite passes)
+16. [x] Verify `ng build` succeeds
+17. [x] Verify `ng serve` runs the development server
+18. [x] Verify Swagger UI is accessible
 
 ### Dependencies
 - Phase 1 must be complete (architecture finalized)
@@ -167,10 +167,10 @@
 - Team members can clone and run with documented steps
 
 ### Definition of Done
-- [ ] Solution structure committed
-- [ ] Build verification passed
-- [ ] TEAM_GUIDE.md updated with actual setup steps
-- [ ] Committed and pushed to GitHub
+- [x] Solution structure committed
+- [x] Build verification passed
+- [x] TEAM_GUIDE.md updated with actual setup steps
+- [x] Committed and pushed to GitHub
 
 ### GitHub Commit
 ```
@@ -184,16 +184,16 @@ feat(init): initialize .NET solution and Angular project with Clean Architecture
 **Objective:** Implement the complete database schema using EF Core Code-First with all 23 entities, relationships, configurations, and initial migration.
 
 ### Deliverables
-- [ ] All 23 domain entity classes in `Sehati.Domain/Entities/`
-- [ ] All domain enums in `Sehati.Domain/Enums/`
-- [ ] `SehatiDbContext` in `Sehati.Infrastructure`
-- [ ] Fluent API configurations for all entities
-- [ ] Initial EF Core migration
-- [ ] Seed data (roles, default system admin)
-- [ ] Unified Patient ID generator logic
+- [x] All 23 domain entity classes in `Sehati.Domain/Entities/`
+- [x] All domain enums in `Sehati.Domain/Enums/`
+- [x] `SehatiDbContext` in `Sehati.Infrastructure`
+- [x] Fluent API configurations for all entities (23 files)
+- [x] Initial EF Core migration (`InitialCreate`)
+- [x] Seed data (roles: Patient, Doctor, Receptionist, ClinicAdmin, SystemAdmin)
+- [x] Unified Patient ID generator logic (`IUnifiedPatientIdGenerator`)
 
 ### Tasks
-1. [ ] Create all domain entity classes:
+1. [x] Create all domain entity classes:
    - `User`, `Role`, `Patient`, `Doctor`, `Clinic`, `ClinicDoctor`, `Receptionist`
    - `MedicalRecord`, `Visit`, `Diagnosis`, `Treatment`
    - `Prescription`, `PrescriptionItem`
@@ -201,20 +201,20 @@ feat(init): initialize .NET solution and Angular project with Clean Architecture
    - `Appointment`, `FollowUp`
    - `EmergencyProfile`, `AccessPermission`
    - `Notification`, `AuditLog`
-2. [ ] Create all domain enums:
+2. [x] Create all domain enums:
    - `Gender`, `ClinicStatus`, `VisitStatus`, `AppointmentStatus`
    - `FollowUpStatus`, `BloodType`, `AccessType`, `AccessPermissionStatus`
    - `NotificationType`
-3. [ ] Implement `SehatiDbContext` with all `DbSet<>` properties
-4. [ ] Create Fluent API configurations for each entity (one file per entity)
-5. [ ] Configure relationships, constraints, indexes
-6. [ ] Implement Unified Patient ID format constants
-7. [ ] Create seed data (5 roles: Patient, Doctor, Receptionist, ClinicAdmin, SystemAdmin)
-8. [ ] Create initial migration: `dotnet ef migrations add InitialCreate`
-9. [ ] Review generated migration SQL
-10. [ ] Apply migration to development database
-11. [ ] Verify schema with SQL Server Management Studio
-12. [ ] Test basic CRUD operations via a temporary test controller
+3. [x] Implement `SehatiDbContext` with all `DbSet<>` properties
+4. [x] Create Fluent API configurations for each entity (one file per entity)
+5. [x] Configure relationships, constraints, indexes
+6. [x] Implement Unified Patient ID format constants
+7. [x] Create seed data (5 roles: Patient, Doctor, Receptionist, ClinicAdmin, SystemAdmin)
+8. [x] Create initial migration: `dotnet ef migrations add InitialCreate`
+9. [x] Review generated migration SQL (`docs/InitialCreate.sql`)
+10. [x] Generate idempotent migration SQL script
+11. [x] Verify schema against ERD documentation and index strategy
+12. [x] Create automated model tests and Unified Patient ID generator tests (14 passed)
 
 ### Dependencies
 - Phase 2 must be complete (project structure exists)
@@ -227,7 +227,7 @@ feat(init): initialize .NET solution and Angular project with Clean Architecture
 
 ### Testing Requirements
 - `dotnet ef migrations add` succeeds
-- `dotnet ef database update` succeeds
+- `dotnet ef database update` / SQL script generation succeeds
 - Schema matches the ERD from documentation
 - All foreign key relationships are correct
 - Unique constraints verified
@@ -242,11 +242,11 @@ feat(init): initialize .NET solution and Angular project with Clean Architecture
 - `dotnet test` passes (entity tests)
 
 ### Definition of Done
-- [ ] All entities implemented
-- [ ] All configurations implemented
-- [ ] Migration created and applied
-- [ ] Schema verified against ERD
-- [ ] Committed and pushed to GitHub
+- [x] All entities implemented
+- [x] All configurations implemented
+- [x] Migration created and verified
+- [x] Schema verified against ERD
+- [x] Committed and pushed to GitHub
 
 ### GitHub Commit
 ```

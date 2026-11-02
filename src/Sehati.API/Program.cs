@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Sehati.API.Middleware;
+using Sehati.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,9 @@ builder.Host.UseSerilog((context, services, configuration) =>
         .Enrich.FromLogContext()
         .WriteTo.Console();
 });
+
+// Register Infrastructure (DbContext & Persistence)
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Add Controllers
 builder.Services.AddControllers()
