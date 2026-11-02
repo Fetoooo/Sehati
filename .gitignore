@@ -1,0 +1,125 @@
+# ============================================================================
+# SEHATI PROJECT — .gitignore
+# Full-Stack .NET (ASP.NET Core + EF Core) + Frontend (Angular/React)
+# ============================================================================
+
+# ──────────────────────────────────────────────────────────────────
+# .NET / C# Build Artifacts
+# ──────────────────────────────────────────────────────────────────
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+*.dll
+*.exe
+*.pdb
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+**/packages/*
+*.nupkg
+**/[Pp]ackages/
+.nuget/
+NuGetFallbackFolder/
+
+# MSBuild
+*.log
+msbuild*.log
+
+# Visual Studio
+.vs/
+*.rsuser
+*.csproj.user
+*.dbmdl
+*.jfm
+launchSettings.json
+
+# Rider
+.idea/
+
+# ──────────────────────────────────────────────────────────────────
+# User Secrets & Configuration (NEVER commit credentials)
+# ──────────────────────────────────────────────────────────────────
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json
+*.pfx
+*.p12
+secrets.json
+.env
+.env.*
+!.env.example
+
+# ──────────────────────────────────────────────────────────────────
+# Entity Framework Core Migrations — keep migrations, ignore snapshots cache
+# ──────────────────────────────────────────────────────────────────
+# NOTE: Migrations ARE committed. Only local DB files are excluded.
+*.mdf
+*.ldf
+*.ndf
+
+# ──────────────────────────────────────────────────────────────────
+# Frontend (Node.js / Angular / React)
+# ──────────────────────────────────────────────────────────────────
+node_modules/
+dist/
+.angular/
+.cache/
+.parcel-cache/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+.eslintcache
+
+# ──────────────────────────────────────────────────────────────────
+# Testing
+# ──────────────────────────────────────────────────────────────────
+TestResults/
+*.trx
+coverage/
+lcov.info
+.nyc_output/
+
+# ──────────────────────────────────────────────────────────────────
+# OS and IDE
+# ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ──────────────────────────────────────────────────────────────────
+# Docker
+# ──────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ──────────────────────────────────────────────────────────────────
+# Miscellaneous
+# ──────────────────────────────────────────────────────────────────
+*.tmp
+*.temp
+*.bak
+*.cache
+*.pid
+logs/
+*.log
+
+# Python helper scripts (workspace-only, not part of the main project)
+__pycache__/
+*.pyc
