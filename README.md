@@ -1,4 +1,4 @@
-# 🏥 SEHATI (صِحّتي) — Unified Healthcare Management & Medical Records Platform
+# SEHATI (صِحّتي) — Unified Healthcare Management & Medical Records Platform
 
 <div align="center">
 
@@ -16,23 +16,23 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Project Overview](#-project-overview)
-- [The Problem](#-the-problem)
-- [The Solution](#-the-solution)
-- [Key Features](#-key-features)
-- [Technology Stack](#-technology-stack)
-- [Architecture Overview](#-architecture-overview)
-- [Repository Structure](#-repository-structure)
-- [Getting Started](#-getting-started)
-- [Running the Project](#-running-the-project)
-- [Team & Contributions](#-team--contributions)
-- [Documentation](#-documentation)
+- [Project Overview](#project-overview)
+- [The Problem](#the-problem)
+- [The Solution](#the-solution)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Architecture Overview](#architecture-overview)
+- [Repository Structure](#repository-structure)
+- [Getting Started](#getting-started)
+- [Running the Project](#running-the-project)
+- [Team & Contributions](#team--contributions)
+- [Documentation](#documentation)
 
 ---
 
-## 🎯 Project Overview
+## Project Overview
 
 **Sehati** is a centralized digital health record and clinic management platform designed to unify every patient's lifelong health journey under a single, lifetime identifier — the **Unified Patient ID** (`SH-YYYY-XXXXXX`).
 
@@ -50,7 +50,7 @@ The platform targets private outpatient clinics and specialist doctors in Egypt 
 
 ---
 
-## 🔴 The Problem
+## The Problem
 
 In modern healthcare across Egypt and the MENA region:
 
@@ -61,7 +61,7 @@ In modern healthcare across Egypt and the MENA region:
 
 ---
 
-## ✅ The Solution
+## The Solution
 
 Sehati bridges the communication gap between independent healthcare providers by:
 
@@ -73,19 +73,19 @@ Sehati bridges the communication gap between independent healthcare providers by
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 ### Core Platform (MVP)
-- 🔐 **Multi-Role Authentication** — JWT-based auth with role-based access control (RBAC)
-- 🆔 **Unified Patient ID Engine** — Lifetime identifier (`SH-YYYY-XXXXXX`) for every patient
-- 📋 **Unified Medical Profile** — Allergies, medications, chronic conditions, lab results
-- 🚨 **Emergency Profile** — QR-accessible critical data (blood type, allergies, contacts)
-- 🩺 **Clinical Encounters** — Diagnosis, clinical notes, treatment plans per visit
-- 💊 **Digital Prescription Builder** — Structured Rx with medication items, dosage, frequency
-- 🔬 **Lab & Imaging Archive** — PDF/image storage with metadata for tests and scans
-- 🤝 **Granular Consent Engine** — Patient-controlled view/add permissions with expiry
-- 📅 **Appointment & Queue Management** — Clinic scheduling and real-time queue dashboard
-- 📝 **Immutable Audit Logging** — Every data access event is recorded for compliance
+- **Multi-Role Authentication** — JWT-based auth with role-based access control (RBAC)
+- **Unified Patient ID Engine** — Lifetime identifier (`SH-YYYY-XXXXXX`) for every patient
+- **Unified Medical Profile** — Allergies, medications, chronic conditions, lab results
+- **Emergency Profile** — QR-accessible critical data (blood type, allergies, contacts)
+- **Clinical Encounters** — Diagnosis, clinical notes, treatment plans per visit
+- **Digital Prescription Builder** — Structured Rx with medication items, dosage, frequency
+- **Lab & Imaging Archive** — PDF/image storage with metadata for tests and scans
+- **Granular Consent Engine** — Patient-controlled view/add permissions with expiry
+- **Appointment & Queue Management** — Clinic scheduling and real-time queue dashboard
+- **Immutable Audit Logging** — Every data access event is recorded for compliance
 
 ### Future Releases (Out of MVP Scope)
 - Telemedicine video streaming
@@ -95,7 +95,7 @@ Sehati bridges the communication gap between independent healthcare providers by
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Backend
 | Technology | Purpose |
@@ -129,7 +129,7 @@ Sehati bridges the communication gap between independent healthcare providers by
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 Sehati follows **Clean Architecture** to ensure separation of concerns, testability, and maintainability.
 
@@ -168,7 +168,7 @@ Sehati follows **Clean Architecture** to ensure separation of concerns, testabil
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 Sehati/
@@ -186,22 +186,22 @@ Sehati/
 │   ├── PROGRESS_TRACKER.md            # Task tracking
 │   ├── CHANGELOG.md                   # Version changes
 │   └── TEAM_GUIDE.md                  # Developer onboarding
-├── src/                               # Source code (future)
+├── src/                               # Source code
 │   ├── Sehati.API/                    # ASP.NET Core Web API
 │   ├── Sehati.Application/           # Business logic layer
-│   ├── Sehati.Domain/                # Domain entities
-│   ├── Sehati.Infrastructure/        # Data access & EF Core
+│   ├── Sehati.Domain/                # Domain entities & enums
+│   ├── Sehati.Infrastructure/        # EF Core persistence & migrations
 │   └── Sehati.Web/                   # Angular frontend
-├── tests/                             # Test projects (future)
+├── tests/                             # Test projects
 │   └── Sehati.Tests/                  # xUnit test project
 ├── .gitignore                         # Git ignore rules
 ├── README.md                          # This file
-└── Sehati.sln                         # .NET solution file (future)
+└── Sehati.sln                         # .NET solution file
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -222,7 +222,7 @@ Sehati/
 git clone https://github.com/Fetoooo/Sehati.git
 cd Sehati
 
-# 2. Backend setup (when code is available)
+# 2. Backend setup
 cd src/Sehati.API
 dotnet restore
 dotnet build
@@ -234,14 +234,14 @@ dotnet build
 # 4. Apply database migrations
 dotnet ef database update --project ../Sehati.Infrastructure
 
-# 5. Frontend setup (when code is available)
+# 5. Frontend setup
 cd ../Sehati.Web
 npm install
 ```
 
 ---
 
-## ▶️ Running the Project
+## Running the Project
 
 ```bash
 # Backend API (from src/Sehati.API/)
@@ -263,7 +263,7 @@ cd src/Sehati.Web && ng test   # Frontend tests
 
 ---
 
-## 👥 Team & Contributions
+## Team & Contributions
 
 | Member | Role |
 |--------|------|
@@ -283,7 +283,7 @@ cd src/Sehati.Web && ng test   # Frontend tests
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 | Document | Description |
 |----------|-------------|

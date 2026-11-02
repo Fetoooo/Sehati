@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sehati.API/Sehati.API.csproj" />
+    <Project Path="src/Sehati.Application/Sehati.Application.csproj" />
+    <Project Path="src/Sehati.Domain/Sehati.Domain.csproj" />
+    <Project Path="src/Sehati.Infrastructure/Sehati.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Sehati.Tests/Sehati.Tests.csproj" />
+  </Folder>
+</Solution>
