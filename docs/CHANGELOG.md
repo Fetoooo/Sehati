@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Phase 3: Complete Database Schema & EF Core Code-First implementation
+  - 23 domain entities in `Sehati.Domain/Entities/` (`User`, `Role`, `Patient`, `Clinic`, `Doctor`, `ClinicDoctor`, `Receptionist`, `MedicalRecord`, `Visit`, `Diagnosis`, `Treatment`, `Prescription`, `PrescriptionItem`, `Allergy`, `Medication`, `Test`, `Scan`, `Appointment`, `FollowUp`, `EmergencyProfile`, `AccessPermission`, `Notification`, `AuditLog`)
+  - 9 domain enums in `Sehati.Domain/Enums/` (`Gender`, `ClinicStatus`, `VisitStatus`, `AppointmentStatus`, `FollowUpStatus`, `BloodType`, `AccessType`, `AccessPermissionStatus`, `NotificationType`)
+  - Unified Patient ID format constants and generation service (`IUnifiedPatientIdGenerator`, `UnifiedPatientIdGenerator`)
+  - `SehatiDbContext` with all 23 `DbSet<>` properties and automatic assembly configuration discovery
+  - 23 Fluent API entity configurations with exact foreign keys, cascade/restrict behaviors, and indexes
+  - Role seed data for 5 system tiers (`Patient`, `Doctor`, `Receptionist`, `ClinicAdmin`, `SystemAdmin`)
+  - Initial EF Core Migration `20261102200538_InitialCreate`
+  - Idempotent SQL script `docs/InitialCreate.sql`
+  - Unit tests in `DatabaseSchemaTests` and `UnifiedPatientIdGeneratorTests` (14 passing tests)
 - Phase 2: Complete .NET solution initialized (`Sehati.sln` and `Sehati.slnx`)
 - `Sehati.Domain` (classlib net9.0) with zero external dependencies
 - `Sehati.Application` (classlib net9.0) with FluentValidation, AutoMapper, Logging abstractions
