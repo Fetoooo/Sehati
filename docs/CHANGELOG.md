@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Phase 4: Authentication & User Management
+  - JWT authentication engine with access and refresh tokens, supporting token rotation and invalidation on logout
+  - Password hashing service using ASP.NET Core Identity PBKDF2 with cryptographic salting
+  - Role-based authorization supporting all 5 system roles (`Patient`, `Doctor`, `Receptionist`, `ClinicAdmin`, `SystemAdmin`)
+  - `IAuthService` and `AuthService` handling register, login, refresh-token, logout, and current user profile
+  - Multi-role user registration supporting automatic Unified Patient ID creation (`SH-YYYY-NNNNNN`), initial medical record, and emergency profile provisioning for Patients
+  - Dual login mechanism supporting authentication via email or phone number with international format
+  - `AuthController` exposing `/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/refresh-token`, `/api/v1/auth/logout`, `/api/v1/auth/me`, and role-protected test endpoints
+  - FluentValidation rules for `RegisterDto`, `LoginDto`, and `RefreshTokenDto` with password complexity and E.164 phone validation
+  - Global exception handling middleware updated for RFC-compliant validation errors, conflict responses (409), unauthorized (401), and not found (404)
+  - EF Core migration `20261103104611_AddRefreshTokenToUser` adding `RefreshToken` and `RefreshTokenExpiryTime` to `Users`
+  - Comprehensive unit and integration test suite (55 total passing tests across schema, services, validators, and controllers)
 - Phase 3: Complete Database Schema & EF Core Code-First implementation
   - 23 domain entities in `Sehati.Domain/Entities/` (`User`, `Role`, `Patient`, `Clinic`, `Doctor`, `ClinicDoctor`, `Receptionist`, `MedicalRecord`, `Visit`, `Diagnosis`, `Treatment`, `Prescription`, `PrescriptionItem`, `Allergy`, `Medication`, `Test`, `Scan`, `Appointment`, `FollowUp`, `EmergencyProfile`, `AccessPermission`, `Notification`, `AuditLog`)
   - 9 domain enums in `Sehati.Domain/Enums/` (`Gender`, `ClinicStatus`, `VisitStatus`, `AppointmentStatus`, `FollowUpStatus`, `BloodType`, `AccessType`, `AccessPermissionStatus`, `NotificationType`)

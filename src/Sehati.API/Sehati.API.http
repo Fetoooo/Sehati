@@ -1,6 +1,77 @@
-@Sehati.API_HostAddress = http://localhost:5202
+@Sehati.API_HostAddress = https://localhost:7001
 
-GET {{Sehati.API_HostAddress}}/weatherforecast/
+### Health Check
+GET {{Sehati.API_HostAddress}}/api/health
 Accept: application/json
 
-###
+### Register New Patient
+POST {{Sehati.API_HostAddress}}/api/v1/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "patient@sehati.com",
+  "password": "SecurePassword@2026",
+  "phone": "+201012345678",
+  "fullName": "Ahmed Mohamed",
+  "roleName": "Patient",
+  "dateOfBirth": "1992-04-15",
+  "gender": 1,
+  "address": "15 Nasr Road, Nasr City, Cairo",
+  "emergencyContact": "Mona Mohamed (+201099887766)"
+}
+
+### Register New Doctor
+POST {{Sehati.API_HostAddress}}/api/v1/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "doctor@sehati.com",
+  "password": "SecurePassword@2026",
+  "phone": "+201098765432",
+  "fullName": "Dr. Mahmoud Youssef",
+  "roleName": "Doctor",
+  "specialty": "Cardiology",
+  "licenseNumber": "DOC-CARDIO-12345"
+}
+
+### Login
+# @name login
+POST {{Sehati.API_HostAddress}}/api/v1/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "emailOrPhone": "patient@sehati.com",
+  "password": "SecurePassword@2026"
+}
+
+### Store token from login
+@authToken = {{login.response.body.accessToken}}
+@refreshToken = {{login.response.body.refreshToken}}
+
+### Get Current User Profile (Protected)
+GET {{Sehati.API_HostAddress}}/api/v1/auth/me
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### Test Role-Protected Patient Endpoint
+GET {{Sehati.API_HostAddress}}/api/v1/auth/patient-only
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### Refresh Token
+POST {{Sehati.API_HostAddress}}/api/v1/auth/refresh-token
+Content-Type: application/json
+Accept: application/json
+
+{
+  "accessToken": "{{authToken}}",
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Logout
+POST {{Sehati.API_HostAddress}}/api/v1/auth/logout
+Authorization: Bearer {{authToken}}
+Accept: application/json
