@@ -1,9 +1,11 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Sehati.API.Middleware;
+using Sehati.Application;
 using Sehati.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +20,10 @@ builder.Host.UseSerilog((context, services, configuration) =>
         .WriteTo.Console();
 });
 
-// Register Infrastructure (DbContext & Persistence)
+// Register Application Services (Validators, Application Services)
+builder.Services.AddApplicationServices();
+
+// Register Infrastructure (DbContext & Persistence, Services)
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Add Controllers
@@ -44,7 +49,8 @@ builder.Services.AddCors(options =>
 });
 
 // Configure JWT Authentication
-var jwtSecret = builder.Configuration["JwtSettings:Secret"] ?? "Sehati_Default_Secret_Key_For_Development_Only_32_Chars";
+var jwtSecret = builder.Configuration["JwtSettings:Secret"] 
+    ?? "Sehati_Centralized_Digital_Health_Platform_Secure_JWT_Key_2026_Minimum_32_Chars";
 var key = Encoding.UTF8.GetBytes(jwtSecret);
 
 builder.Services.AddAuthentication(options =>
@@ -65,7 +71,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JwtSettings:Audience"] ?? "SehatiClient",
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero,
+        NameClaimType = ClaimTypes.Name,
+        RoleClaimType = ClaimTypes.Role
     };
 });
 

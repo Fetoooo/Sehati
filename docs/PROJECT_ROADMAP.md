@@ -15,7 +15,7 @@
 | **Phase 1** | Requirements Analysis & Architecture | ✅ Complete | Phase 0 |
 | **Phase 2** | Development Environment & Project Initialization | ✅ Complete | Phase 1 |
 | **Phase 3** | Database Design & Implementation | ✅ Complete | Phase 2 |
-| **Phase 4** | Authentication & User Management | ⬜ Pending | Phase 3 |
+| **Phase 4** | Authentication & User Management | ✅ Complete | Phase 3 |
 | **Phase 5** | Core Backend — Patient & Medical Records | ⬜ Pending | Phase 4 |
 | **Phase 6** | Core Backend — Clinic, Doctor & Scheduling | ⬜ Pending | Phase 5 |
 | **Phase 7** | Core Backend — Prescriptions, Consent & Emergency | ⬜ Pending | Phase 6 |
@@ -260,33 +260,33 @@ feat(db): implement complete database schema with 23 entities and initial migrat
 **Objective:** Implement JWT-based authentication, user registration, login, and role-based authorization.
 
 ### Deliverables
-- [ ] User registration endpoint (per role)
-- [ ] Login endpoint with JWT token generation
-- [ ] Refresh token mechanism
-- [ ] Role-based authorization middleware
-- [ ] Password hashing (ASP.NET Core Identity)
-- [ ] Auth DTOs and validators
-- [ ] Auth service with interface
-- [ ] Protected endpoints respond correctly to unauthorized requests
+- [x] User registration endpoint (per role)
+- [x] Login endpoint with JWT token generation
+- [x] Refresh token mechanism
+- [x] Role-based authorization middleware
+- [x] Password hashing (ASP.NET Core Identity)
+- [x] Auth DTOs and validators
+- [x] Auth service with interface
+- [x] Protected endpoints respond correctly to unauthorized requests
 
 ### Tasks
-1. [ ] Configure ASP.NET Core Identity in `Sehati.Infrastructure`
-2. [ ] Implement JWT token generation service
-3. [ ] Create `IAuthService` interface in `Sehati.Application`
-4. [ ] Implement `AuthService` with login, register, refresh token logic
-5. [ ] Create auth DTOs: `LoginDto`, `RegisterDto`, `TokenResponseDto`, `RefreshTokenDto`
-6. [ ] Create FluentValidation validators for auth DTOs
-7. [ ] Implement `AuthController` with endpoints:
+1. [x] Configure ASP.NET Core Identity in `Sehati.Infrastructure`
+2. [x] Implement JWT token generation service
+3. [x] Create `IAuthService` interface in `Sehati.Application`
+4. [x] Implement `AuthService` with login, register, refresh token logic
+5. [x] Create auth DTOs: `LoginDto`, `RegisterDto`, `TokenResponseDto`, `RefreshTokenDto`
+6. [x] Create FluentValidation validators for auth DTOs
+7. [x] Implement `AuthController` with endpoints:
    - `POST /api/v1/auth/register`
    - `POST /api/v1/auth/login`
    - `POST /api/v1/auth/refresh-token`
    - `POST /api/v1/auth/logout`
-8. [ ] Configure JWT middleware in `Program.cs`
-9. [ ] Add `[Authorize]` and `[Authorize(Roles = "...")]` to test endpoints
-10. [ ] Configure CORS for Angular dev server
-11. [ ] Store JWT settings in `appsettings.json` (secret via User Secrets)
-12. [ ] Write unit tests for auth service
-13. [ ] Write integration tests for auth endpoints
+8. [x] Configure JWT middleware in `Program.cs`
+9. [x] Add `[Authorize]` and `[Authorize(Roles = "...")]` to test endpoints
+10. [x] Configure CORS for Angular dev server
+11. [x] Store JWT settings in `appsettings.json` (secret via User Secrets)
+12. [x] Write unit tests for auth service
+13. [x] Write integration tests for auth endpoints
 
 ### Dependencies
 - Phase 3 (database with Users and Roles tables)
@@ -317,9 +317,9 @@ feat(db): implement complete database schema with 23 entities and initial migrat
 - No secrets committed to source control
 
 ### Definition of Done
-- [ ] Auth system functional
-- [ ] Unit and integration tests pass
-- [ ] Committed and pushed to GitHub
+- [x] Auth system functional
+- [x] Unit and integration tests pass (55 passed)
+- [x] Committed and pushed to GitHub
 
 ### GitHub Commit
 ```
