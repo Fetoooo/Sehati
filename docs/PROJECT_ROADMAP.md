@@ -1,7 +1,7 @@
 # 🗺️ SEHATI — Project Development Roadmap
 
 > **Document Version:** 1.0.0  
-> **Last Updated:** November 2, 2026  
+> **Last Updated:** November 3, 2026  
 > **Status:** Active  
 > **Total Phases:** 12 (Phase 0–11)
 
@@ -16,7 +16,7 @@
 | **Phase 2** | Development Environment & Project Initialization | ✅ Complete | Phase 1 |
 | **Phase 3** | Database Design & Implementation | ✅ Complete | Phase 2 |
 | **Phase 4** | Authentication & User Management | ✅ Complete | Phase 3 |
-| **Phase 5** | Core Backend — Patient & Medical Records | ⬜ Pending | Phase 4 |
+| **Phase 5** | Core Backend — Patient & Medical Records | ✅ Complete | Phase 4 |
 | **Phase 6** | Core Backend — Clinic, Doctor & Scheduling | ⬜ Pending | Phase 5 |
 | **Phase 7** | Core Backend — Prescriptions, Consent & Emergency | ⬜ Pending | Phase 6 |
 | **Phase 8** | Frontend Foundation & UI Framework | ⬜ Pending | Phase 4 |
@@ -387,8 +387,9 @@ feat(auth): implement JWT authentication with role-based authorization
 
 ### Definition of Done
 - [x] All patient endpoints functional
-- [x] Tests pass
-- [x] Committed and pushed
+- [x] Tests pass (85 tests passing: unit & integration)
+- [x] Security refactoring completed (zero hardcoded test secrets)
+- [x] Committed and pushed to GitHub
 
 ### GitHub Commit
 ```
