@@ -11,3 +11,4 @@ public interface ITokenService
     ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
     int GetTokenExpirySeconds();
 }
+

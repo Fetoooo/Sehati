@@ -20,3 +20,4 @@ public class RegisterDto
     public string? Specialty { get; set; }
     public string? LicenseNumber { get; set; }
 }
+

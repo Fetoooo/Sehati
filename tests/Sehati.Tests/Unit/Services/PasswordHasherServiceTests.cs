@@ -52,3 +52,4 @@ public class PasswordHasherServiceTests
         isValid.Should().BeFalse();
     }
 }
+

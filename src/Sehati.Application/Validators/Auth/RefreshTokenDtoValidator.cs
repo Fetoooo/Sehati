@@ -14,3 +14,4 @@ public class RefreshTokenDtoValidator : AbstractValidator<RefreshTokenDto>
             .NotEmpty().WithMessage("Refresh token is required.");
     }
 }
+

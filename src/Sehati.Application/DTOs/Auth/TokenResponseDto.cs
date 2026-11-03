@@ -8,3 +8,4 @@ public class TokenResponseDto
     public int ExpiresIn { get; set; }
     public UserDto User { get; set; } = null!;
 }
+

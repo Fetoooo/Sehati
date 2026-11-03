@@ -10,3 +10,4 @@ public interface IAuthService
     Task LogoutAsync(int userId, CancellationToken cancellationToken = default);
     Task<UserDto> GetCurrentUserAsync(int userId, CancellationToken cancellationToken = default);
 }
+

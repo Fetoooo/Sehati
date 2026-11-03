@@ -295,3 +295,4 @@ public class AuthServiceTests
         user.RefreshTokenExpiryTime.Should().BeNull();
     }
 }
+

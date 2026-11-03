@@ -199,3 +199,4 @@ public class AuthDtoValidationTests
         result.Errors.Should().Contain(e => e.PropertyName == nameof(RefreshTokenDto.RefreshToken));
     }
 }
+

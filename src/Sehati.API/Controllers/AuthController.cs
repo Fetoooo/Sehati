@@ -146,3 +146,4 @@ public class AuthController : ControllerBase
         return int.TryParse(claim, out var id) ? id : null;
     }
 }
+
