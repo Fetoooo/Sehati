@@ -7,6 +7,7 @@ namespace Sehati.Infrastructure.Services;
 public class UnifiedPatientIdGenerator : IUnifiedPatientIdGenerator
 {
     private static readonly Regex IdRegex = new(UnifiedPatientIdConstants.RegexPattern, RegexOptions.Compiled);
+    public static readonly SemaphoreSlim PatientCreationLock = new(1, 1);
 
     public string GenerateId(int sequenceNumber, int? year = null)
     {

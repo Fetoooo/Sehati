@@ -86,80 +86,103 @@ public class AuthService : IAuthService
         string? unifiedPatientId = null;
         string? specialty = null;
 
+        bool lockAcquired = false;
         if (role.RoleName.Equals("Patient", StringComparison.OrdinalIgnoreCase))
         {
-            var count = await _context.Patients.CountAsync(cancellationToken);
-            unifiedPatientId = _patientIdGenerator.GenerateId(count + 1, DateTime.UtcNow.Year);
+            await IUnifiedPatientIdGenerator.PatientCreationLock.WaitAsync(cancellationToken);
+            lockAcquired = true;
+        }
 
-            var patient = new Patient
+        try
+        {
+            if (role.RoleName.Equals("Patient", StringComparison.OrdinalIgnoreCase))
             {
-                User = user,
-                FullName = fullName,
-                UnifiedPatientId = unifiedPatientId,
-                DateOfBirth = dto.DateOfBirth ?? new DateOnly(2000, 1, 1),
-                Gender = dto.Gender ?? Gender.Male,
-                Address = dto.Address?.Trim(),
-                EmergencyContact = dto.EmergencyContact?.Trim(),
-                CreatedAt = DateTime.UtcNow,
-                MedicalRecord = new MedicalRecord
+                var currentYear = DateTime.UtcNow.Year;
+                var count = await _context.Patients.CountAsync(cancellationToken);
+                var nextSeq = count + 1;
+                while (await _context.Patients.AnyAsync(p => p.UnifiedPatientId == _patientIdGenerator.GenerateId(nextSeq, currentYear), cancellationToken))
                 {
-                    CreatedAt = DateTime.UtcNow,
-                    LastUpdatedAt = DateTime.UtcNow
-                },
-                EmergencyProfile = new EmergencyProfile
-                {
-                    BloodType = BloodType.Unknown,
-                    EmergencyContactName = dto.EmergencyContact?.Trim() ?? string.Empty,
-                    EmergencyContactPhone = string.Empty,
-                    LastUpdatedAt = DateTime.UtcNow
+                    nextSeq++;
                 }
-            };
+                unifiedPatientId = _patientIdGenerator.GenerateId(nextSeq, currentYear);
 
-            user.Patient = patient;
-            _context.Patients.Add(patient);
-        }
-        else if (role.RoleName.Equals("Doctor", StringComparison.OrdinalIgnoreCase))
-        {
-            specialty = dto.Specialty?.Trim() ?? string.Empty;
-            var doctor = new Doctor
+                var patient = new Patient
+                {
+                    User = user,
+                    FullName = fullName,
+                    UnifiedPatientId = unifiedPatientId,
+                    DateOfBirth = dto.DateOfBirth ?? new DateOnly(2000, 1, 1),
+                    Gender = dto.Gender ?? Gender.Male,
+                    Address = dto.Address?.Trim(),
+                    EmergencyContact = dto.EmergencyContact?.Trim(),
+                    CreatedAt = DateTime.UtcNow,
+                    MedicalRecord = new MedicalRecord
+                    {
+                        CreatedAt = DateTime.UtcNow,
+                        LastUpdatedAt = DateTime.UtcNow
+                    },
+                    EmergencyProfile = new EmergencyProfile
+                    {
+                        BloodType = BloodType.Unknown,
+                        EmergencyContactName = dto.EmergencyContact?.Trim() ?? string.Empty,
+                        EmergencyContactPhone = string.Empty,
+                        LastUpdatedAt = DateTime.UtcNow
+                    }
+                };
+
+                user.Patient = patient;
+                _context.Patients.Add(patient);
+            }
+            else if (role.RoleName.Equals("Doctor", StringComparison.OrdinalIgnoreCase))
             {
-                User = user,
-                FullName = fullName,
-                Specialty = specialty,
-                LicenseNumber = dto.LicenseNumber?.Trim() ?? string.Empty,
-                Phone = normalizedPhone,
-                Email = normalizedEmail
-            };
+                specialty = dto.Specialty?.Trim() ?? string.Empty;
+                var doctor = new Doctor
+                {
+                    User = user,
+                    FullName = fullName,
+                    Specialty = specialty,
+                    LicenseNumber = dto.LicenseNumber?.Trim() ?? string.Empty,
+                    Phone = normalizedPhone,
+                    Email = normalizedEmail
+                };
 
-            user.Doctor = doctor;
-            _context.Doctors.Add(doctor);
-        }
-        else if (role.RoleName.Equals("Receptionist", StringComparison.OrdinalIgnoreCase))
-        {
-            // If registering a receptionist, assign to first clinic if available or clinic 1
-            var defaultClinic = await _context.Clinics.FirstOrDefaultAsync(cancellationToken);
-            var receptionist = new Receptionist
+                user.Doctor = doctor;
+                _context.Doctors.Add(doctor);
+            }
+            else if (role.RoleName.Equals("Receptionist", StringComparison.OrdinalIgnoreCase))
             {
-                User = user,
-                FullName = fullName,
-                ClinicId = defaultClinic?.ClinicId ?? 1
-            };
+                // If registering a receptionist, assign to first clinic if available or clinic 1
+                var defaultClinic = await _context.Clinics.FirstOrDefaultAsync(cancellationToken);
+                var receptionist = new Receptionist
+                {
+                    User = user,
+                    FullName = fullName,
+                    ClinicId = defaultClinic?.ClinicId ?? 1
+                };
 
-            user.Receptionist = receptionist;
-            _context.Receptionists.Add(receptionist);
+                user.Receptionist = receptionist;
+                _context.Receptionists.Add(receptionist);
+            }
+
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var tokenResponse = _tokenService.GenerateTokens(user, role.RoleName, fullName, unifiedPatientId, specialty);
+            tokenResponse.RefreshToken = refreshToken;
+
+            return tokenResponse;
         }
-
-        var refreshToken = _tokenService.GenerateRefreshToken();
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        var tokenResponse = _tokenService.GenerateTokens(user, role.RoleName, fullName, unifiedPatientId, specialty);
-        tokenResponse.RefreshToken = refreshToken;
-
-        return tokenResponse;
+        finally
+        {
+            if (lockAcquired)
+            {
+                IUnifiedPatientIdGenerator.PatientCreationLock.Release();
+            }
+        }
     }
 
     public async Task<TokenResponseDto> LoginAsync(LoginDto dto, CancellationToken cancellationToken = default)

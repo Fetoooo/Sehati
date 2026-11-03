@@ -1,8 +1,8 @@
 # 📊 SEHATI — Progress Tracker
 
 > **Last Updated:** November 3, 2026  
-> **Current Phase:** Phase 4 (Authentication & User Management) Complete -> Phase 5 Next  
-> **Overall Completion:** 42%
+> **Current Phase:** Phase 5 (Core Backend — Patient & Medical Records) Complete -> Phase 6 Next  
+> **Overall Completion:** 50%
 
 ---
 
@@ -14,7 +14,7 @@ Phase  1: Requirements Analysis & Architecture  ██████████�
 Phase  2: Dev Environment & Project Init        ████████████████████ 100%
 Phase  3: Database Design & Implementation      ████████████████████ 100%
 Phase  4: Authentication & User Management      ████████████████████ 100%
-Phase  5: Core Backend — Patients & Records     ░░░░░░░░░░░░░░░░░░░░   0%
+Phase  5: Core Backend — Patients & Records     ████████████████████ 100%
 Phase  6: Core Backend — Clinics & Scheduling   ░░░░░░░░░░░░░░░░░░░░   0%
 Phase  7: Core Backend — Rx, Consent & Audit    ░░░░░░░░░░░░░░░░░░░░   0%
 Phase  8: Frontend Foundation & UI              ░░░░░░░░░░░░░░░░░░░░   0%
@@ -94,14 +94,14 @@ Phase 11: Deployment & Final Documentation      ░░░░░░░░░░�
 - [x] Unit tests for auth service
 - [x] Integration tests for auth endpoints
 
-### ⬜ Phase 5: Core Backend — Patients & Records — PENDING
+### ✅ Phase 5: Core Backend — Patients & Records — COMPLETE
 
-- [ ] Patient CRUD with Unified Patient ID
-- [ ] Medical record management
-- [ ] Allergy, medication, test, scan CRUD
-- [ ] Emergency profile management
-- [ ] Patient search functionality
-- [ ] Unit and integration tests
+- [x] Patient CRUD with Unified Patient ID
+- [x] Medical record management
+- [x] Allergy, medication, test, scan CRUD
+- [x] Emergency profile management
+- [x] Patient search functionality
+- [x] Unit and integration tests
 
 ### ⬜ Phase 6: Core Backend — Clinics & Scheduling — PENDING
 

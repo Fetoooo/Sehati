@@ -333,27 +333,27 @@ feat(auth): implement JWT authentication with role-based authorization
 **Objective:** Implement patient management, unified patient ID generation, medical records, allergies, medications, tests, scans, and emergency profiles.
 
 ### Deliverables
-- [ ] Patient CRUD operations with Unified Patient ID
-- [ ] Medical record management
-- [ ] Allergy management
-- [ ] Medication tracking
-- [ ] Lab test records
-- [ ] Scan/imaging records
-- [ ] Emergency profile management
-- [ ] Patient search (by phone, name, Unified ID)
+- [x] Patient CRUD operations with Unified Patient ID
+- [x] Medical record management
+- [x] Allergy management
+- [x] Medication tracking
+- [x] Lab test records
+- [x] Scan/imaging records
+- [x] Emergency profile management
+- [x] Patient search (by phone, name, Unified ID)
 
 ### Tasks
-1. [ ] Create patient-related DTOs
-2. [ ] Create FluentValidation validators
-3. [ ] Implement `IPatientService` and `PatientService`
-4. [ ] Implement Unified Patient ID generator (`SH-YYYY-XXXXXX`)
-5. [ ] Implement `PatientsController`
-6. [ ] Implement `IEmergencyService` and `EmergencyService`
-7. [ ] Implement `EmergencyController`
-8. [ ] Implement allergy, medication, test, and scan CRUD
-9. [ ] Implement patient search functionality
-10. [ ] Write unit tests
-11. [ ] Write integration tests
+1. [x] Create patient-related DTOs
+2. [x] Create FluentValidation validators
+3. [x] Implement `IPatientService` and `PatientService`
+4. [x] Implement Unified Patient ID generator (`SH-YYYY-XXXXXX`)
+5. [x] Implement `PatientsController`
+6. [x] Implement `IEmergencyService` and `EmergencyService`
+7. [x] Implement `EmergencyController`
+8. [x] Implement allergy, medication, test, and scan CRUD
+9. [x] Implement patient search functionality
+10. [x] Write unit tests
+11. [x] Write integration tests
 
 ### API Endpoints
 | Method | Route | Description |
@@ -386,9 +386,9 @@ feat(auth): implement JWT authentication with role-based authorization
 - `dotnet build` + `dotnet test` pass
 
 ### Definition of Done
-- [ ] All patient endpoints functional
-- [ ] Tests pass
-- [ ] Committed and pushed
+- [x] All patient endpoints functional
+- [x] Tests pass
+- [x] Committed and pushed
 
 ### GitHub Commit
 ```
