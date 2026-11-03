@@ -53,6 +53,21 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                     db.SaveChanges();
                 }
 
+                if (!db.Clinics.Any())
+                {
+                    db.Clinics.Add(new Clinic
+                    {
+                        ClinicName = "Sehati Central Hospital",
+                        Specialty = "General Care",
+                        Address = "Downtown Cairo",
+                        Phone = "+20223456789",
+                        Email = "central@sehati.com",
+                        WorkingHours = "08:00 - 22:00",
+                        Status = ClinicStatus.Active
+                    });
+                    db.SaveChanges();
+                }
+
                 _databaseInitialized = true;
             }
         }

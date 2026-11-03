@@ -2,6 +2,8 @@ namespace Sehati.Application.Common.Interfaces;
 
 public interface IUnifiedPatientIdGenerator
 {
+    public static readonly SemaphoreSlim PatientCreationLock = new(1, 1);
+
     /// <summary>
     /// Generates a unique, standardized Unified Patient ID in the format SH-YYYY-NNNNNN
     /// </summary>
