@@ -92,7 +92,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var registerDto = new RegisterDto
         {
             Email = $"patient_{Guid.NewGuid():N}@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+2010" + Random.Shared.Next(10000000, 99999999),
             FullName = "Amr Diab",
             RoleName = "Patient",
@@ -142,7 +142,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var registerDto = new RegisterDto
         {
             Email = email,
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = phone,
             FullName = "Valid User",
             RoleName = "Patient"
@@ -152,7 +152,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var loginDto = new LoginDto
         {
             EmailOrPhone = email,
-            Password = "SecurePassword@2026"
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword
         };
 
         // Act
@@ -173,7 +173,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var registerDto = new RegisterDto
         {
             Email = email,
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+2010" + Random.Shared.Next(10000000, 99999999),
             FullName = "User Test",
             RoleName = "Patient"
@@ -200,7 +200,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var registerDto = new RegisterDto
         {
             Email = $"refreshtest_{Guid.NewGuid():N}@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+2010" + Random.Shared.Next(10000000, 99999999),
             FullName = "Refresh User",
             RoleName = "Patient"
@@ -242,7 +242,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var registerDto = new RegisterDto
         {
             Email = $"me_{Guid.NewGuid():N}@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+2010" + Random.Shared.Next(10000000, 99999999),
             FullName = "Current Profile User",
             RoleName = "Patient"
@@ -272,7 +272,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var registerDto = new RegisterDto
         {
             Email = $"pat_role_{Guid.NewGuid():N}@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+2010" + Random.Shared.Next(10000000, 99999999),
             FullName = "Role Test Patient",
             RoleName = "Patient"
@@ -298,7 +298,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var registerDto = new RegisterDto
         {
             Email = $"doc_role_{Guid.NewGuid():N}@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+2010" + Random.Shared.Next(10000000, 99999999),
             FullName = "Dr. Hossam Ghaly",
             RoleName = "Doctor",
@@ -325,7 +325,7 @@ public class AuthControllerTests : IClassFixture<CustomWebApplicationFactory>
         var registerDto = new RegisterDto
         {
             Email = $"logout_{Guid.NewGuid():N}@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+2010" + Random.Shared.Next(10000000, 99999999),
             FullName = "Logout Integration User",
             RoleName = "Patient"

@@ -25,7 +25,7 @@ public class EmergencyControllerTests : IClassFixture<CustomWebApplicationFactor
         var registerDto = new RegisterDto
         {
             Email = $"emergency_test_{Guid.NewGuid():N}@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+2010" + Random.Shared.Next(10000000, 99999999),
             FullName = "Emergency Test Patient",
             RoleName = "Patient",

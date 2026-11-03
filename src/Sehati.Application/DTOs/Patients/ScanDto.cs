@@ -21,3 +21,4 @@ public class CreateScanDto
     public string? FileUrl { get; set; }
     public string? Notes { get; set; }
 }
+

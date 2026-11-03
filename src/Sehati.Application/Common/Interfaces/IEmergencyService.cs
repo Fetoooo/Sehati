@@ -8,3 +8,4 @@ public interface IEmergencyService
     Task<EmergencyProfileDto> GetEmergencyProfileByPatientIdAsync(int patientId, CancellationToken cancellationToken = default);
     Task<EmergencyProfileDto> UpdateEmergencyProfileAsync(int patientId, UpdateEmergencyProfileDto dto, CancellationToken cancellationToken = default);
 }
+

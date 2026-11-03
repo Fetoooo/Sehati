@@ -11,3 +11,4 @@ public class UpdatePatientDto
     public string? EmergencyContact { get; set; }
     public string? Phone { get; set; }
 }
+

@@ -22,3 +22,4 @@ public class CreateMedicationDto
     public DateOnly? EndDate { get; set; }
     public string? Notes { get; set; }
 }
+

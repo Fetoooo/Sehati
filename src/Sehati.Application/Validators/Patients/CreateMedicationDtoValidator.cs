@@ -30,3 +30,4 @@ public class CreateMedicationDtoValidator : AbstractValidator<CreateMedicationDt
             .MaximumLength(500).WithMessage("Notes must not exceed 500 characters.");
     }
 }
+

@@ -65,3 +65,4 @@ public class EmergencyController : ControllerBase
         return Ok(profile);
     }
 }
+

@@ -242,3 +242,4 @@ public class PatientsController : ControllerBase
         return Ok(profile);
     }
 }
+

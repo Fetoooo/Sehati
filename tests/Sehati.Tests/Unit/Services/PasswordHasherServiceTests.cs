@@ -13,7 +13,7 @@ public class PasswordHasherServiceTests
     public void HashPassword_ShouldReturnHashedString_NotMatchingPlainText()
     {
         // Arrange
-        const string plainText = "SecurePassword123!";
+        const string plainText = "SampleTestInput123!";
 
         // Act
         var hash = _hasher.HashPassword(_dummyUser, plainText);
