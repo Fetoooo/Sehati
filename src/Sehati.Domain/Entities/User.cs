@@ -11,6 +11,9 @@ public class User
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiryTime { get; set; }
+
     // Navigation properties
     public Patient? Patient { get; set; }
     public Doctor? Doctor { get; set; }

@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Sehati.Application.Common.Interfaces;
 using Sehati.Domain.Entities;
 
 namespace Sehati.Infrastructure.Persistence;
 
-public class SehatiDbContext : DbContext
+public class SehatiDbContext : DbContext, IApplicationDbContext
 {
     public SehatiDbContext(DbContextOptions<SehatiDbContext> options) : base(options)
     {
