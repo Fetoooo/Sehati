@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Phase 5: Core Backend — Patient & Medical Records
+  - Unified Patient ID generation (SH-YYYY-NNNNNN) with thread-safe concurrency lock and auto-increment sequence
+  - Complete Patient CRUD management with automatic user account, medical record, and emergency profile provisioning
+  - Sub-resource management endpoints for Allergies, Current Medications, Diagnostic Lab Tests, and Scans/Imaging
+  - Emergency profile service (IEmergencyService) and controller (EmergencyController)
+  - Public anonymous emergency endpoint (GET /api/v1/emergency/{unifiedId}) for ER responders and paramedics QR scanning
+  - Patient search engine (GET /api/v1/patients/search?q=...) searching across Unified ID, phone number, and full name
+  - Patient pagination model PaginatedList<T> with RFC JSON deserialization support
+  - FluentValidation rules for patient creation, update, allergies, medications, lab tests, scans, and emergency profiles
+  - 85 total passing tests (30 new unit and integration tests added for Phase 5)
 - Phase 4: Authentication & User Management
   - JWT authentication engine with access and refresh tokens, supporting token rotation and invalidation on logout
   - Password hashing service using ASP.NET Core Identity PBKDF2 with cryptographic salting
