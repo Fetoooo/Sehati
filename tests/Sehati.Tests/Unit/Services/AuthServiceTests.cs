@@ -70,7 +70,7 @@ public class AuthServiceTests
         var registerDto = new RegisterDto
         {
             Email = "patient.new@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201011112222",
             FullName = "Tamer Hosny",
             RoleName = "Patient",
@@ -110,7 +110,7 @@ public class AuthServiceTests
         var registerDto = new RegisterDto
         {
             Email = "doctor.neuro@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201022223333",
             FullName = "Dr. Mona Zaki",
             RoleName = "Doctor",
@@ -139,7 +139,7 @@ public class AuthServiceTests
         var initialDto = new RegisterDto
         {
             Email = "duplicate@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201033334444",
             FullName = "First User",
             RoleName = "Patient"
@@ -149,7 +149,7 @@ public class AuthServiceTests
         var duplicateDto = new RegisterDto
         {
             Email = "duplicate@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201055556666",
             FullName = "Second User",
             RoleName = "Patient"
@@ -166,7 +166,7 @@ public class AuthServiceTests
         var registerDto = new RegisterDto
         {
             Email = "login.test@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201044445555",
             FullName = "Login User",
             RoleName = "Patient"
@@ -176,7 +176,7 @@ public class AuthServiceTests
         var loginDto = new LoginDto
         {
             EmailOrPhone = "login.test@sehati.com",
-            Password = "SecurePassword@2026"
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword
         };
 
         // Act
@@ -196,7 +196,7 @@ public class AuthServiceTests
         var registerDto = new RegisterDto
         {
             Email = "phone.test@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201077778888",
             FullName = "Phone User",
             RoleName = "Patient"
@@ -206,7 +206,7 @@ public class AuthServiceTests
         var loginDto = new LoginDto
         {
             EmailOrPhone = "+201077778888",
-            Password = "SecurePassword@2026"
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword
         };
 
         // Act
@@ -225,7 +225,7 @@ public class AuthServiceTests
         var registerDto = new RegisterDto
         {
             Email = "wrongpass@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201088889999",
             FullName = "User Name",
             RoleName = "Patient"
@@ -249,7 +249,7 @@ public class AuthServiceTests
         var registerDto = new RegisterDto
         {
             Email = "refresh@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201099990000",
             FullName = "Refresh User",
             RoleName = "Patient"
@@ -279,7 +279,7 @@ public class AuthServiceTests
         var registerDto = new RegisterDto
         {
             Email = "logout@sehati.com",
-            Password = "SecurePassword@2026",
+            Password = Sehati.Tests.Common.TestAuthHelper.DefaultTestPassword,
             Phone = "+201012121212",
             FullName = "Logout User",
             RoleName = "Patient"

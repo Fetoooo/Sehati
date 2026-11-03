@@ -33,3 +33,4 @@ public class UpdatePatientDtoValidator : AbstractValidator<UpdatePatientDto>
             .MaximumLength(100).WithMessage("Emergency contact must not exceed 100 characters.");
     }
 }
+

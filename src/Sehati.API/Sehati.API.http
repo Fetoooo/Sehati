@@ -11,7 +11,7 @@ Accept: application/json
 
 {
   "email": "patient@sehati.com",
-  "password": "SecurePassword@2026",
+  "password": "P@ssword_Sample_123!",
   "phone": "+201012345678",
   "fullName": "Ahmed Mohamed",
   "roleName": "Patient",
@@ -28,7 +28,7 @@ Accept: application/json
 
 {
   "email": "doctor@sehati.com",
-  "password": "SecurePassword@2026",
+  "password": "P@ssword_Sample_123!",
   "phone": "+201098765432",
   "fullName": "Dr. Mahmoud Youssef",
   "roleName": "Doctor",
@@ -44,7 +44,7 @@ Accept: application/json
 
 {
   "emailOrPhone": "patient@sehati.com",
-  "password": "SecurePassword@2026"
+  "password": "P@ssword_Sample_123!"
 }
 
 ### Store token from login

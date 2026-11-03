@@ -21,3 +21,4 @@ public class PatientDetailDto : PatientDto
     public List<TestDto> RecentTests { get; set; } = new();
     public List<ScanDto> RecentScans { get; set; } = new();
 }
+

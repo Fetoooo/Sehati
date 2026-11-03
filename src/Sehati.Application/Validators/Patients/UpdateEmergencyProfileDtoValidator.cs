@@ -24,3 +24,4 @@ public class UpdateEmergencyProfileDtoValidator : AbstractValidator<UpdateEmerge
             .MaximumLength(1000).WithMessage("Emergency notes must not exceed 1000 characters.");
     }
 }
+

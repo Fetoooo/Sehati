@@ -32,3 +32,4 @@ public interface IPatientService
     Task<ScanDto> AddScanAsync(int patientId, CreateScanDto dto, CancellationToken cancellationToken = default);
     Task DeleteScanAsync(int patientId, int scanId, CancellationToken cancellationToken = default);
 }
+

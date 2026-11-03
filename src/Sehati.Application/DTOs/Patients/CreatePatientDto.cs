@@ -14,3 +14,4 @@ public class CreatePatientDto
     public BloodType BloodType { get; set; } = BloodType.Unknown;
     public string? EmergencyNotes { get; set; }
 }
+

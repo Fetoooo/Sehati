@@ -25,3 +25,4 @@ public class CreateScanDtoValidator : AbstractValidator<CreateScanDto>
             .MaximumLength(500).WithMessage("Notes must not exceed 500 characters.");
     }
 }
+
