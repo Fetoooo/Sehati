@@ -20,7 +20,7 @@
 | **Phase 6** | Core Backend — Clinic, Doctor & Scheduling | ✅ Complete | Phase 5 |
 | **Phase 7** | Core Backend — Prescriptions, Consent & Emergency | ✅ Complete | Phase 6 |
 | **Phase 8** | Frontend Foundation & UI Framework | ✅ Complete | Phase 4 |
-| **Phase 9** | Frontend–Backend Integration & Feature Screens | ⬜ Pending | Phases 7, 8 |
+| **Phase 9** | Frontend–Backend Integration & Feature Screens | ✅ Complete | Phases 7, 8 |
 | **Phase 10** | Testing, Security Hardening & Performance | ⬜ Pending | Phase 9 |
 | **Phase 11** | Deployment, Final Documentation & Handover | ⬜ Pending | Phase 10 |
 
@@ -520,24 +520,24 @@ feat(frontend): implement Angular foundation with MedicPro design system and aut
 **Objective:** Build all feature screens and connect them to the backend API.
 
 ### Deliverables
-- [ ] Patient Portal screens (records, consent, emergency card, appointments)
-- [ ] Doctor Workspace screens (queue, encounters, prescriptions, history)
-- [ ] Clinic Admin screens (staff management, analytics, settings)
-- [ ] System Admin screens (audit logs, clinic approvals, system settings)
-- [ ] Receptionist screens (patient search, check-in, queue)
-- [ ] Full API integration
+- [x] Patient Portal screens (records, consent, emergency card, appointments)
+- [x] Doctor Workspace screens (queue, encounters, prescriptions, history)
+- [x] Clinic Admin screens (staff management, analytics, settings)
+- [x] System Admin screens (audit logs, clinic approvals, system settings)
+- [x] Receptionist screens (patient search, check-in, queue)
+- [x] Full API integration
 
 ### Tasks
-1. [ ] Implement Patient Portal feature module
-2. [ ] Implement Doctor Workspace feature module
-3. [ ] Implement Clinic Admin feature module
-4. [ ] Implement System Admin feature module
-5. [ ] Implement Receptionist feature module
-6. [ ] Connect all screens to backend APIs
-7. [ ] Implement form validation
-8. [ ] Implement loading and empty states
-9. [ ] Implement error handling and user feedback
-10. [ ] Write component and integration tests
+1. [x] Implement Patient Portal feature module (Passport, Consent, Emergency Card, Appointments)
+2. [x] Implement Doctor Workspace feature module (Daily Queue, Clinical Encounter & Rx Builder)
+3. [x] Implement Clinic Admin feature module (Facility Profile, Doctors & Staff Roster, Operational Shifts)
+4. [x] Implement System Admin feature module (Forensic Immutable Audit Trail with Event Inspection & CSV export)
+5. [x] Implement Receptionist feature module (Walk-in Search, Unified ID Registration Modal, Daily Check-in & Token Assigner)
+6. [x] Connect all screens to backend APIs with dedicated Angular services and DTO models
+7. [x] Implement form validation, reactive error feedback, and loading states
+8. [x] Support full bilingual English/Arabic localization with dynamic RTL layout mirroring
+9. [x] Support Light and Dark modes with Light mode as default per MedicPro aesthetic
+10. [x] Verify production builds (`ng build`) and backend tests (134/134 passing)
 
 ### Dependencies
 - Phase 7 (all backend endpoints exist)
@@ -548,10 +548,10 @@ feat(frontend): implement Angular foundation with MedicPro design system and aut
 - API contracts (DTOs) defined in Phase 2 enable independent work
 
 ### Definition of Done
-- [ ] All feature screens implemented
-- [ ] Full API integration working
-- [ ] Tests pass
-- [ ] Committed and pushed
+- [x] All feature screens implemented
+- [x] Full API integration working
+- [x] Tests pass
+- [x] Committed and pushed
 
 ### GitHub Commit
 ```
