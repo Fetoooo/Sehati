@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
+import { LandingComponent } from './features/landing/landing.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
@@ -18,11 +19,17 @@ import { AuditLogsComponent } from './features/admin/audit-logs/audit-logs.compo
 
 export const routes: Routes = [
   {
+    path: '',
+    component: LandingComponent,
+    pathMatch: 'full',
+    title: 'Sehati - Unified Digital Health Platform | صِحّتي'
+  },
+  {
     path: 'auth',
     component: AuthLayoutComponent,
     children: [
-      { path: 'login', component: LoginComponent, title: 'Sehati - Login' },
-      { path: 'register', component: RegisterComponent, title: 'Sehati - Register' },
+      { path: 'login', component: LoginComponent, title: 'Sehati - Login | تسجيل الدخول' },
+      { path: 'register', component: RegisterComponent, title: 'Sehati - Register | إنشاء حساب' },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
   },
@@ -46,8 +53,7 @@ export const routes: Routes = [
       { path: 'doctor/encounter/:id', component: EncounterBuilderComponent, title: 'Sehati - Clinical Encounter & Rx' },
       { path: 'receptionist', component: ReceptionistDeskComponent, title: 'Sehati - Receptionist Desk' },
       { path: 'clinic/admin', component: ClinicAdminComponent, title: 'Sehati - Clinic Administration' },
-      { path: 'admin/audit', component: AuditLogsComponent, title: 'Sehati - Security Audit Trail' },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: 'admin/audit', component: AuditLogsComponent, title: 'Sehati - Security Audit Trail' }
     ]
   },
   {
@@ -57,6 +63,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: ''
   }
 ];

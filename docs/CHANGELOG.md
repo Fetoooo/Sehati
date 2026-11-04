@@ -34,6 +34,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Frontend-Backend Integration:
     - Typed TypeScript DTO models: `patient.models.ts`, `appointment.models.ts`, `clinical.models.ts`, `clinic.models.ts`, `auth.models.ts`.
     - Typed Angular injectable HTTP services: `PatientService`, `AppointmentService`, `ClinicalService`, `ClinicService`.
+  - Landing Page & Authentication Redesign:
+    - Dedicated National Landing Page (`LandingComponent` at `/`): Glassmorphism sticky navbar, hero section with 3D MedicPro ID passport card simulation, live ECG/vitals readout, 6 core capability pillars, interactive 5-role persona tabbed showcases, impact metrics, and responsive mobile drawer.
+    - Split-Screen Auth Layout (`AuthLayoutComponent`): Branded left hero showcase panel featuring the official Sehati logo, mission slogan, floating verified card simulation, trust badges, and quick "Back to Home" navigation pill.
+    - Revamped Login Experience (`LoginComponent`): Modern floating input fields with icons, password show/hide visibility toggle, one-click quick demo credential fill chips (`Patient`, `Doctor`, `Receptionist`, `Admin`), and fast cross-navigation links.
+    - Revamped Registration Experience (`RegisterComponent`): Persona selector cards with visual icons, 14-digit national ID validation, doctor specialty and license number conditional fields, password strength validation, and bilingual error alerts.
   - Design & Localization:
     - Full Arabic and English bilingual dictionary (`LanguageService`) with dynamic RTL layout mirroring and Cairo/Plus Jakarta Sans typography.
     - Light Mode as default theme with seamless Dark Mode toggle and localStorage persistence (`ThemeService`).
