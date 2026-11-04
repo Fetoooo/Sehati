@@ -70,6 +70,7 @@ export const APP_TRANSLATIONS: Translations = {
   doctorWorkspace: { en: "Doctor's Consultation", ar: 'عيادة الكشف الطبي' },
   patientQueue: { en: "Today's Patient Queue", ar: 'طابور المرضى اليوم' },
   patientSearch: { en: 'Patient Search & Verification', ar: 'البحث والتحقق من المريض' },
+  receptionistDesk: { en: 'Reception Desk', ar: 'مكتب الاستقبال والدخول' },
   clinicManagement: { en: 'Clinic Management', ar: 'إدارة العيادة والمواعيد' },
   auditLog: { en: 'Security Audit Trail', ar: 'سجل العمليات والأمان' },
   logout: { en: 'Sign Out', ar: 'تسجيل الخروج' },

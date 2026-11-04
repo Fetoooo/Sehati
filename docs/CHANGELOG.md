@@ -9,6 +9,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Phase 9: Frontend–Backend Integration & Feature Screens
+  - Patient Portal screens:
+    - Unified Medical Passport (`PassportComponent`): Digital physical ID card simulation, allergies with severity indicators, active medications, pathology lab tests with reference ranges, and diagnostic scans.
+    - Dynamic Consent Engine (`ConsentComponent`): Granular provider permission management (`ViewOnly`, `ViewAndAddRecords`), active status verification, and instant one-click revocation.
+    - Emergency QR Profile (`EmergencyCardComponent`): Critical ER triage dashboard with blood type pill, severe allergy alert banners, emergency contact speed-call, and printable wallet card view; public anonymous route (`/emergency-public/:id`) for paramedics and ER personnel.
+    - Appointments & Scheduling (`AppointmentsComponent`): Status filter tabs (`Pending`, `Confirmed`, `Completed`, `Cancelled`), doctor specialty tags, clinic location badges, and interactive booking modal with double-booking feedback.
+  - Doctor Workspace screens:
+    - Daily Patient Queue (`DoctorQueueComponent`): Live waiting list with token numbers, consultation status transitions (`Pending`, `Confirmed`, `Completed`), patient search, and quick launch into clinical encounter.
+    - Clinical Encounter & Rx Builder (`EncounterBuilderComponent`): Patient banner with allergy alerts, vitals tracker with automated BMI category calculator, ICD-10 diagnosis picker & custom diagnosis documentation, digital prescription builder (Rx pad simulation) with attending doctor digital signature stamp, and follow-up consultation scheduler.
+  - Receptionist Desk (`ReceptionistDeskComponent`):
+    - Walk-in patient search across Unified ID (`SH-YYYY-NNNNNN`), National ID, Phone, and Full Name.
+    - Quick Patient Registration Modal generating thread-safe Unified Health ID, medical record, and emergency card.
+    - Queue Check-in & Token Assigner: Allocates next sequential queue number and assigns patient to attending doctor.
+  - Clinic Admin Portal (`ClinicAdminComponent`):
+    - Clinic profile overview (address, phone, license number, status).
+    - Medical staff roster: Affiliated doctors list with specialty, license number, and consultation fee; affiliation modal.
+    - Reception staff roster with shift assignments.
+    - Operational hours and slot duration configurations.
+  - System Admin Audit Trail (`AuditLogsComponent`):
+    - Immutable security audit trail with multi-criteria filtering by actor email, entity name, action type, and client IP.
+    - Forensic Event Inspector modal displaying formatted raw JSON audit payload and context.
+    - One-click CSV audit log report export.
+  - Frontend-Backend Integration:
+    - Typed TypeScript DTO models: `patient.models.ts`, `appointment.models.ts`, `clinical.models.ts`, `clinic.models.ts`, `auth.models.ts`.
+    - Typed Angular injectable HTTP services: `PatientService`, `AppointmentService`, `ClinicalService`, `ClinicService`.
+  - Design & Localization:
+    - Full Arabic and English bilingual dictionary (`LanguageService`) with dynamic RTL layout mirroring and Cairo/Plus Jakarta Sans typography.
+    - Light Mode as default theme with seamless Dark Mode toggle and localStorage persistence (`ThemeService`).
+    - Official Sehati brand logo integration across favicon, manifest, sidebar, and cards.
+  - Quality & Verification:
+    - Angular production build passes with 0 errors (`ng build`).
+    - All 134 backend xUnit tests passing with 0 failures (`dotnet test Sehati.sln`).
 - Phase 8: Frontend Foundation & UI Framework
   - Complete MedicPro design system implementation with CSS tokens (dark healthcare teal/cyan palette, elevated glass cards, typography, interactive badges, alert states, and buttons)
   - Modular standalone architecture with core, shared, layouts, and eatures directories
