@@ -544,15 +544,15 @@ export class MainLayoutComponent {
 
   public navItems: NavItem[] = [
     { labelKey: 'dashboard', icon: 'dashboard', route: '/dashboard' },
-    { labelKey: 'myMedicalPassport', icon: 'medical_information', route: '/dashboard', roles: ['Patient'] },
-    { labelKey: 'appointments', icon: 'calendar_month', route: '/dashboard' },
-    { labelKey: 'prescriptions', icon: 'prescriptions', route: '/dashboard', roles: ['Patient', 'Doctor'] },
-    { labelKey: 'consentEngine', icon: 'shield_lock', route: '/dashboard', roles: ['Patient'] },
-    { labelKey: 'emergencyProfile', icon: 'emergency', route: '/dashboard', roles: ['Patient'] },
-    { labelKey: 'doctorWorkspace', icon: 'stethoscope', route: '/dashboard', roles: ['Doctor'] },
-    { labelKey: 'patientQueue', icon: 'reduce_capacity', route: '/dashboard', roles: ['Doctor', 'Receptionist', 'ClinicAdmin'] },
-    { labelKey: 'clinicManagement', icon: 'domain', route: '/dashboard', roles: ['ClinicAdmin'] },
-    { labelKey: 'auditLog', icon: 'security', route: '/dashboard', roles: ['SystemAdmin'] }
+    { labelKey: 'myMedicalPassport', icon: 'medical_information', route: '/passport' },
+    { labelKey: 'appointments', icon: 'calendar_month', route: '/appointments' },
+    { labelKey: 'consentEngine', icon: 'shield_lock', route: '/consent' },
+    { labelKey: 'emergencyProfile', icon: 'emergency', route: '/emergency' },
+    { labelKey: 'patientQueue', icon: 'reduce_capacity', route: '/doctor/queue', roles: ['Doctor', 'Receptionist', 'ClinicAdmin', 'SystemAdmin'] },
+    { labelKey: 'doctorWorkspace', icon: 'stethoscope', route: '/doctor/encounter', roles: ['Doctor', 'ClinicAdmin', 'SystemAdmin'] },
+    { labelKey: 'receptionistDesk', icon: 'desk', route: '/receptionist', roles: ['Receptionist', 'ClinicAdmin', 'SystemAdmin'] },
+    { labelKey: 'clinicManagement', icon: 'domain', route: '/clinic/admin', roles: ['ClinicAdmin', 'SystemAdmin'] },
+    { labelKey: 'auditLog', icon: 'policy', route: '/admin/audit', roles: ['SystemAdmin', 'ClinicAdmin'] }
   ];
 
   public userInitials = computed(() => {

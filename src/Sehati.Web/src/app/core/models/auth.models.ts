@@ -2,14 +2,17 @@ export type UserRole = 'Patient' | 'Doctor' | 'Receptionist' | 'ClinicAdmin' | '
 
 export interface UserDto {
   userId: number;
+  id?: string;
   email: string;
   phone: string;
+  phoneNumber?: string;
   fullName: string;
   roleName: UserRole;
   isActive: boolean;
   unifiedPatientId?: string | null;
   specialty?: string | null;
   clinicId?: number | null;
+  createdAt?: string;
 }
 
 export interface TokenResponseDto {
@@ -44,4 +47,3 @@ export interface ApiErrorResponse {
   errors?: Record<string, string[]>;
   status?: number;
 }
-
