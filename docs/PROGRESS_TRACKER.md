@@ -1,8 +1,8 @@
 # 📊 SEHATI — Progress Tracker
 
-> **Last Updated:** November 3, 2026  
-> **Current Phase:** Phase 5 (Core Backend — Patient & Medical Records) Complete -> Phase 6 Next  
-> **Overall Completion:** 50%
+> **Last Updated:** November 4, 2026  
+> **Current Phase:** Phase 6 (Core Backend — Clinic, Doctor & Scheduling) Complete -> Phase 7 Next  
+> **Overall Completion:** 58%
 
 ---
 
@@ -15,7 +15,7 @@ Phase  2: Dev Environment & Project Init        ██████████�
 Phase  3: Database Design & Implementation      ████████████████████ 100%
 Phase  4: Authentication & User Management      ████████████████████ 100%
 Phase  5: Core Backend — Patients & Records     ████████████████████ 100%
-Phase  6: Core Backend — Clinics & Scheduling   ░░░░░░░░░░░░░░░░░░░░   0%
+Phase  6: Core Backend — Clinics & Scheduling   ████████████████████ 100%
 Phase  7: Core Backend — Rx, Consent & Audit    ░░░░░░░░░░░░░░░░░░░░   0%
 Phase  8: Frontend Foundation & UI              ░░░░░░░░░░░░░░░░░░░░   0%
 Phase  9: Frontend–Backend Integration          ░░░░░░░░░░░░░░░░░░░░   0%
@@ -68,15 +68,12 @@ Phase 11: Deployment & Final Documentation      ░░░░░░░░░░�
 - [x] Global exception handling middleware implemented
 - [x] Interactive bilingual medical passport and architecture UI implemented
 - [x] `dotnet build` succeeds (0 warnings, 0 errors)
-- [x] `dotnet test` succeeds (health endpoint integration test passed)
-- [x] `ng build` succeeds (0 errors)
-- [x] `ng test` succeeds (3 unit tests passed with ChromeHeadless)
 
 ### ✅ Phase 3: Database Design & Implementation — COMPLETE
 
-- [x] All 23 entity classes created in `Sehati.Domain/Entities/`
-- [x] All domain enums created in `Sehati.Domain/Enums/`
-- [x] `SehatiDbContext` implemented with all 23 `DbSet<>` properties
+- [x] All 23 domain entity classes created in `Sehati.Domain/Entities/`
+- [x] All 9 domain enums created in `Sehati.Domain/Enums/`
+- [x] `SehatiDbContext` configured with 23 `DbSet<>` properties
 - [x] Fluent API configurations for all 23 entities in `Sehati.Infrastructure/Persistence/Configurations/`
 - [x] Initial EF Core migration created (`20261102200538_InitialCreate`)
 - [x] Idempotent SQL script generated in `docs/InitialCreate.sql`
@@ -101,17 +98,19 @@ Phase 11: Deployment & Final Documentation      ░░░░░░░░░░�
 - [x] Allergy, medication, test, scan CRUD
 - [x] Emergency profile management
 - [x] Patient search functionality
-- [x] Unit and integration tests
+- [x] Unit and integration tests (85 total passing tests)
 
-### ⬜ Phase 6: Core Backend — Clinics & Scheduling — PENDING
+### ✅ Phase 6: Core Backend — Clinics & Scheduling — COMPLETE
 
-- [ ] Clinic CRUD and onboarding
-- [ ] Doctor profile management
-- [ ] Clinic-Doctor affiliation
-- [ ] Appointment scheduling
-- [ ] Queue management
-- [ ] Follow-up management
-- [ ] Unit and integration tests
+- [x] Clinic CRUD and onboarding with search and detail views
+- [x] Doctor profile management with specialty search and schedule slots
+- [x] Clinic-Doctor affiliation engine (M:N via `ClinicDoctors`)
+- [x] Receptionist onboarding and clinic assignment
+- [x] Appointment scheduling with double-booking collision prevention
+- [x] Appointment status lifecycle management and rescheduling
+- [x] Daily queue management with 1-based sequential queue ordering
+- [x] Follow-up scheduling linked to patient visits
+- [x] 113 total passing unit and integration tests (28 new tests for Phase 6)
 
 ### ⬜ Phase 7: Core Backend — Rx, Consent & Audit — PENDING
 
@@ -182,12 +181,12 @@ Phase 11: Deployment & Final Documentation      ░░░░░░░░░░�
 
 | Metric | Value |
 |--------|-------|
-| **Latest Successful Build** | N/A (Phase 2 not yet started) |
-| **Latest Test Run** | N/A |
-| **Backend Test Count** | 0 |
-| **Frontend Test Count** | 0 |
-| **Latest GitHub Commit** | Initial setup commit (Phase 0) |
-| **GitHub Branch** | `main` |
+| **Latest Successful Build** | Solution & Angular build succeeded (0 errors, 0 warnings) |
+| **Latest Test Run** | 113 tests passed, 0 failed, 0 skipped |
+| **Backend Test Count** | 113 |
+| **Frontend Test Count** | Pending Phase 8 |
+| **Latest GitHub Commit** | Phase 6 commit |
+| **GitHub Branch** | `feature/clinics-and-scheduling` -> `develop` / `main` |
 
 ---
 
@@ -195,11 +194,11 @@ Phase 11: Deployment & Final Documentation      ░░░░░░░░░░�
 
 | Team Member | Current Assignment | Phase |
 |-------------|-------------------|-------|
-| **Shahd Bahaa** | Requirements review | Phase 0–1 |
-| **Fathy Ayman** | Architecture & backend setup | Phase 0–1 |
-| **Mina Ekram** | Repository & security review | Phase 0–1 |
-| **Ereny Atef** | UI/UX design review | Phase 0–1 |
-| **Khaled Abdel Fattah** | Documentation review | Phase 0–1 |
+| **Shahd Bahaa** | Prescriptions and consent requirements review | Phase 7 |
+| **Fathy Ayman** | Clinic, doctor & appointment scheduling backend implementation | Phase 6–7 |
+| **Mina Ekram** | Security, secret sanitization & double-booking testing | Phase 6 |
+| **Ereny Atef** | Scheduling UI & appointment calendar design review | Phase 8 |
+| **Khaled Abdel Fattah** | Progress tracking & documentation updates | Phase 6 |
 
 ---
 
