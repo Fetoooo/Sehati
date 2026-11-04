@@ -123,3 +123,14 @@ logs/
 # Python helper scripts (workspace-only, not part of the main project)
 __pycache__/
 *.pyc
+
+# Root duplicates and local generator scratch files
+/*.py
+/presentation.html
+/documentation_for_pdf.html
+/index.html
+/*.pptx
+/*.pdf
+/extracted_images/
+/team_members/
+/SEHATI_COMPREHENSIVE_DOCUMENTATION.md

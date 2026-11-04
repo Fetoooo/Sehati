@@ -1,16 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting()
-      ]
+      providers: [provideRouter([])]
     }).compileComponents();
   });
 
@@ -20,24 +16,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should toggle language between English and Arabic', () => {
+  it(`should have the 'Sehati' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.currentLang).toBe('en');
-
-    app.toggleLanguage();
-    expect(app.currentLang).toBe('ar');
-
-    app.toggleLanguage();
-    expect(app.currentLang).toBe('en');
-  });
-
-  it('should select active portal role', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.currentRole.id).toBe('patient');
-
-    app.selectRole(1);
-    expect(app.currentRole.id).toBe('doctor');
+    expect(app.title).toEqual('Sehati');
   });
 });

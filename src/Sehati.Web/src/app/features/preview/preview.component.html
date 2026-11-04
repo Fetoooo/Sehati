@@ -1,0 +1,336 @@
+<div class="sehati-shell" [class.rtl]="currentLang === 'ar'">
+  <!-- Top Navigation Bar -->
+  <header class="top-nav glass-panel">
+    <div class="nav-brand">
+      <div class="brand-logo-mark">
+        <span class="material-symbols-outlined logo-icon">vital_signs</span>
+        <span class="logo-pulse"></span>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">
+          <span class="arabic-accent">صِحّتي</span>
+          <span class="latin-accent">SEHATI</span>
+        </div>
+        <span class="brand-tagline">Centralized Healthcare Platform</span>
+      </div>
+    </div>
+
+    <!-- Live Backend API Status Badge -->
+    <div class="api-status-chip" [class.connected]="apiStatus === 'connected'" (click)="checkApiHealth()" title="Click to refresh API status">
+      <span class="status-dot"></span>
+      <span class="status-label">
+        API: <strong>{{ healthData?.status || 'Active' }}</strong> (v{{ healthData?.version || '1.0' }})
+      </span>
+      <span class="material-symbols-outlined refresh-icon">refresh</span>
+    </div>
+
+    <!-- Actions / Utilities -->
+    <div class="nav-actions">
+      <!-- Portal Login Button -->
+      <a routerLink="/auth/login" class="action-btn login-nav-btn">
+        <span class="material-symbols-outlined">login</span>
+        <span>{{ currentLang === 'en' ? 'Sign In / Register' : 'تسجيل الدخول' }}</span>
+      </a>
+
+      <!-- Language Toggle -->
+      <button class="action-btn lang-toggle" (click)="toggleLanguage()" aria-label="Toggle Language">
+        <span class="material-symbols-outlined">translate</span>
+        <span>{{ currentLang === 'en' ? 'العربية (RTL)' : 'English (LTR)' }}</span>
+      </button>
+
+      <!-- GitHub Link -->
+      <a href="https://github.com/Fetoooo/Sehati" target="_blank" rel="noopener noreferrer" class="action-btn github-btn">
+        <span class="material-symbols-outlined">code</span>
+        <span>GitHub Repo</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span>ASP.NET Core 9.0 · Angular 19 · SQL Server 2022 · Clean Architecture</span>
+    </div>
+
+    <h1 class="hero-heading" *ngIf="currentLang === 'en'">
+      One Patient. One Medical History.<br>
+      <span class="gradient-text">Centralized Healthcare for MENA.</span>
+    </h1>
+    <h1 class="hero-heading arabic" *ngIf="currentLang === 'ar'">
+      مريض واحد. تاريخ طبي موحد.<br>
+      <span class="gradient-text">الرعاية الصحية الرقمية الشاملة في مصر والشرق الأوسط.</span>
+    </h1>
+
+    <p class="hero-sub" *ngIf="currentLang === 'en'">
+      Eliminate fragmented medical paper records. Sehati centralizes clinical encounters, digital prescriptions, lab results, and emergency profiles under a single, lifelong <strong>Unified Patient ID (SH-YYYY-XXXXXX)</strong>.
+    </p>
+    <p class="hero-sub arabic" *ngIf="currentLang === 'ar'">
+      وداعًا لتشتت الروشتات الورقية والملفات القديمة. يجمع صِحّتي تاريخك الطبي الكامل، والروشتات الإلكترونية، والتحاليل، وملف الطوارئ تحت <strong>رقم طبي موحد مدى الحياة (SH-YYYY-XXXXXX)</strong>.
+    </p>
+
+    <!-- Navigation Tabs -->
+    <div class="portal-nav-pills">
+      <button class="pill-btn" [class.active]="activeTab === 'passport'" (click)="activeTab = 'passport'">
+        <span class="material-symbols-outlined">badge</span>
+        <span>{{ currentLang === 'en' ? 'Unified Medical Passport' : 'الجواز الطبي الموحد' }}</span>
+      </button>
+
+      <button class="pill-btn" [class.active]="activeTab === 'architecture'" (click)="activeTab = 'architecture'">
+        <span class="material-symbols-outlined">account_tree</span>
+        <span>{{ currentLang === 'en' ? 'Clean Architecture' : 'التصميم المعماري' }}</span>
+      </button>
+
+      <button class="pill-btn" [class.active]="activeTab === 'entities'" (click)="activeTab = 'entities'">
+        <span class="material-symbols-outlined">database</span>
+        <span>{{ currentLang === 'en' ? '23 Database Entities' : '23 كيانًا لقواعد البيانات' }}</span>
+      </button>
+
+      <button class="pill-btn" [class.active]="activeTab === 'workflow'" (click)="activeTab = 'workflow'">
+        <span class="material-symbols-outlined">groups</span>
+        <span>{{ currentLang === 'en' ? '5 Role Portals' : 'بوابات المستخدمين الخمسة' }}</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Main Content Display based on Active Tab -->
+  <main class="content-container">
+
+    <!-- TAB 1: UNIFIED MEDICAL PASSPORT -->
+    <section class="tab-pane" *ngIf="activeTab === 'passport'">
+      <div class="passport-grid">
+        <!-- Holographic ID Card Preview -->
+        <div class="passport-card-wrapper">
+          <div class="passport-card glass-panel">
+            <div class="card-shimmer"></div>
+            
+            <div class="card-top">
+              <div class="card-brand">
+                <span class="material-symbols-outlined chip-icon">contactless</span>
+                <div>
+                  <span class="card-title-ar">جمهورية مصر العربية — منظومة صِحّتي</span>
+                  <div class="card-title-en">SEHATI UNIFIED MEDICAL PASSPORT</div>
+                </div>
+              </div>
+              <div class="qr-mock-badge" title="Emergency QR Quick Scan">
+                <span class="material-symbols-outlined">qr_code_2</span>
+                <span class="qr-label">EMERGENCY QR</span>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="patient-id-block">
+                <span class="label">UNIFIED PATIENT ID / رقم الهوية الطبية</span>
+                <div class="id-number">{{ patientMock.id }}</div>
+              </div>
+
+              <div class="patient-meta-grid">
+                <div class="meta-item">
+                  <span class="label">PATIENT NAME / الاسم</span>
+                  <span class="value">{{ currentLang === 'en' ? patientMock.nameEn : patientMock.nameAr }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">BLOOD TYPE / الفصيلة</span>
+                  <span class="value blood-badge">{{ patientMock.bloodType }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">AGE / العمر</span>
+                  <span class="value">{{ patientMock.age }} yrs ({{ currentLang === 'en' ? patientMock.genderEn : patientMock.genderAr }})</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">EMERGENCY CONTACT</span>
+                  <span class="value phone-badge">{{ patientMock.emergencyPhone }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-bottom">
+              <div class="card-chip"></div>
+              <div class="consent-indicator">
+                <span class="material-symbols-outlined">verified_user</span>
+                <span>Protected by Patient Dynamic Consent Engine</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Details Pane -->
+        <div class="passport-details glass-panel">
+          <h2 class="pane-title">
+            <span class="material-symbols-outlined">health_and_safety</span>
+            <span>{{ currentLang === 'en' ? 'Clinical Critical Baseline' : 'الملف الطبي الحرج التراكمي' }}</span>
+          </h2>
+
+          <!-- Allergies Section -->
+          <div class="detail-section">
+            <h3 class="section-heading danger">
+              <span class="material-symbols-outlined">warning</span>
+              <span>{{ currentLang === 'en' ? 'Severe Allergies (2 Verified)' : 'تنبيهات الحساسية الحرجة (2 مسجل)' }}</span>
+            </h3>
+            <div class="allergy-tags">
+              <div class="allergy-tag" *ngFor="let a of patientMock.allergies">
+                <strong>{{ a.name }}</strong>
+                <span class="reaction">({{ a.severity }} - {{ a.reaction }})</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chronic Conditions -->
+          <div class="detail-section">
+            <h3 class="section-heading info">
+              <span class="material-symbols-outlined">monitor_heart</span>
+              <span>{{ currentLang === 'en' ? 'Chronic Conditions' : 'الأمراض المزمنة المسجلة' }}</span>
+            </h3>
+            <div class="condition-list">
+              <div class="condition-item" *ngFor="let c of patientMock.chronicConditions">
+                <span class="name">{{ c.name }}</span>
+                <span class="year">Diagnosed: {{ c.diagnosedYear }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Consents Granted -->
+          <div class="detail-section">
+            <h3 class="section-heading success">
+              <span class="material-symbols-outlined">lock_open</span>
+              <span>{{ currentLang === 'en' ? 'Active Doctor Access Consents' : 'أذونات الأطباء النشطة' }}</span>
+            </h3>
+            <div class="consent-list">
+              <div class="consent-item" *ngFor="let cs of patientMock.activeConsents">
+                <div class="consent-doc">
+                  <strong>{{ cs.doctor }}</strong>
+                  <span class="clinic">{{ cs.clinic }}</span>
+                </div>
+                <div class="consent-badge">
+                  <span class="type">{{ cs.type }}</span>
+                  <span class="exp">Expires: {{ cs.expiry }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: CLEAN ARCHITECTURE -->
+    <section class="tab-pane" *ngIf="activeTab === 'architecture'">
+      <div class="architecture-layout">
+        <div class="arch-intro glass-panel">
+          <h2 class="pane-title">
+            <span class="material-symbols-outlined">layers</span>
+            <span>{{ currentLang === 'en' ? 'Clean Architecture (Onion Pattern)' : 'التصميم المعماري النظيف (Clean Architecture)' }}</span>
+          </h2>
+          <p class="arch-desc">
+            The backend strictly adheres to Clean Architecture with zero circular dependencies. Domain entities remain pure POCOs with zero external NuGet dependencies, surrounded by Application logic, Infrastructure data access, and API presentation.
+          </p>
+        </div>
+
+        <div class="arch-layer-stack">
+          <div class="layer-card glass-panel" *ngFor="let l of architectureLayers; let i = index" [style.--accent-border]="'var(--primary-' + (400 + i * 100) + ')'">
+            <div class="layer-header">
+              <span class="layer-number">0{{ i + 1 }}</span>
+              <div>
+                <h3 class="layer-name">{{ l.name }}</h3>
+                <span class="layer-role">{{ currentLang === 'en' ? l.roleEn : l.roleAr }}</span>
+              </div>
+            </div>
+            <div class="layer-tech">
+              <span class="material-symbols-outlined">memory</span>
+              <code>{{ l.tech }}</code>
+            </div>
+            <p class="layer-detail">
+              {{ currentLang === 'en' ? l.detailsEn : l.detailsAr }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: 23 DATABASE ENTITIES -->
+    <section class="tab-pane" *ngIf="activeTab === 'entities'">
+      <div class="entities-layout">
+        <div class="entities-header glass-panel">
+          <h2 class="pane-title">
+            <span class="material-symbols-outlined">schema</span>
+            <span>{{ currentLang === 'en' ? '23 System Database Entities' : '23 كيانًا لقاعدة البيانات' }}</span>
+          </h2>
+          <p class="entities-desc">
+            Organized into 3 interconnected healthcare domains with EF Core 9.0 Code-First migrations targeting Microsoft SQL Server 2022.
+          </p>
+        </div>
+
+        <div class="entity-domains-grid">
+          <div class="domain-card glass-panel" *ngFor="let g of entityGroups">
+            <div class="domain-header" [style.borderBottomColor]="g.color">
+              <span class="domain-badge" [style.background]="g.color"></span>
+              <h3>{{ currentLang === 'en' ? g.domainEn : g.domainAr }}</h3>
+            </div>
+            <div class="entities-list">
+              <div class="entity-item" *ngFor="let e of g.entities">
+                <div class="entity-name">
+                  <span class="material-symbols-outlined">table_chart</span>
+                  <strong>{{ e.name }}</strong>
+                </div>
+                <p class="entity-desc">{{ e.desc }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: 5 ROLE PORTALS & WORKFLOW -->
+    <section class="tab-pane" *ngIf="activeTab === 'workflow'">
+      <div class="roles-layout">
+        <!-- Role Selector Pills -->
+        <div class="role-selector-bar">
+          <button class="role-btn glass-panel" *ngFor="let r of roles; let i = index" [class.selected]="activeRoleIndex === i" (click)="selectRole(i)">
+            <span class="material-symbols-outlined">{{ r.icon }}</span>
+            <span>{{ currentLang === 'en' ? r.nameEn : r.nameAr }}</span>
+          </button>
+        </div>
+
+        <!-- Active Role Feature Showcase -->
+        <div class="role-details-card glass-panel">
+          <div class="role-card-header">
+            <div class="role-card-title">
+              <span class="material-symbols-outlined role-big-icon">{{ currentRole.icon }}</span>
+              <div>
+                <h2>{{ currentLang === 'en' ? currentRole.nameEn : currentRole.nameAr }}</h2>
+                <span class="role-badge">{{ currentRole.badge }}</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="role-desc">
+            {{ currentLang === 'en' ? currentRole.descriptionEn : currentRole.descriptionAr }}
+          </p>
+
+          <div class="features-grid">
+            <div class="feature-box" *ngFor="let f of currentRole.primaryFeatures">
+              <span class="material-symbols-outlined check-icon">check_circle</span>
+              <span>{{ currentLang === 'en' ? f.titleEn : f.titleAr }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="sehati-footer glass-panel">
+    <div class="footer-content">
+      <div class="footer-left">
+        <strong>Sehati Platform (صِحّتي)</strong>
+        <span>© 2026 All Rights Reserved · Egypt & MENA Healthcare</span>
+      </div>
+      <div class="footer-center">
+        <span>Backend: .NET 9.0 Web API · Frontend: Angular 19 · DB: SQL Server 2022</span>
+      </div>
+      <div class="footer-right">
+        <span class="commit-pill">Clean Architecture · Angular 19</span>
+      </div>
+    </div>
+  </footer>
+</div>

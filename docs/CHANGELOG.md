@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Phase 8: Frontend Foundation & UI Framework
+  - Complete MedicPro design system implementation with CSS tokens (dark healthcare teal/cyan palette, elevated glass cards, typography, interactive badges, alert states, and buttons)
+  - Modular standalone architecture with core, shared, layouts, and eatures directories
+  - Reactive AuthService leveraging Angular 19 signals (signal, computed) for synchronous state (currentUser, isAuthenticated, userRole) alongside RxJS observables for asynchronous HTTP auth flows
+  - Secure storage wrapper (StorageService) with safe SSR/platform-browser detection
+  - Authentication flow layouts and screens: AuthLayoutComponent, LoginComponent (supporting dual email/phone authentication, validation, error alerts, and remember-me), and RegisterComponent
+  - Application dashboard shell: MainLayoutComponent with responsive sidebar navigation, role-based visibility, active route highlighting, and user session profile
+  - Functional router guards: uthGuard (protecting authenticated routes and redirecting with 
+eturnUrl) and 
+oleGuard (enforcing role-based access control)
+  - Functional HTTP interceptors: jwtInterceptor (injecting Bearer tokens) and errorInterceptor (handling 401 Unauthorized token refresh and error normalization)
+  - Isolated preview and architectural showcase route (/preview) preserving the full interactive demo
+  - Comprehensive unit test suites covering AuthService, uthGuard, LoginComponent, AppComponent, and PreviewComponent
 - Phase 7: Core Backend — Prescriptions, Consent & Audit
   - Clinical visit & encounter management (`Visits`) with chief complaints, encounter notes, and lifecycle status tracking (`CheckedIn`, `InConsultation`, `Completed`, `Cancelled`)
   - Diagnosis documentation (`Diagnoses`) and treatment planning (`Treatments`) tied to clinical visits
