@@ -18,7 +18,7 @@
 | **Phase 4** | Authentication & User Management | ✅ Complete | Phase 3 |
 | **Phase 5** | Core Backend — Patient & Medical Records | ✅ Complete | Phase 4 |
 | **Phase 6** | Core Backend — Clinic, Doctor & Scheduling | ✅ Complete | Phase 5 |
-| **Phase 7** | Core Backend — Prescriptions, Consent & Emergency | ⬜ Pending | Phase 6 |
+| **Phase 7** | Core Backend — Prescriptions, Consent & Emergency | ✅ Complete | Phase 6 |
 | **Phase 8** | Frontend Foundation & UI Framework | ⬜ Pending | Phase 4 |
 | **Phase 9** | Frontend–Backend Integration & Feature Screens | ⬜ Pending | Phases 7, 8 |
 | **Phase 10** | Testing, Security Hardening & Performance | ⬜ Pending | Phase 9 |
@@ -441,28 +441,28 @@ feat(clinics): implement clinic management, doctor profiles, and appointment sch
 **Objective:** Implement visit/encounter management, prescription builder, consent engine, notification system, and audit logging.
 
 ### Deliverables
-- [ ] Visit/encounter CRUD with diagnoses and treatments
-- [ ] Digital prescription builder (header + items)
-- [ ] Consent/access permission engine
-- [ ] Notification system
-- [ ] Immutable audit logging
+- [x] Visit/encounter CRUD with diagnoses and treatments
+- [x] Digital prescription builder (header + items)
+- [x] Consent/access permission engine
+- [x] Notification system
+- [x] Immutable audit logging
 
 ### Tasks
-1. [ ] Implement visit services and controller
-2. [ ] Implement diagnosis and treatment management
-3. [ ] Implement prescription services (header + items)
-4. [ ] Implement consent service (grant/revoke access)
-5. [ ] Implement notification service
-6. [ ] Implement audit logging middleware
-7. [ ] Write unit and integration tests
+1. [x] Implement visit services and controller
+2. [x] Implement diagnosis and treatment management
+3. [x] Implement prescription services (header + items)
+4. [x] Implement consent service (grant/revoke access)
+5. [x] Implement notification service
+6. [x] Implement audit logging middleware
+7. [x] Write unit and integration tests (134 total passing tests)
 
 ### Dependencies
 - Phase 6 (clinics and doctors working)
 
 ### Definition of Done
-- [ ] All visit/prescription/consent/audit endpoints functional
-- [ ] Tests pass
-- [ ] Committed and pushed
+- [x] All visit/prescription/consent/audit endpoints functional
+- [x] Tests pass (134 passing)
+- [x] Committed and pushed
 
 ### GitHub Commit
 ```

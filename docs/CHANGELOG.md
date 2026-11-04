@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Phase 7: Core Backend — Prescriptions, Consent & Audit
+  - Clinical visit & encounter management (`Visits`) with chief complaints, encounter notes, and lifecycle status tracking (`CheckedIn`, `InConsultation`, `Completed`, `Cancelled`)
+  - Diagnosis documentation (`Diagnoses`) and treatment planning (`Treatments`) tied to clinical visits
+  - Digital prescription builder (`Prescriptions` & `PrescriptionItems`) with dosages, frequencies, durations, and instructions
+  - Consent engine (`AccessPermissions`) supporting granular permissions (`ViewOnly`, `ViewAndAddRecords`), active status checking, and revocation
+  - In-app notification system (`Notifications`) with user targeting, unread filtering, and read status management
+  - Immutable audit trail logging (`AuditLogs`) tracking user actions, entity types, IDs, timestamps, and client IP addresses
+  - Five new API Controllers: `VisitsController` (`/api/v1/visits`), `PrescriptionsController` (`/api/v1/prescriptions`), `ConsentController` (`/api/v1/consent`), `NotificationsController` (`/api/v1/notifications`), and `AuditController` (`/api/v1/audit`)
+  - 134 total passing unit and integration tests (21 new tests for Phase 7) with 0 failures and 0 security alerts
 - Phase 6: Core Backend — Clinic, Doctor & Scheduling
   - Clinic management with onboarding, paginated browsing, multi-field search, detail views, and doctor/receptionist counts
   - Doctor profile management with specialty filtering, clinic affiliations, and search
