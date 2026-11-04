@@ -1,60 +1,97 @@
 /* ==========================================================================
-   SEHATI (صِحّتي) DESIGN SYSTEM & CORE TOKENS
-   Theme: Precision Medical Modernism (Deep Teal, Emerald, Slate Navy)
+   SEHATI (صِحّتي) MEDICPRO DESIGN SYSTEM & TOKENS
+   Comprehensive Healthcare Architecture (English & Arabic, Light & Dark)
    ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   1. ROOT VARIABLES (LIGHT MODE AS DEFAULT)
+   -------------------------------------------------------------------------- */
 :root {
-  /* Brand Primary */
-  --primary-50: #f0fdfa;
-  --primary-100: #ccfbf1;
-  --primary-200: #99f6e4;
-  --primary-300: #5eead4;
-  --primary-400: #2dd4bf;
-  --primary-500: #14b8a6;
-  --primary-600: #0d9488;
-  --primary-700: #0f766e;
-  --primary-800: #115e59;
-  --primary-900: #134e4a;
-  --primary-950: #042f2e;
+  /* MedicPro Brand Primary Palette */
+  --color-primary-dark: #0A4D68;     /* Deep Oceanic Navy Teal */
+  --color-primary-base: #088395;     /* Rich Clinical Ocean Cyan */
+  --color-primary-accent: #05BFDB;   /* Vibrant Mint / Turquoise */
+  --color-primary-surface: #EBF4F6;  /* Ice Pale Blue Surface */
 
-  /* Accent & Medical Secondary */
-  --accent-cyan: #06b6d4;
-  --accent-blue: #3b82f6;
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-rose: #f43f5e;
-  --accent-purple: #8b5cf6;
-
-  /* Neutral Dark Canvas */
-  --bg-canvas: #090d16;
-  --bg-surface-1: #0f172a;
-  --bg-surface-2: #1e293b;
-  --bg-surface-3: #334155;
-  --bg-surface-glass: rgba(15, 23, 42, 0.75);
-  --bg-surface-card: rgba(30, 41, 59, 0.65);
-
-  /* Borders & Dividers */
-  --border-subtle: rgba(148, 163, 184, 0.12);
-  --border-focus: rgba(20, 184, 166, 0.5);
-  --border-glow: rgba(45, 212, 191, 0.35);
+  /* Neutral & Canvas Surfaces (Light Default) */
+  --color-bg-app: #F8FAFC;           /* Clean Crisp App Canvas */
+  --color-surface-card: #FFFFFF;     /* Pure White Elevated Card */
+  --color-surface-tint: #EBF4F6;     /* Ice Pale Panel Tint */
+  --color-surface-hover: #F1F5F9;    /* Interactive Hover State */
+  --color-border-subtle: #E2E8F0;    /* Crisp Clean Separation */
+  --color-border-focus: #088395;     /* Focused Input Teal */
+  --color-border-accent: #05BFDB;    /* Glowing Mint Highlight */
 
   /* Typography Colors */
-  --text-main: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-highlight: #5eead4;
+  --color-text-main: #0F172A;        /* Deep Charcoal Slate */
+  --color-text-muted: #64748B;       /* Secondary Clinical Label */
+  --color-text-inverse: #FFFFFF;     /* White on Dark / Ocean Teal */
+  --color-text-brand: #0A4D68;       /* Primary Brand Heading */
 
-  /* Shadows & Glows */
-  --glow-primary: 0 0 35px rgba(20, 184, 166, 0.22);
-  --glow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-  --shadow-elevation: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+  /* Healthcare Status & Indicators */
+  --color-status-success: #059669;   /* Emerald Green (Confirmed / Verified) */
+  --color-status-success-bg: #ECFDF5;
+  --color-status-warning: #D97706;   /* Amber (Pending / Expiring) */
+  --color-status-warning-bg: #FFFBEB;
+  --color-status-danger: #DC2626;    /* Crimson Red (Allergy Alert / Revoked) */
+  --color-status-danger-bg: #FEF2F2;
+  --color-status-info: #0284C7;      /* Sky Blue (System / Notice) */
+  --color-status-info-bg: #F0F9FF;
 
-  /* Typography */
+  /* Shadows & Elevation */
+  --shadow-sm: 0 2px 4px rgba(10, 77, 104, 0.04);
+  --shadow-card: 0 10px 25px -5px rgba(10, 77, 104, 0.08), 0 4px 6px -2px rgba(10, 77, 104, 0.03);
+  --shadow-hover: 0 20px 35px -10px rgba(10, 77, 104, 0.14);
+  --shadow-header: 0 4px 20px -2px rgba(10, 77, 104, 0.06);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-card: 20px;               /* 20px border radius as defined in doc */
+  --radius-pill: 9999px;
+
+  /* Fonts */
   --font-latin: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-arabic: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
-/* Global Reset & Base */
+/* --------------------------------------------------------------------------
+   2. DARK THEME OVERRIDES (when .dark-theme or [data-theme="dark"] is active)
+   -------------------------------------------------------------------------- */
+:root[data-theme="dark"],
+body.dark-theme,
+html.dark-theme {
+  --color-bg-app: #031B26;           /* Deep Oceanic Night Canvas */
+  --color-surface-card: #082635;     /* Navy Slate Card */
+  --color-surface-tint: #0B3347;     /* Dark Teal Panel Tint */
+  --color-surface-hover: #0E3E56;    /* Hover State */
+  --color-border-subtle: rgba(5, 191, 219, 0.16);
+  --color-border-focus: #05BFDB;
+  --color-border-accent: #05BFDB;
+
+  --color-text-main: #F8FAFC;        /* Crisp Bright White */
+  --color-text-muted: #94A3B8;       /* Slate Grey */
+  --color-text-inverse: #0F172A;
+  --color-text-brand: #05BFDB;
+
+  --color-status-success: #10B981;
+  --color-status-success-bg: rgba(16, 185, 129, 0.15);
+  --color-status-warning: #F59E0B;
+  --color-status-warning-bg: rgba(245, 158, 11, 0.15);
+  --color-status-danger: #EF4444;
+  --color-status-danger-bg: rgba(239, 68, 68, 0.18);
+  --color-status-info: #38BDF8;
+  --color-status-info-bg: rgba(56, 189, 248, 0.15);
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 12px 30px -5px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+  --shadow-header: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   3. GLOBAL RESET & BASE STYLES
+   -------------------------------------------------------------------------- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -64,304 +101,303 @@
 html, body {
   height: 100%;
   font-family: var(--font-latin);
-  background-color: var(--bg-canvas);
-  color: var(--text-main);
+  background-color: var(--color-bg-app);
+  color: var(--color-text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
   overflow-x: hidden;
 }
 
-/* RTL Support */
-[dir="rtl"] {
+/* RTL Support for Arabic Language */
+[dir="rtl"],
+html.rtl,
+body.rtl {
   font-family: var(--font-arabic);
+  direction: rtl;
+  text-align: right;
 }
 
-/* Glassmorphism Surface Utility */
-.glass-panel {
-  background: var(--bg-surface-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
+/* Material Symbols alignment */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  line-height: 1;
 }
 
-/* Scrollbar Customization */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+/* --------------------------------------------------------------------------
+   4. MEDICPRO CARD COMPONENT
+   -------------------------------------------------------------------------- */
+.medic-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 1.75rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
-::-webkit-scrollbar-track {
-  background: var(--bg-canvas);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--bg-surface-3);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-600);
-}
-
-/* Pulse animation utility */
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.05);
+  &:hover {
+    box-shadow: var(--shadow-hover);
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-
-/* ==========================================================================
-   MedicPro UI Component Utilities
-   ========================================================================== */
-
-/* Buttons */
+/* --------------------------------------------------------------------------
+   5. MEDICPRO BUTTON COMPONENTS
+   -------------------------------------------------------------------------- */
 .medic-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
-  font-size: 0.925rem;
+  padding: 0.75rem 1.4rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
   text-decoration: none;
-  font-family: inherit;
+  line-height: 1.2;
 
   &:disabled {
     opacity: 0.55;
     cursor: not-allowed;
+    pointer-events: none;
   }
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
-  color: #ffffff;
-  box-shadow: 0 4px 14px 0 rgba(20, 184, 166, 0.39);
+  background: linear-gradient(135deg, var(--color-primary-base) 0%, var(--color-primary-dark) 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(8, 131, 149, 0.35);
 
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--primary-400) 0%, var(--primary-600) 100%);
-    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.5);
+    background: linear-gradient(135deg, #099db3 0%, var(--color-primary-base) 100%);
+    box-shadow: 0 6px 18px rgba(8, 131, 149, 0.45);
     transform: translateY(-1px);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(1px);
   }
 }
 
 .btn-secondary {
-  background: var(--bg-surface-2);
-  color: var(--text-main);
-  border: 1px solid var(--border-subtle);
+  background: var(--color-primary-surface);
+  color: var(--color-primary-dark);
+  border: 1px solid rgba(8, 131, 149, 0.2);
 
   &:hover:not(:disabled) {
-    background: var(--bg-surface-3);
-    border-color: var(--border-focus);
-    color: var(--text-highlight);
+    background: #ddf2f8;
+    color: var(--color-primary-base);
+  }
+}
+
+.dark-theme .btn-secondary {
+  background: var(--color-surface-tint);
+  color: var(--color-primary-accent);
+  border-color: rgba(5, 191, 219, 0.25);
+
+  &:hover:not(:disabled) {
+    background: #11435c;
   }
 }
 
 .btn-outline {
   background: transparent;
-  color: var(--primary-400);
-  border: 1px solid var(--primary-500);
+  color: var(--color-primary-base);
+  border: 1px solid var(--color-primary-base);
 
   &:hover:not(:disabled) {
-    background: rgba(20, 184, 166, 0.1);
-    color: var(--primary-300);
-    border-color: var(--primary-400);
+    background: rgba(8, 131, 149, 0.08);
   }
 }
 
 .btn-danger {
-  background: rgba(244, 63, 94, 0.15);
-  color: #fda4af;
-  border: 1px solid rgba(244, 63, 94, 0.35);
+  background: var(--color-status-danger);
+  color: #FFFFFF;
 
   &:hover:not(:disabled) {
-    background: rgba(244, 63, 94, 0.25);
-    border-color: var(--accent-rose);
+    background: #b91c1c;
   }
 }
 
-/* Form Controls */
+/* --------------------------------------------------------------------------
+   6. MEDICPRO FORM CONTROLS
+   -------------------------------------------------------------------------- */
 .medic-form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.45rem;
   margin-bottom: 1.25rem;
-  text-align: left;
-}
-
-[dir="rtl"] .medic-form-group {
-  text-align: right;
 }
 
 .medic-label {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--color-text-main);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.25rem;
 
   .req {
-    color: var(--accent-rose);
+    color: var(--color-status-danger);
+    font-weight: 700;
   }
 }
 
-.medic-input, .medic-select, .medic-textarea {
+.medic-input,
+.medic-select {
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: var(--bg-surface-1);
-  border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  color: var(--text-main);
-  font-family: inherit;
   font-size: 0.95rem;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border-subtle);
+  background: var(--color-surface-card);
+  color: var(--color-text-main);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &::placeholder {
-    color: var(--text-muted);
+    color: var(--color-text-muted);
+    opacity: 0.75;
   }
 
   &:focus {
-    outline: none;
-    border-color: var(--primary-500);
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
-    background-color: var(--bg-surface-2);
+    border-color: var(--color-primary-base);
+    box-shadow: 0 0 0 3px rgba(8, 131, 149, 0.16);
   }
 
   &.is-invalid {
-    border-color: var(--accent-rose);
-    box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
+    border-color: var(--color-status-danger);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
   }
-}
-
-.medic-select {
-  cursor: pointer;
 }
 
 .error-text {
-  font-size: 0.775rem;
-  color: var(--accent-rose);
-  margin-top: 0.25rem;
+  font-size: 0.785rem;
+  color: var(--color-status-danger);
+  font-weight: 500;
+  margin-top: 0.2rem;
 }
 
-/* Cards & Surfaces */
-.medic-card {
-  background: var(--bg-surface-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 1.5rem;
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-elevation);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    border-color: var(--border-focus);
-    box-shadow: var(--glow-primary);
-  }
-}
-
-/* Badges */
+/* --------------------------------------------------------------------------
+   7. MEDICPRO STATUS BADGES
+   -------------------------------------------------------------------------- */
 .medic-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.25rem 0.65rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
   font-size: 0.75rem;
   font-weight: 700;
-  border-radius: 9999px;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-
-  &.badge-primary {
-    background: rgba(20, 184, 166, 0.15);
-    color: var(--primary-300);
-    border: 1px solid rgba(20, 184, 166, 0.3);
-  }
-
-  &.badge-success {
-    background: rgba(16, 185, 129, 0.15);
-    color: #6ee7b7;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-  }
-
-  &.badge-warning {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fde68a;
-    border: 1px solid rgba(245, 158, 11, 0.3);
-  }
-
-  &.badge-danger {
-    background: rgba(244, 63, 94, 0.15);
-    color: #fda4af;
-    border: 1px solid rgba(244, 63, 94, 0.3);
-  }
-
-  &.badge-info {
-    background: rgba(59, 130, 246, 0.15);
-    color: #93c5fd;
-    border: 1px solid rgba(59, 130, 246, 0.3);
-  }
 }
 
-/* Alerts */
+.badge-success {
+  background: var(--color-status-success-bg);
+  color: var(--color-status-success);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+
+.badge-warning {
+  background: var(--color-status-warning-bg);
+  color: var(--color-status-warning);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+}
+
+.badge-danger {
+  background: var(--color-status-danger-bg);
+  color: var(--color-status-danger);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.badge-info {
+  background: var(--color-status-info-bg);
+  color: var(--color-status-info);
+  border: 1px solid rgba(2, 132, 199, 0.25);
+}
+
+.badge-teal {
+  background: var(--color-primary-surface);
+  color: var(--color-primary-dark);
+  border: 1px solid rgba(8, 131, 149, 0.25);
+}
+
+.dark-theme .badge-teal {
+  background: var(--color-surface-tint);
+  color: var(--color-primary-accent);
+  border-color: rgba(5, 191, 219, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   8. MEDICPRO ALERTS & SPINNERS
+   -------------------------------------------------------------------------- */
 .medic-alert {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
-  padding: 0.9rem 1.15rem;
-  border-radius: 12px;
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-md);
   font-size: 0.9rem;
   margin-bottom: 1.25rem;
 
   &.alert-error {
-    background: rgba(244, 63, 94, 0.12);
-    border: 1px solid rgba(244, 63, 94, 0.35);
-    color: #fecdd3;
+    background: var(--color-status-danger-bg);
+    color: var(--color-status-danger);
+    border: 1px solid rgba(220, 38, 38, 0.25);
   }
 
   &.alert-success {
-    background: rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(16, 185, 129, 0.35);
-    color: #a7f3d0;
+    background: var(--color-status-success-bg);
+    color: var(--color-status-success);
+    border: 1px solid rgba(5, 150, 105, 0.25);
   }
 }
 
-/* Spinner */
 .medic-spinner {
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: currentColor;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  border-top-color: #FFFFFF;
+  animation: medic-spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@keyframes medic-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   9. BRAND LOGO UTILITIES
+   -------------------------------------------------------------------------- */
+.sehati-logo-image {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(10, 77, 104, 0.12);
+  display: block;
+  flex-shrink: 0;
+}
+
+.dark-theme .sehati-logo-image {
+  background: #082635;
+  box-shadow: 0 4px 15px rgba(5, 191, 219, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   10. RESPONSIVE BREAKPOINTS
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .medic-card {
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+
+  .medic-btn {
+    padding: 0.65rem 1.1rem;
+    font-size: 0.9rem;
   }
 }

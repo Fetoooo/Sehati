@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-login',
@@ -11,8 +12,8 @@ import { AuthService } from '../../../core/services/auth.service';
   template: `
     <div class="medic-card login-card">
       <div class="card-header">
-        <h1 class="login-title">Sign In to Sehati</h1>
-        <p class="login-subtitle">Enter your email or registered phone number to access your medical records.</p>
+        <h1 class="login-title">{{ langService.t('loginTitle') }}</h1>
+        <p class="login-subtitle">{{ langService.t('loginSubtitle') }}</p>
       </div>
 
       <!-- Error Alert -->
@@ -25,7 +26,7 @@ import { AuthService } from '../../../core/services/auth.service';
         <!-- Identifier Input (Email or Phone) -->
         <div class="medic-form-group">
           <label class="medic-label" for="identifier">
-            <span>Email or Phone Number</span>
+            <span>{{ langService.t('identifierLabel') }}</span>
             <span class="req">*</span>
           </label>
           <input
@@ -34,18 +35,18 @@ import { AuthService } from '../../../core/services/auth.service';
             formControlName="identifier"
             class="medic-input"
             [class.is-invalid]="isFieldInvalid('identifier')"
-            placeholder="e.g. name@sehati.com or +201012345678"
+            [placeholder]="langService.t('identifierPlaceholder')"
             autocomplete="username"
           />
           <div class="error-text" *ngIf="isFieldInvalid('identifier')">
-            Please enter your registered email or phone number.
+            {{ langService.isRtl() ? 'يرجى إدخال البريد الإلكتروني أو رقم الهاتف المسجل.' : 'Please enter your registered email or phone number.' }}
           </div>
         </div>
 
         <!-- Password Input -->
         <div class="medic-form-group">
           <div class="medic-label">
-            <label for="password">Password</label>
+            <label for="password">{{ langService.t('passwordLabel') }}</label>
             <span class="req">*</span>
           </div>
           <input
@@ -54,59 +55,59 @@ import { AuthService } from '../../../core/services/auth.service';
             formControlName="password"
             class="medic-input"
             [class.is-invalid]="isFieldInvalid('password')"
-            placeholder="••••••••"
+            [placeholder]="langService.t('passwordPlaceholder')"
             autocomplete="current-password"
           />
           <div class="error-text" *ngIf="isFieldInvalid('password')">
-            Password is required (min 8 characters).
+            {{ langService.isRtl() ? 'كلمة المرور مطلوبة (8 أحرف على الأقل).' : 'Password is required (min 8 characters).' }}
           </div>
         </div>
 
-        <!-- Remember Me & Forgot Password -->
+        <!-- Remember Me Checkbox -->
         <div class="form-options">
           <label class="remember-me">
             <input type="checkbox" formControlName="rememberMe" />
-            <span>Remember this device</span>
+            <span>{{ langService.t('rememberMe') }}</span>
           </label>
         </div>
 
         <!-- Submit Button -->
         <button type="submit" class="medic-btn btn-primary submit-btn" [disabled]="loginForm.invalid || isLoading">
           <span class="medic-spinner" *ngIf="isLoading"></span>
-          <span *ngIf="!isLoading">Sign In</span>
-          <span class="material-symbols-outlined" *ngIf="!isLoading">arrow_forward</span>
+          <span *ngIf="!isLoading">{{ langService.t('signInBtn') }}</span>
+          <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">arrow_forward</span>
         </button>
       </form>
 
       <!-- Footer navigation -->
       <div class="card-footer">
         <p class="signup-prompt">
-          Don't have an account yet?
-          <a routerLink="/auth/register" class="link-highlight">Create Account</a>
+          {{ langService.t('dontHaveAccount') }}
+          <a routerLink="/auth/register" class="link-highlight">{{ langService.t('createAccountLink') }}</a>
         </p>
       </div>
     </div>
   `,
   styles: [`
     .login-card {
-      padding: 2.25rem 2rem;
+      padding: 2.5rem 2.25rem;
     }
 
     .card-header {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
       text-align: center;
 
       .login-title {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: 800;
-        color: var(--text-main);
+        color: var(--color-text-brand);
         letter-spacing: -0.02em;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.45rem;
       }
 
       .login-subtitle {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
         line-height: 1.5;
       }
     }
@@ -116,43 +117,65 @@ import { AuthService } from '../../../core/services/auth.service';
       align-items: center;
       justify-content: space-between;
       margin-bottom: 1.5rem;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
 
       .remember-me {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         cursor: pointer;
-        color: var(--text-secondary);
+        color: var(--color-text-muted);
+
+        input[type="checkbox"] {
+          accent-color: var(--color-primary-base);
+          width: 16px;
+          height: 16px;
+        }
       }
     }
 
     .submit-btn {
       width: 100%;
-      padding: 0.8rem;
-      font-size: 1rem;
+      padding: 0.85rem;
+      font-size: 1.05rem;
+      border-radius: var(--radius-md);
+    }
+
+    .flip-rtl {
+      transition: transform 0.2s ease;
+    }
+
+    :host-context([dir="rtl"]) .flip-rtl,
+    :host-context(.rtl) .flip-rtl {
+      transform: rotate(180deg);
     }
 
     .card-footer {
-      margin-top: 1.75rem;
+      margin-top: 2rem;
       text-align: center;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border-subtle);
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border-subtle);
 
       .signup-prompt {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
 
         .link-highlight {
-          color: var(--primary-400);
+          color: var(--color-primary-base);
           text-decoration: none;
-          font-weight: 600;
-          margin-left: 0.35rem;
+          font-weight: 700;
+          margin: 0 0.35rem;
 
           &:hover {
             text-decoration: underline;
           }
         }
+      }
+    }
+
+    @media (max-width: 640px) {
+      .login-card {
+        padding: 1.75rem 1.25rem;
       }
     }
   `]
@@ -162,6 +185,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  public langService = inject(LanguageService);
 
   isLoading = false;
   errorMessage: string | null = null;
@@ -196,7 +220,11 @@ export class LoginComponent {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err?.error?.message || 'Invalid credentials. Please verify your email/phone and password.';
+        this.errorMessage =
+          err?.error?.message ||
+          (this.langService.isRtl()
+            ? 'بيانات الدخول غير صحيحة. يرجى التحقق من البريد أو رقم الهاتف وكلمة المرور.'
+            : 'Invalid credentials. Please verify your email/phone and password.');
       }
     });
   }
