@@ -125,3 +125,243 @@ html, body {
     background-position: 200% 0;
   }
 }
+
+
+/* ==========================================================================
+   MedicPro UI Component Utilities
+   ========================================================================== */
+
+/* Buttons */
+.medic-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.925rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  font-family: inherit;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px 0 rgba(20, 184, 166, 0.39);
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-400) 0%, var(--primary-600) 100%);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.5);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}
+
+.btn-secondary {
+  background: var(--bg-surface-2);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+
+  &:hover:not(:disabled) {
+    background: var(--bg-surface-3);
+    border-color: var(--border-focus);
+    color: var(--text-highlight);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary-400);
+  border: 1px solid var(--primary-500);
+
+  &:hover:not(:disabled) {
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--primary-300);
+    border-color: var(--primary-400);
+  }
+}
+
+.btn-danger {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+
+  &:hover:not(:disabled) {
+    background: rgba(244, 63, 94, 0.25);
+    border-color: var(--accent-rose);
+  }
+}
+
+/* Form Controls */
+.medic-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+[dir="rtl"] .medic-form-group {
+  text-align: right;
+}
+
+.medic-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .req {
+    color: var(--accent-rose);
+  }
+}
+
+.medic-input, .medic-select, .medic-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+    background-color: var(--bg-surface-2);
+  }
+
+  &.is-invalid {
+    border-color: var(--accent-rose);
+    box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
+  }
+}
+
+.medic-select {
+  cursor: pointer;
+}
+
+.error-text {
+  font-size: 0.775rem;
+  color: var(--accent-rose);
+  margin-top: 0.25rem;
+}
+
+/* Cards & Surfaces */
+.medic-card {
+  background: var(--bg-surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-elevation);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--border-focus);
+    box-shadow: var(--glow-primary);
+  }
+}
+
+/* Badges */
+.medic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &.badge-primary {
+    background: rgba(20, 184, 166, 0.15);
+    color: var(--primary-300);
+    border: 1px solid rgba(20, 184, 166, 0.3);
+  }
+
+  &.badge-success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  &.badge-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fde68a;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  &.badge-danger {
+    background: rgba(244, 63, 94, 0.15);
+    color: #fda4af;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+  }
+
+  &.badge-info {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+}
+
+/* Alerts */
+.medic-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1.15rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+
+  &.alert-error {
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    color: #fecdd3;
+  }
+
+  &.alert-success {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #a7f3d0;
+  }
+}
+
+/* Spinner */
+.medic-spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

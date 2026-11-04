@@ -19,7 +19,7 @@
 | **Phase 5** | Core Backend — Patient & Medical Records | ✅ Complete | Phase 4 |
 | **Phase 6** | Core Backend — Clinic, Doctor & Scheduling | ✅ Complete | Phase 5 |
 | **Phase 7** | Core Backend — Prescriptions, Consent & Emergency | ✅ Complete | Phase 6 |
-| **Phase 8** | Frontend Foundation & UI Framework | ⬜ Pending | Phase 4 |
+| **Phase 8** | Frontend Foundation & UI Framework | ✅ Complete | Phase 4 |
 | **Phase 9** | Frontend–Backend Integration & Feature Screens | ⬜ Pending | Phases 7, 8 |
 | **Phase 10** | Testing, Security Hardening & Performance | ⬜ Pending | Phase 9 |
 | **Phase 11** | Deployment, Final Documentation & Handover | ⬜ Pending | Phase 10 |
@@ -476,37 +476,37 @@ feat(clinical): implement visits, prescriptions, consent engine, and audit loggi
 **Objective:** Build the Angular application foundation with routing, authentication UI, layouts, and the MedicPro design system.
 
 ### Deliverables
-- [ ] Angular project structured with core/shared/features
-- [ ] MedicPro design system implemented (CSS tokens, typography, components)
-- [ ] Authentication screens (login, register)
-- [ ] Role-based routing and guards
-- [ ] Sidebar and header layout components
-- [ ] HTTP interceptor for JWT
-- [ ] API service layer
-- [ ] Error handling interceptor
+- [x] Angular project structured with core/shared/features
+- [x] MedicPro design system implemented (CSS tokens, typography, components)
+- [x] Authentication screens (login, register)
+- [x] Role-based routing and guards
+- [x] Sidebar and header layout components
+- [x] HTTP interceptor for JWT
+- [x] API service layer
+- [x] Error handling interceptor
 
 ### Tasks
-1. [ ] Implement CSS design tokens (MedicPro palette)
-2. [ ] Create layout components (sidebar, header, footer)
-3. [ ] Implement Angular routing with lazy-loaded feature modules
-4. [ ] Create `AuthService` with JWT token management
-5. [ ] Create `AuthGuard` and `RoleGuard`
-6. [ ] Create JWT HTTP interceptor
-7. [ ] Build login page
-8. [ ] Build registration page
-9. [ ] Create shared components (buttons, cards, modals, tables, badges)
-10. [ ] Implement responsive design
-11. [ ] Write component tests
+1. [x] Implement CSS design tokens (MedicPro palette)
+2. [x] Create layout components (sidebar, header, footer)
+3. [x] Implement Angular routing with lazy-loaded feature modules
+4. [x] Create `AuthService` with JWT token management
+5. [x] Create `AuthGuard` and `RoleGuard`
+6. [x] Create JWT HTTP interceptor
+7. [x] Build login page
+8. [x] Build registration page
+9. [x] Create shared components (buttons, cards, modals, tables, badges)
+10. [x] Implement responsive design
+11. [x] Write component tests
 
 ### Dependencies
 - Phase 4 (backend auth endpoints exist)
 
 ### Definition of Done
-- [ ] Angular app builds and serves
-- [ ] Authentication flow works end-to-end
-- [ ] Design system matches MedicPro aesthetic
-- [ ] Tests pass
-- [ ] Committed and pushed
+- [x] Angular app builds and serves
+- [x] Authentication flow works end-to-end
+- [x] Design system matches MedicPro aesthetic
+- [x] Tests pass
+- [x] Committed and pushed
 
 ### GitHub Commit
 ```
