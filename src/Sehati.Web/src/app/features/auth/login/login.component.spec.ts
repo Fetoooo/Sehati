@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../../core/services/auth.service';
@@ -10,13 +10,15 @@ describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let router: Router;
 
   const mockTokenResponse: TokenResponseDto = {
     accessToken: 'test-jwt-token',
     refreshToken: 'test-refresh-token',
     expiresIn: 3600,
+    tokenType: 'Bearer',
     user: {
+      userId: 1,
       id: 'usr-1',
       nationalId: '12345678901234',
       fullName: 'Patient Test',
@@ -32,13 +34,12 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
-    routerSpy = jasmine.createSpyObj('Router', ['navigateByUrl']);
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, ReactiveFormsModule],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -49,6 +50,9 @@ describe('LoginComponent', () => {
         }
       ]
     }).compileComponents();
+
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigateByUrl').and.returnValue(Promise.resolve(true));
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
@@ -87,7 +91,7 @@ describe('LoginComponent', () => {
       identifier: 'patient@sehati.com',
       password: validTestCredential
     });
-    expect(routerSpy.navigateByUrl).toHaveBeenCalledWith('/dashboard');
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
     expect(component.isLoading).toBeFalse();
   });
 
@@ -106,6 +110,6 @@ describe('LoginComponent', () => {
 
     expect(component.errorMessage).toBe('Invalid credentials provided.');
     expect(component.isLoading).toBeFalse();
-    expect(routerSpy.navigateByUrl).not.toHaveBeenCalled();
+    expect(router.navigateByUrl).not.toHaveBeenCalled();
   });
 });

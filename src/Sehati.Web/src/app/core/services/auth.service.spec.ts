@@ -15,6 +15,7 @@ describe('AuthService', () => {
     accessToken: 'test-access-token',
     refreshToken: 'test-refresh-token',
     expiresIn: 3600,
+    tokenType: 'Bearer',
     user: {
       id: 'user-123',
       nationalId: '12345678901234',
