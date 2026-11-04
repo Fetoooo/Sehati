@@ -1,25 +1,36 @@
 export type UserRole = 'Patient' | 'Doctor' | 'Receptionist' | 'ClinicAdmin' | 'SystemAdmin';
 
+export const UserRole = {
+  Patient: 'Patient' as UserRole,
+  Doctor: 'Doctor' as UserRole,
+  Receptionist: 'Receptionist' as UserRole,
+  ClinicAdmin: 'ClinicAdmin' as UserRole,
+  SystemAdmin: 'SystemAdmin' as UserRole
+} as const;
+
 export interface UserDto {
-  userId: number;
+  userId?: number;
   id?: string;
+  nationalId?: string;
   email: string;
-  phone: string;
+  phone?: string;
   phoneNumber?: string;
   fullName: string;
+  roleId?: number;
   roleName: UserRole;
   isActive: boolean;
   unifiedPatientId?: string | null;
   specialty?: string | null;
   clinicId?: number | null;
   createdAt?: string;
+  lastLoginAt?: string | null;
 }
 
 export interface TokenResponseDto {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
-  tokenType: string;
+  tokenType?: string;
   user: UserDto;
 }
 
