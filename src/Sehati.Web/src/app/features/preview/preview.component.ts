@@ -1,7 +1,9 @@
+import { ThemeService } from '../../core/services/theme.service';
+import { LanguageService } from '../../core/services/language.service';
+import { RouterLink } from '@angular/router';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
 
 interface HealthResponse {
   status: string;
@@ -31,13 +33,27 @@ interface PortalRole {
 })
 export class PreviewComponent implements OnInit {
   private http = inject(HttpClient);
+  public themeService = inject(ThemeService);
+  public langService = inject(LanguageService);
 
-  currentLang: 'en' | 'ar' = 'en';
+  get currentLang(): 'en' | 'ar' {
+    return this.langService.currentLang();
+  }
 
+  set currentLang(val: 'en' | 'ar') {
+    this.langService.setLanguage(val);
+  }
+
+
+  // API Status State
   apiStatus: 'checking' | 'connected' | 'offline' = 'checking';
   healthData: HealthResponse | null = null;
+  apiBaseUrl = 'https://localhost:7154'; // Standard ASP.NET Core HTTPS port or local
 
+  // Active Tab / View
   activeTab: 'passport' | 'architecture' | 'entities' | 'workflow' = 'passport';
+
+  // Active Role Portal
   activeRoleIndex = 0;
 
   roles: PortalRole[] = [
@@ -118,6 +134,7 @@ export class PreviewComponent implements OnInit {
     }
   ];
 
+  // Medical Passport Mock Data
   patientMock = {
     id: 'SH-2026-004812',
     nameEn: 'Karim Ahmed Mansour',
@@ -146,6 +163,7 @@ export class PreviewComponent implements OnInit {
     ]
   };
 
+  // Clean Architecture Layers
   architectureLayers = [
     {
       name: 'Sehati.API',
@@ -189,6 +207,7 @@ export class PreviewComponent implements OnInit {
     }
   ];
 
+  // 23 Entities Classified into 3 Domains
   entityGroups = [
     {
       domainEn: 'Identity & Access Control (10 Entities)',
@@ -242,12 +261,14 @@ export class PreviewComponent implements OnInit {
 
   checkApiHealth(): void {
     this.apiStatus = 'checking';
+    // Poll the backend health check
     this.http.get<HealthResponse>('/api/health').subscribe({
       next: (data) => {
         this.healthData = data;
         this.apiStatus = 'connected';
       },
       error: () => {
+        // Mock fallback simulation for standalone frontend preview
         this.healthData = {
           status: 'Ready (Local Dev)',
           service: 'Sehati.API',
@@ -261,9 +282,7 @@ export class PreviewComponent implements OnInit {
   }
 
   toggleLanguage(): void {
-    this.currentLang = this.currentLang === 'en' ? 'ar' : 'en';
-    document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = this.currentLang;
+    this.langService.toggleLanguage();
   }
 
   selectRole(index: number): void {

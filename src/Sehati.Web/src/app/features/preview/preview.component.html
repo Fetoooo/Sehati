@@ -2,10 +2,7 @@
   <!-- Top Navigation Bar -->
   <header class="top-nav glass-panel">
     <div class="nav-brand">
-      <div class="brand-logo-mark">
-        <span class="material-symbols-outlined logo-icon">vital_signs</span>
-        <span class="logo-pulse"></span>
-      </div>
+      <img src="/sehati_logo.png" alt="Sehati Logo" class="sehati-logo-image" />
       <div class="brand-text">
         <div class="brand-title">
           <span class="arabic-accent">صِحّتي</span>
@@ -32,16 +29,21 @@
         <span>{{ currentLang === 'en' ? 'Sign In / Register' : 'تسجيل الدخول' }}</span>
       </a>
 
+      <!-- Theme Toggle -->
+      <button class="action-btn theme-toggle" (click)="themeService.toggleTheme()" [title]="themeService.isDark() ? 'Light Mode' : 'Dark Mode'">
+        <span class="material-symbols-outlined">{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</span>
+      </button>
+
       <!-- Language Toggle -->
       <button class="action-btn lang-toggle" (click)="toggleLanguage()" aria-label="Toggle Language">
         <span class="material-symbols-outlined">translate</span>
-        <span>{{ currentLang === 'en' ? 'العربية (RTL)' : 'English (LTR)' }}</span>
+        <span>{{ currentLang === 'en' ? 'العربية' : 'English' }}</span>
       </button>
 
       <!-- GitHub Link -->
       <a href="https://github.com/Fetoooo/Sehati" target="_blank" rel="noopener noreferrer" class="action-btn github-btn">
         <span class="material-symbols-outlined">code</span>
-        <span>GitHub Repo</span>
+        <span>GitHub</span>
       </a>
     </div>
   </header>
@@ -334,3 +336,4 @@
     </div>
   </footer>
 </div>
+

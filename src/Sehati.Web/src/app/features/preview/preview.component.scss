@@ -2,9 +2,10 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: radial-gradient(circle at 15% 10%, rgba(20, 184, 166, 0.12) 0%, transparent 40%),
-              radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
-              #090d16;
+  background: radial-gradient(circle at 15% 10%, var(--color-primary-surface) 0%, transparent 40%),
+              radial-gradient(circle at 85% 80%, rgba(5, 191, 219, 0.08) 0%, transparent 45%),
+              var(--color-bg-app);
+  color: var(--color-text-main);
   padding: 1.5rem 2.5rem;
   gap: 2rem;
 
@@ -41,7 +42,7 @@
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary-500), var(--accent-cyan));
+      background: linear-gradient(135deg, var(var(--color-primary-base)), var(--accent-cyan));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -57,7 +58,7 @@
         position: absolute;
         inset: -3px;
         border-radius: 14px;
-        border: 2px solid var(--primary-400);
+        border: 2px solid var(var(--color-primary-accent));
         animation: pulse-glow 2.5s infinite ease-in-out;
       }
     }
@@ -75,18 +76,18 @@
         letter-spacing: -0.5px;
 
         .arabic-accent {
-          color: var(--primary-400);
+          color: var(var(--color-primary-accent));
           font-family: var(--font-arabic);
         }
 
         .latin-accent {
-          color: var(--text-main);
+          color: var(var(--color-text-main));
         }
       }
 
       .brand-tagline {
         font-size: 0.75rem;
-        color: var(--text-secondary);
+        color: var(var(--color-text-muted));
         letter-spacing: 0.5px;
         text-transform: uppercase;
       }
@@ -99,15 +100,15 @@
     gap: 0.6rem;
     padding: 0.4rem 0.9rem;
     border-radius: 9999px;
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid var(--border-subtle);
+    background: var(--color-surface-tint);
+    border: 1px solid var(var(--color-border-subtle));
     font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: var(--primary-400);
-      background: rgba(30, 41, 59, 1);
+      border-color: var(var(--color-primary-accent));
+      background: var(--color-surface-tint);
     }
 
     .status-dot {
@@ -125,9 +126,9 @@
     }
 
     .status-label {
-      color: var(--text-secondary);
+      color: var(var(--color-text-muted));
       strong {
-        color: var(--text-main);
+        color: var(var(--color-text-main));
       }
     }
 
@@ -148,9 +149,9 @@
       gap: 0.5rem;
       padding: 0.55rem 1rem;
       border-radius: 10px;
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-main);
+      background: var(--color-surface-tint);
+      border: 1px solid var(var(--color-border-subtle));
+      color: var(var(--color-text-main));
       font-size: 0.85rem;
       font-weight: 500;
       text-decoration: none;
@@ -159,8 +160,8 @@
 
       &:hover {
         background: rgba(51, 65, 85, 0.8);
-        border-color: var(--primary-500);
-        color: var(--primary-300);
+        border-color: var(var(--color-primary-base));
+        color: var(var(--color-primary-accent));
       }
 
       .material-symbols-outlined {
@@ -192,7 +193,7 @@
     border-radius: 9999px;
     background: rgba(20, 184, 166, 0.1);
     border: 1px solid rgba(20, 184, 166, 0.3);
-    color: var(--primary-300);
+    color: var(var(--color-primary-accent));
     font-size: 0.8rem;
     font-weight: 600;
 
@@ -200,7 +201,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--primary-400);
+      background: var(var(--color-primary-accent));
     }
   }
 
@@ -217,7 +218,7 @@
     }
 
     .gradient-text {
-      background: linear-gradient(135deg, var(--primary-300) 0%, var(--accent-cyan) 50%, #38bdf8 100%);
+      background: linear-gradient(135deg, var(var(--color-primary-accent)) 0%, var(--accent-cyan) 50%, #38bdf8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -225,7 +226,7 @@
 
   .hero-sub {
     font-size: 1.05rem;
-    color: var(--text-secondary);
+    color: var(var(--color-text-muted));
     max-width: 760px;
     line-height: 1.65;
 
@@ -235,7 +236,7 @@
     }
 
     strong {
-      color: var(--primary-300);
+      color: var(var(--color-primary-accent));
       font-weight: 600;
     }
   }
@@ -253,9 +254,9 @@
       gap: 0.6rem;
       padding: 0.75rem 1.4rem;
       border-radius: 12px;
-      background: var(--bg-surface-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
+      background: var(var(--color-surface-card));
+      border: 1px solid var(var(--color-border-subtle));
+      color: var(var(--color-text-muted));
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
@@ -266,15 +267,15 @@
       }
 
       &:hover {
-        color: var(--text-main);
+        color: var(var(--color-text-main));
         border-color: rgba(20, 184, 166, 0.4);
-        background: rgba(30, 41, 59, 0.9);
+        background: var(--color-surface-tint);
       }
 
       &.active {
         color: #042f2e;
-        background: linear-gradient(135deg, var(--primary-400), var(--primary-500));
-        border-color: var(--primary-400);
+        background: linear-gradient(135deg, var(var(--color-primary-accent)), var(var(--color-primary-base)));
+        border-color: var(var(--color-primary-accent));
         box-shadow: 0 0 25px rgba(20, 184, 166, 0.35);
 
         .material-symbols-outlined {
@@ -353,21 +354,21 @@
 
       .chip-icon {
         font-size: 32px;
-        color: var(--primary-300);
+        color: var(var(--color-primary-accent));
       }
 
       .card-title-ar {
         display: block;
         font-family: var(--font-arabic);
         font-size: 0.85rem;
-        color: var(--text-secondary);
+        color: var(var(--color-text-muted));
       }
 
       .card-title-en {
         font-size: 0.75rem;
         font-weight: 700;
         letter-spacing: 1px;
-        color: var(--primary-400);
+        color: var(var(--color-primary-accent));
       }
     }
 
@@ -382,7 +383,7 @@
 
       .material-symbols-outlined {
         font-size: 38px;
-        color: var(--text-main);
+        color: var(var(--color-text-main));
       }
 
       .qr-label {
@@ -436,7 +437,7 @@
         .value {
           font-size: 1rem;
           font-weight: 600;
-          color: var(--text-main);
+          color: var(var(--color-text-main));
 
           &.blood-badge {
             display: inline-block;
@@ -447,7 +448,7 @@
 
           &.phone-badge {
             font-family: monospace;
-            color: var(--primary-300);
+            color: var(var(--color-primary-accent));
           }
         }
       }
@@ -483,7 +484,7 @@
       align-items: center;
       gap: 0.4rem;
       font-size: 0.75rem;
-      color: var(--primary-300);
+      color: var(var(--color-primary-accent));
 
       .material-symbols-outlined {
         font-size: 16px;
@@ -505,12 +506,12 @@
     gap: 0.6rem;
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text-main);
-    border-bottom: 1px solid var(--border-subtle);
+    color: var(var(--color-text-main));
+    border-bottom: 1px solid var(var(--color-border-subtle));
     padding-bottom: 0.8rem;
 
     .material-symbols-outlined {
-      color: var(--primary-400);
+      color: var(var(--color-primary-accent));
     }
   }
 
@@ -572,11 +573,11 @@
 
         .name {
           font-weight: 600;
-          color: var(--text-main);
+          color: var(var(--color-text-main));
         }
 
         .year {
-          color: var(--text-secondary);
+          color: var(var(--color-text-muted));
         }
       }
     }
@@ -599,12 +600,12 @@
           display: flex;
           flex-direction: column;
           strong {
-            color: var(--text-main);
+            color: var(var(--color-text-main));
             font-size: 0.9rem;
           }
           .clinic {
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: var(var(--color-text-muted));
           }
         }
 
@@ -643,16 +644,16 @@
       align-items: center;
       gap: 0.6rem;
       font-size: 1.3rem;
-      color: var(--text-main);
+      color: var(var(--color-text-main));
       margin-bottom: 0.5rem;
 
       .material-symbols-outlined {
-        color: var(--primary-400);
+        color: var(var(--color-primary-accent));
       }
     }
 
     .arch-desc {
-      color: var(--text-secondary);
+      color: var(var(--color-text-muted));
       font-size: 0.95rem;
       line-height: 1.6;
     }
@@ -674,7 +675,7 @@
 
       &:hover {
         transform: translateY(-3px);
-        border-color: var(--primary-400);
+        border-color: var(var(--color-primary-accent));
       }
 
       .layer-header {
@@ -686,17 +687,17 @@
           font-family: monospace;
           font-size: 1.4rem;
           font-weight: 800;
-          color: var(--primary-400);
+          color: var(var(--color-primary-accent));
         }
 
         .layer-name {
           font-size: 1.15rem;
-          color: var(--text-main);
+          color: var(var(--color-text-main));
         }
 
         .layer-role {
           font-size: 0.78rem;
-          color: var(--text-secondary);
+          color: var(var(--color-text-muted));
         }
       }
 
@@ -708,7 +709,7 @@
         background: rgba(0, 0, 0, 0.3);
         border-radius: 8px;
         font-size: 0.78rem;
-        color: var(--primary-300);
+        color: var(var(--color-primary-accent));
 
         .material-symbols-outlined {
           font-size: 16px;
@@ -721,7 +722,7 @@
 
       .layer-detail {
         font-size: 0.85rem;
-        color: var(--text-secondary);
+        color: var(var(--color-text-muted));
         line-height: 1.5;
       }
     }
@@ -744,7 +745,7 @@
       align-items: center;
       gap: 0.6rem;
       font-size: 1.3rem;
-      color: var(--text-main);
+      color: var(var(--color-text-main));
       margin-bottom: 0.5rem;
 
       .material-symbols-outlined {
@@ -753,7 +754,7 @@
     }
 
     .entities-desc {
-      color: var(--text-secondary);
+      color: var(var(--color-text-muted));
       font-size: 0.95rem;
     }
   }
@@ -785,7 +786,7 @@
 
         h3 {
           font-size: 1.05rem;
-          color: var(--text-main);
+          color: var(var(--color-text-main));
         }
       }
 
@@ -798,13 +799,13 @@
           padding: 0.8rem 1rem;
           border-radius: 10px;
           background: rgba(15, 23, 42, 0.5);
-          border: 1px solid var(--border-subtle);
+          border: 1px solid var(var(--color-border-subtle));
 
           .entity-name {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--primary-300);
+            color: var(var(--color-primary-accent));
             font-size: 0.9rem;
             margin-bottom: 0.3rem;
 
@@ -815,7 +816,7 @@
 
           .entity-desc {
             font-size: 0.8rem;
-            color: var(--text-secondary);
+            color: var(var(--color-text-muted));
             line-height: 1.4;
           }
         }
@@ -845,8 +846,8 @@
       gap: 0.6rem;
       padding: 0.9rem 1.2rem;
       border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
+      border: 1px solid var(var(--color-border-subtle));
+      color: var(var(--color-text-muted));
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
@@ -857,15 +858,15 @@
       }
 
       &:hover {
-        background: rgba(30, 41, 59, 0.9);
-        color: var(--text-main);
-        border-color: var(--primary-400);
+        background: var(--color-surface-tint);
+        color: var(var(--color-text-main));
+        border-color: var(var(--color-primary-accent));
       }
 
       &.selected {
         background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(6, 182, 212, 0.2));
-        border-color: var(--primary-400);
-        color: var(--primary-300);
+        border-color: var(var(--color-primary-accent));
+        color: var(var(--color-primary-accent));
         box-shadow: 0 0 20px rgba(20, 184, 166, 0.2);
       }
     }
@@ -886,7 +887,7 @@
 
         .role-big-icon {
           font-size: 48px;
-          color: var(--primary-400);
+          color: var(var(--color-primary-accent));
           background: rgba(20, 184, 166, 0.12);
           padding: 0.8rem;
           border-radius: 16px;
@@ -894,7 +895,7 @@
 
         h2 {
           font-size: 1.6rem;
-          color: var(--text-main);
+          color: var(var(--color-text-main));
         }
 
         .role-badge {
@@ -913,7 +914,7 @@
 
     .role-desc {
       font-size: 1.05rem;
-      color: var(--text-secondary);
+      color: var(var(--color-text-muted));
       line-height: 1.6;
       max-width: 900px;
     }
@@ -930,18 +931,18 @@
         gap: 0.8rem;
         padding: 1rem 1.2rem;
         border-radius: 12px;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid var(--border-subtle);
+        background: var(--color-surface-tint);
+        border: 1px solid var(var(--color-border-subtle));
         font-size: 0.92rem;
-        color: var(--text-main);
+        color: var(var(--color-text-main));
         transition: border-color 0.2s ease;
 
         &:hover {
-          border-color: var(--primary-500);
+          border-color: var(var(--color-primary-base));
         }
 
         .check-icon {
-          color: var(--primary-400);
+          color: var(var(--color-primary-accent));
           font-size: 20px;
         }
       }
@@ -962,13 +963,13 @@
     flex-wrap: wrap;
     gap: 1rem;
     font-size: 0.82rem;
-    color: var(--text-secondary);
+    color: var(var(--color-text-muted));
 
     .footer-left {
       display: flex;
       flex-direction: column;
       strong {
-        color: var(--text-main);
+        color: var(var(--color-text-main));
       }
     }
 
@@ -982,7 +983,7 @@
       border-radius: 9999px;
       background: rgba(20, 184, 166, 0.1);
       border: 1px solid rgba(20, 184, 166, 0.25);
-      color: var(--primary-300);
+      color: var(var(--color-primary-accent));
       font-family: monospace;
       font-size: 0.78rem;
     }
