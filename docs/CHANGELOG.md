@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Phase 6: Core Backend — Clinic, Doctor & Scheduling
+  - Clinic management with onboarding, paginated browsing, multi-field search, detail views, and doctor/receptionist counts
+  - Doctor profile management with specialty filtering, clinic affiliations, and search
+  - Clinic-Doctor affiliation engine (M:N via `ClinicDoctors`) with status tracking and affiliation management
+  - Receptionist provisioning with secure password hashing and clinic assignment
+  - Appointment scheduling engine with double-booking collision prevention for both doctors and patients
+  - Appointment lifecycle status transitions (`Pending`, `Confirmed`, `Completed`, `Cancelled`, `NoShow`) and rescheduling
+  - Daily clinic queue manager (`GET /api/v1/appointments/queue?clinicId=X&date=YYYY-MM-DD`) with 1-based sequential ordering
+  - Clinical follow-up scheduling and status tracking (`FollowUps`) linked to patient visits
+  - Three new API Controllers: `ClinicsController` (`/api/v1/clinics`), `DoctorsController` (`/api/v1/doctors`), and `AppointmentsController` (`/api/v1/appointments`)
+  - 113 total passing unit and integration tests (28 new tests for Phase 6) with 0 failures and 0 security alerts
 - Phase 5: Core Backend — Patient & Medical Records
   - Unified Patient ID generation (SH-YYYY-NNNNNN) with thread-safe concurrency lock and auto-increment sequence
   - Complete Patient CRUD management with automatic user account, medical record, and emergency profile provisioning

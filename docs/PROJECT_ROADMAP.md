@@ -17,7 +17,7 @@
 | **Phase 3** | Database Design & Implementation | ✅ Complete | Phase 2 |
 | **Phase 4** | Authentication & User Management | ✅ Complete | Phase 3 |
 | **Phase 5** | Core Backend — Patient & Medical Records | ✅ Complete | Phase 4 |
-| **Phase 6** | Core Backend — Clinic, Doctor & Scheduling | ⬜ Pending | Phase 5 |
+| **Phase 6** | Core Backend — Clinic, Doctor & Scheduling | ✅ Complete | Phase 5 |
 | **Phase 7** | Core Backend — Prescriptions, Consent & Emergency | ⬜ Pending | Phase 6 |
 | **Phase 8** | Frontend Foundation & UI Framework | ⬜ Pending | Phase 4 |
 | **Phase 9** | Frontend–Backend Integration & Feature Screens | ⬜ Pending | Phases 7, 8 |
@@ -403,31 +403,31 @@ feat(patients): implement patient management, medical records, and emergency pro
 **Objective:** Implement clinic management, doctor profiles, clinic-doctor affiliations, appointment scheduling, queue management, and follow-ups.
 
 ### Deliverables
-- [ ] Clinic CRUD and onboarding
-- [ ] Doctor profile management
-- [ ] Clinic-Doctor affiliation (M:N)
-- [ ] Receptionist management
-- [ ] Appointment scheduling
-- [ ] Queue management
-- [ ] Follow-up scheduling
+- [x] Clinic CRUD and onboarding
+- [x] Doctor profile management
+- [x] Clinic-Doctor affiliation (M:N)
+- [x] Receptionist management
+- [x] Appointment scheduling
+- [x] Queue management
+- [x] Follow-up scheduling
 
 ### Tasks
-1. [ ] Create clinic, doctor, appointment DTOs and validators
-2. [ ] Implement clinic services and controller
-3. [ ] Implement doctor services and controller
-4. [ ] Implement clinic-doctor affiliation logic
-5. [ ] Implement receptionist management
-6. [ ] Implement appointment services and controller
-7. [ ] Implement follow-up management
-8. [ ] Write unit and integration tests
+1. [x] Create clinic, doctor, appointment DTOs and validators
+2. [x] Implement clinic services and controller
+3. [x] Implement doctor services and controller
+4. [x] Implement clinic-doctor affiliation logic
+5. [x] Implement receptionist management
+6. [x] Implement appointment services and controller
+7. [x] Implement follow-up management
+8. [x] Write unit and integration tests (113 total passing tests)
 
 ### Dependencies
 - Phase 5 (patient management working)
 
 ### Definition of Done
-- [ ] All clinic/doctor/scheduling endpoints functional
-- [ ] Tests pass
-- [ ] Committed and pushed
+- [x] All clinic/doctor/scheduling endpoints functional
+- [x] Tests pass (113 passing)
+- [x] Committed and pushed
 
 ### GitHub Commit
 ```
