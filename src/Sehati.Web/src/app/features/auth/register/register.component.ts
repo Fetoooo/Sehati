@@ -12,321 +12,372 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="auth-card-container register-container">
-      <!-- Switcher Tabs -->
-      <div class="auth-switch-tabs">
-        <a routerLink="/auth/login" class="tab-item">
-          <span class="material-symbols-outlined">login</span>
+      <!-- Top Navigation Switcher Tabs (Buttons to Navigate Between Login & Register) -->
+      <div class="auth-navigation-tabs">
+        <a routerLink="/auth/login" class="nav-tab-pill">
+          <span class="material-symbols-outlined tab-icon">login</span>
           <span>{{ langService.t('signInBtn') }}</span>
         </a>
-        <a routerLink="/auth/register" class="tab-item active">
-          <span class="material-symbols-outlined">person_add</span>
+        <a routerLink="/auth/register" class="nav-tab-pill active">
+          <span class="material-symbols-outlined tab-icon">person_add</span>
           <span>{{ langService.t('createAccountLink') }}</span>
         </a>
       </div>
 
-      <div class="auth-main-card">
-        <div class="card-titles">
-          <h1 class="main-title">{{ langService.t('registerTitle') }}</h1>
-          <p class="subtitle">{{ langService.t('registerSubtitle') }}</p>
+      <!-- Main Register Card -->
+      <div class="auth-glass-card">
+        <!-- Card Titles -->
+        <div class="card-header-block">
+          <span class="header-mini-badge">
+            <span class="badge-dot"></span>
+            <span>{{ langService.isRtl() ? 'إصدار الجواز الصحي الموحد' : 'Claim Your Unified Health Passport' }}</span>
+          </span>
+          <h1 class="card-main-title">{{ langService.t('registerTitle') }}</h1>
+          <p class="card-subtitle">{{ langService.t('registerSubtitle') }}</p>
         </div>
 
-        <!-- Role Selector Chips -->
-        <div class="role-selector-group">
-          <label class="role-prompt">{{ langService.isRtl() ? 'اختر نوع الحساب في المنظومة:' : 'Select Account Persona:' }}</label>
-          <div class="roles-grid">
+        <!-- Role Selector Cards -->
+        <div class="role-selector-block">
+          <label class="role-selection-prompt">
+            {{ langService.isRtl() ? 'اختر فئة الحساب في المنظومة:' : 'Select Account Persona:' }}
+          </label>
+          <div class="roles-cards-row">
             <button
               type="button"
-              class="role-card-btn"
+              class="role-badge-btn"
               [class.active]="selectedRole === 'Patient'"
               (click)="selectRole('Patient')"
             >
-              <div class="role-icon-box">
+              <div class="role-icon-box teal">
                 <span class="material-symbols-outlined">person</span>
               </div>
-              <div class="role-info">
+              <div class="role-meta">
                 <span class="role-name">{{ langService.t('rolePatient') }}</span>
-                <span class="role-sub">{{ langService.isRtl() ? 'جواز صحي موحد' : 'Health Passport' }}</span>
+                <span class="role-caption">{{ langService.isRtl() ? 'جواز صحي موحد' : 'Health Passport' }}</span>
               </div>
             </button>
 
             <button
               type="button"
-              class="role-card-btn"
+              class="role-badge-btn"
               [class.active]="selectedRole === 'Doctor'"
               (click)="selectRole('Doctor')"
             >
-              <div class="role-icon-box">
+              <div class="role-icon-box emerald">
                 <span class="material-symbols-outlined">stethoscope</span>
               </div>
-              <div class="role-info">
+              <div class="role-meta">
                 <span class="role-name">{{ langService.t('roleDoctor') }}</span>
-                <span class="role-sub">{{ langService.isRtl() ? 'عيادة وروشتات' : 'Clinical Practice' }}</span>
+                <span class="role-caption">{{ langService.isRtl() ? 'عيادة وروشتات' : 'Clinical Practice' }}</span>
               </div>
             </button>
 
             <button
               type="button"
-              class="role-card-btn"
+              class="role-badge-btn"
               [class.active]="selectedRole === 'Receptionist'"
               (click)="selectRole('Receptionist')"
             >
-              <div class="role-icon-box">
-                <span class="material-symbols-outlined">support_agent</span>
+              <div class="role-icon-box indigo">
+                <span class="material-symbols-outlined">desk</span>
               </div>
-              <div class="role-info">
+              <div class="role-meta">
                 <span class="role-name">{{ langService.t('roleReceptionist') }}</span>
-                <span class="role-sub">{{ langService.isRtl() ? 'إدارة الدخول' : 'Desk & Queue' }}</span>
+                <span class="role-caption">{{ langService.isRtl() ? 'إدارة الدخول' : 'Desk & Queue' }}</span>
               </div>
             </button>
           </div>
         </div>
 
         <!-- Error Alert -->
-        <div class="auth-alert alert-error" *ngIf="errorMessage">
+        <div class="auth-error-banner" *ngIf="errorMessage">
           <span class="material-symbols-outlined">error</span>
           <span>{{ errorMessage }}</span>
         </div>
 
-        <!-- Form -->
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="modern-auth-form">
-          <div class="form-row-2">
+        <!-- Register Form -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+          <!-- Row 1: Full Name & National ID -->
+          <div class="form-grid-2">
             <!-- Full Name -->
-            <div class="input-field-group">
+            <div class="form-field-group">
               <label class="field-label" for="fullName">
                 <span>{{ langService.t('fullNameLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <div class="input-with-icon">
-                <span class="material-symbols-outlined leading-icon">badge</span>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">badge</span>
                 <input
                   id="fullName"
                   type="text"
                   formControlName="fullName"
-                  class="field-input"
+                  class="form-input"
                   [class.invalid]="isFieldInvalid('fullName')"
                   [placeholder]="langService.isRtl() ? 'مثال: أحمد محمود حسن' : 'e.g. Ahmed Mahmoud Hassan'"
                   autocomplete="name"
                 />
               </div>
+              <div class="field-error-text" *ngIf="isFieldInvalid('fullName')">
+                {{ langService.isRtl() ? 'الاسم بالكامل مطلوب (3 أحرف على الأقل).' : 'Full name is required (min 3 chars).' }}
+              </div>
             </div>
 
             <!-- National ID -->
-            <div class="input-field-group">
+            <div class="form-field-group">
               <label class="field-label" for="nationalId">
                 <span>{{ langService.t('nationalIdLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <div class="input-with-icon">
-                <span class="material-symbols-outlined leading-icon">pin</span>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">pin</span>
                 <input
                   id="nationalId"
                   type="text"
                   formControlName="nationalId"
-                  class="field-input"
+                  class="form-input font-mono"
                   [class.invalid]="isFieldInvalid('nationalId')"
                   placeholder="29805121601234"
                   maxlength="14"
                 />
               </div>
+              <div class="field-error-text" *ngIf="isFieldInvalid('nationalId')">
+                {{ langService.isRtl() ? 'الرقم القومي يجب أن يتكون من 14 رقماً بالضبط.' : 'National ID must be exactly 14 digits.' }}
+              </div>
             </div>
           </div>
 
-          <div class="form-row-2">
+          <!-- Row 2: Email & Phone Number -->
+          <div class="form-grid-2">
             <!-- Email -->
-            <div class="input-field-group">
+            <div class="form-field-group">
               <label class="field-label" for="email">
                 <span>{{ langService.t('emailLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <div class="input-with-icon">
-                <span class="material-symbols-outlined leading-icon">mail</span>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">mail</span>
                 <input
                   id="email"
                   type="email"
                   formControlName="email"
-                  class="field-input"
+                  class="form-input"
                   [class.invalid]="isFieldInvalid('email')"
                   placeholder="user@sehati.com"
                   autocomplete="email"
                 />
               </div>
+              <div class="field-error-text" *ngIf="isFieldInvalid('email')">
+                {{ langService.isRtl() ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.' }}
+              </div>
             </div>
 
             <!-- Phone Number -->
-            <div class="input-field-group">
+            <div class="form-field-group">
               <label class="field-label" for="phoneNumber">
                 <span>{{ langService.t('phoneNumberLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <div class="input-with-icon">
-                <span class="material-symbols-outlined leading-icon">call</span>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">call</span>
                 <input
                   id="phoneNumber"
                   type="tel"
                   formControlName="phoneNumber"
-                  class="field-input"
+                  class="form-input font-mono"
                   [class.invalid]="isFieldInvalid('phoneNumber')"
                   placeholder="01012345678"
                   autocomplete="tel"
                 />
               </div>
+              <div class="field-error-text" *ngIf="isFieldInvalid('phoneNumber')">
+                {{ langService.isRtl() ? 'رقم هاتف مصري صحيح (مثال: 01012345678).' : 'Valid Egyptian phone (e.g., 01012345678).' }}
+              </div>
             </div>
           </div>
 
-          <div class="form-row-3">
+          <!-- Row 3: Medical Essentials (Date of Birth, Gender, Blood Type) -->
+          <div class="form-grid-3">
             <!-- Date of Birth -->
-            <div class="input-field-group">
+            <div class="form-field-group">
               <label class="field-label" for="dateOfBirth">
                 <span>{{ langService.t('dateOfBirthLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <input
-                id="dateOfBirth"
-                type="date"
-                formControlName="dateOfBirth"
-                class="field-input no-icon"
-                [class.invalid]="isFieldInvalid('dateOfBirth')"
-              />
+              <div class="field-input-box">
+                <input
+                  id="dateOfBirth"
+                  type="date"
+                  formControlName="dateOfBirth"
+                  class="form-input plain-input"
+                  [class.invalid]="isFieldInvalid('dateOfBirth')"
+                />
+              </div>
             </div>
 
             <!-- Gender -->
-            <div class="input-field-group">
+            <div class="form-field-group">
               <label class="field-label" for="gender">
                 <span>{{ langService.t('genderLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <select id="gender" formControlName="gender" class="field-input no-icon">
-                <option value="Male">{{ langService.t('genderMale') }}</option>
-                <option value="Female">{{ langService.t('genderFemale') }}</option>
-              </select>
+              <div class="field-input-box">
+                <select id="gender" formControlName="gender" class="form-input plain-input">
+                  <option value="Male">{{ langService.t('genderMale') }}</option>
+                  <option value="Female">{{ langService.t('genderFemale') }}</option>
+                </select>
+              </div>
             </div>
 
             <!-- Blood Type -->
-            <div class="input-field-group">
+            <div class="form-field-group">
               <label class="field-label" for="bloodType">
                 <span>{{ langService.t('bloodTypeLabel') }}</span>
               </label>
-              <select id="bloodType" formControlName="bloodType" class="field-input no-icon">
-                <option value="A+">A+</option>
-                <option value="A-">A-</option>
-                <option value="B+">B+</option>
-                <option value="B-">B-</option>
-                <option value="AB+">AB+</option>
-                <option value="AB-">AB-</option>
-                <option value="O+">O+</option>
-                <option value="O-">O-</option>
-              </select>
+              <div class="field-input-box">
+                <select id="bloodType" formControlName="bloodType" class="form-input plain-input">
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+              </div>
             </div>
           </div>
 
           <!-- Doctor Specific Fields -->
-          <div class="form-row-2 doctor-extra-fields" *ngIf="selectedRole === 'Doctor'">
-            <div class="input-field-group">
+          <div class="form-grid-2 doctor-extra-box" *ngIf="selectedRole === 'Doctor'">
+            <div class="form-field-group">
               <label class="field-label" for="specialty">
                 <span>{{ langService.t('specialtyLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <div class="input-with-icon">
-                <span class="material-symbols-outlined leading-icon">medical_services</span>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">medical_services</span>
                 <input
                   id="specialty"
                   type="text"
                   formControlName="specialty"
-                  class="field-input"
+                  class="form-input"
                   [placeholder]="langService.isRtl() ? 'مثال: باطنة وقلب' : 'e.g. Cardiology'"
                 />
               </div>
             </div>
 
-            <div class="input-field-group">
+            <div class="form-field-group">
               <label class="field-label" for="licenseNumber">
                 <span>{{ langService.t('licenseNumberLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <div class="input-with-icon">
-                <span class="material-symbols-outlined leading-icon">verified_user</span>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">verified_user</span>
                 <input
                   id="licenseNumber"
                   type="text"
                   formControlName="licenseNumber"
-                  class="field-input"
+                  class="form-input font-mono"
                   placeholder="MD-89102-EG"
                 />
               </div>
             </div>
           </div>
 
-          <!-- Password Row -->
-          <div class="form-row-2">
-            <div class="input-field-group">
+          <!-- Row 4: Password & Confirm Password -->
+          <div class="form-grid-2">
+            <!-- Password -->
+            <div class="form-field-group">
               <label class="field-label" for="password">
                 <span>{{ langService.t('passwordLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <div class="input-with-icon">
-                <span class="material-symbols-outlined leading-icon">lock</span>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">lock</span>
                 <input
                   id="password"
                   [type]="showPassword ? 'text' : 'password'"
                   formControlName="password"
-                  class="field-input"
+                  class="form-input"
                   [class.invalid]="isFieldInvalid('password')"
                   placeholder="••••••••"
                   autocomplete="new-password"
                 />
-                <button type="button" class="trailing-toggle-btn" (click)="showPassword = !showPassword">
+                <button
+                  type="button"
+                  class="eye-toggle-btn"
+                  (click)="showPassword = !showPassword"
+                  [title]="showPassword ? 'Hide password' : 'Show password'"
+                >
                   <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
                 </button>
               </div>
+              <div class="field-error-text" *ngIf="isFieldInvalid('password')">
+                {{ langService.isRtl() ? 'كلمة المرور يجب ألا تقل عن 8 أحرف.' : 'Password must be at least 8 characters.' }}
+              </div>
             </div>
 
-            <div class="input-field-group">
+            <!-- Confirm Password -->
+            <div class="form-field-group">
               <label class="field-label" for="confirmPassword">
                 <span>{{ langService.isRtl() ? 'تأكيد كلمة المرور' : 'Confirm Password' }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
-              <div class="input-with-icon">
-                <span class="material-symbols-outlined leading-icon">lock_reset</span>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">lock_reset</span>
                 <input
                   id="confirmPassword"
                   [type]="showPassword ? 'text' : 'password'"
                   formControlName="confirmPassword"
-                  class="field-input"
+                  class="form-input"
                   [class.invalid]="isFieldInvalid('confirmPassword') || isPasswordMismatch()"
                   placeholder="••••••••"
                   autocomplete="new-password"
                 />
               </div>
-              <div class="field-error-msg" *ngIf="isPasswordMismatch()">
+              <div class="field-error-text" *ngIf="isPasswordMismatch()">
                 {{ langService.isRtl() ? 'كلمتا المرور غير متطابقتين.' : 'Passwords do not match.' }}
               </div>
             </div>
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" class="submit-action-btn" [disabled]="registerForm.invalid || isLoading || isPasswordMismatch()">
-            <span class="loading-spinner" *ngIf="isLoading"></span>
+          <button
+            type="submit"
+            class="btn-submit-register"
+            [disabled]="registerForm.invalid || isLoading || isPasswordMismatch()"
+          >
+            <span class="spinner-dot" *ngIf="isLoading"></span>
             <span *ngIf="!isLoading">{{ langService.t('createAccountBtn') }}</span>
             <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">arrow_forward</span>
           </button>
         </form>
 
-        <!-- Bottom Links -->
-        <div class="card-bottom-bar">
-          <p class="create-account-text">
-            {{ langService.t('alreadyHaveAccount') }}
-            <a routerLink="/auth/login" class="action-link">{{ langService.t('signInBtn') }}</a>
-          </p>
+        <!-- Reciprocal Navigation Helper to Login Page -->
+        <div class="card-bottom-navigation">
+          <div class="login-prompt">
+            <span>{{ langService.t('alreadyHaveAccount') }}</span>
+            <a routerLink="/auth/login" class="btn-goto-login">
+              <span>{{ langService.t('signInBtn') }}</span>
+              <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+            </a>
+          </div>
 
-          <div class="alternative-links">
-            <a routerLink="/" class="home-link">
+          <div class="quick-assist-links">
+            <a routerLink="/" class="assist-link">
               <span class="material-symbols-outlined">home</span>
               <span>{{ langService.isRtl() ? 'الرئيسية' : 'Homepage' }}</span>
             </a>
             <span>•</span>
-            <a routerLink="/preview" class="demo-link">
+            <a routerLink="/preview" class="assist-link">
               <span class="material-symbols-outlined">architecture</span>
               <span>{{ langService.t('architectureShowcase') }}</span>
+            </a>
+            <span>•</span>
+            <a routerLink="/emergency" class="assist-link text-red">
+              <span class="material-symbols-outlined">emergency</span>
+              <span>{{ langService.isRtl() ? 'طوارئ QR' : 'Emergency QR' }}</span>
             </a>
           </div>
         </div>
@@ -334,288 +385,363 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
     </div>
   `,
   styles: [`
-    .auth-card-container.register-container {
+    .auth-card-container {
       width: 100%;
-      max-width: 640px;
-    }
-
-    .auth-switch-tabs {
+      max-width: 660px;
       display: flex;
-      background: var(--color-surface-card);
-      border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-full);
-      padding: 0.3rem;
-      box-shadow: var(--shadow-sm);
-
-      .tab-item {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        padding: 0.55rem;
-        border-radius: var(--radius-full);
-        font-size: 0.88rem;
-        font-weight: 700;
-        text-decoration: none;
-        color: var(--color-text-muted);
-        transition: all 0.2s;
-
-        span.material-symbols-outlined { font-size: 1.1rem; }
-
-        &.active {
-          background: linear-gradient(135deg, var(--color-primary-deep), var(--color-primary-ocean));
-          color: #fff;
-          box-shadow: 0 4px 12px rgba(8, 131, 149, 0.25);
-        }
-      }
+      flex-direction: column;
+      gap: 1.25rem;
     }
 
-    .auth-main-card {
-      background: var(--color-surface-card);
-      border: 1px solid var(--color-border-subtle);
-      border-radius: 24px;
+    /* Top Navigation Tabs */
+    .auth-navigation-tabs {
+      display: flex;
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 9999px;
+      padding: 0.35rem;
+      box-shadow: 0 4px 14px rgba(8, 131, 149, 0.05);
+    }
+
+    :host-context([data-theme="dark"]) .auth-navigation-tabs,
+    :host-context(.dark-theme) .auth-navigation-tabs {
+      background: #082635;
+      border-color: rgba(5, 191, 219, 0.2);
+    }
+
+    .nav-tab-pill {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--color-text-muted, #64748B);
+      transition: all 0.25s ease;
+    }
+
+    .nav-tab-pill:hover {
+      color: var(--color-primary-base, #088395);
+    }
+
+    .nav-tab-pill.active {
+      background: var(--color-primary-base, #088395);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(8, 131, 149, 0.3);
+    }
+
+    .tab-icon {
+      font-size: 1.15rem;
+    }
+
+    /* Main Glass Card */
+    .auth-glass-card {
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 28px;
       padding: 2.25rem;
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 16px 36px -8px rgba(8, 131, 149, 0.1), 0 4px 12px rgba(0, 0, 0, 0.03);
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+      transition: all 0.3s ease;
     }
 
-    .card-titles {
+    :host-context([data-theme="dark"]) .auth-glass-card,
+    :host-context(.dark-theme) .auth-glass-card {
+      background: #082635;
+      border-color: rgba(5, 191, 219, 0.22);
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .card-header-block {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
-
-      .main-title {
-        font-size: 1.7rem;
-        font-weight: 900;
-        color: var(--color-text-main);
-        margin: 0;
-      }
-
-      .subtitle {
-        color: var(--color-text-muted);
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin: 0;
-      }
+      gap: 0.45rem;
     }
 
-    .role-selector-group {
+    .header-mini-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #059669;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      width: fit-content;
+      margin-bottom: 0.25rem;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+    }
+
+    .card-main-title {
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: var(--color-text-main, #0F172A);
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+
+    .card-subtitle {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--color-text-muted, #64748B);
+      margin: 0;
+    }
+
+    /* Role Selector Cards */
+    .role-selector-block {
       display: flex;
       flex-direction: column;
       gap: 0.65rem;
-
-      .role-prompt {
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: var(--color-text-muted);
-      }
-
-      .roles-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.75rem;
-
-        .role-card-btn {
-          background: var(--color-bg-app);
-          border: 1px solid var(--color-border-subtle);
-          border-radius: var(--radius-md);
-          padding: 0.85rem 0.5rem;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.5rem;
-          cursor: pointer;
-          transition: all 0.2s;
-
-          .role-icon-box {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--color-surface-card);
-            color: var(--color-text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            span { font-size: 1.3rem; }
-          }
-
-          .role-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            .role-name {
-              font-size: 0.85rem;
-              font-weight: 800;
-              color: var(--color-text-main);
-            }
-
-            .role-sub {
-              font-size: 0.68rem;
-              color: var(--color-text-muted);
-            }
-          }
-
-          &:hover {
-            border-color: var(--color-primary-ocean);
-          }
-
-          &.active {
-            background: rgba(8, 131, 149, 0.08);
-            border-color: var(--color-primary-ocean);
-
-            .role-icon-box {
-              background: var(--color-primary-ocean);
-              color: #fff;
-            }
-
-            .role-info .role-name {
-              color: var(--color-primary-deep);
-            }
-          }
-        }
-      }
     }
 
-    .auth-alert {
+    .role-selection-prompt {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--color-text-main, #0F172A);
+    }
+
+    .roles-cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .role-badge-btn {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-md);
-      font-size: 0.85rem;
-      font-weight: 600;
-
-      &.alert-error {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.25);
-        color: #b91c1c;
-      }
+      gap: 0.65rem;
+      padding: 0.75rem 0.85rem;
+      border-radius: 16px;
+      border: 1.5px solid var(--color-border-subtle, #E2E8F0);
+      background: var(--color-bg-app, #FAFCFB);
+      cursor: pointer;
+      text-align: right;
+      transition: all 0.25s ease;
     }
 
-    .modern-auth-form {
+    :host-context(:not(.rtl)) .role-badge-btn {
+      text-align: left;
+    }
+
+    :host-context([data-theme="dark"]) .role-badge-btn,
+    :host-context(.dark-theme) .role-badge-btn {
+      background: #031B26;
+      border-color: rgba(5, 191, 219, 0.18);
+    }
+
+    .role-badge-btn:hover {
+      border-color: var(--color-primary-base, #088395);
+      transform: translateY(-2px);
+    }
+
+    .role-badge-btn.active {
+      border-color: var(--color-primary-base, #088395);
+      background: rgba(8, 131, 149, 0.08);
+      box-shadow: 0 4px 14px rgba(8, 131, 149, 0.15);
+    }
+
+    .role-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .role-icon-box.teal { background: rgba(8, 131, 149, 0.12); color: #088395; }
+    .role-icon-box.emerald { background: rgba(16, 185, 129, 0.12); color: #10B981; }
+    .role-icon-box.indigo { background: rgba(139, 92, 246, 0.12); color: #8B5CF6; }
+
+    .role-meta {
       display: flex;
       flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .role-name {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--color-text-main, #0F172A);
+    }
+
+    .role-caption {
+      font-size: 0.72rem;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    /* Error Alert */
+    .auth-error-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #DC2626;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    /* Form Fields */
+    .register-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
 
-    .form-row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
-    }
-
-    .form-row-3 {
+    .form-grid-3 {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.85rem;
+      gap: 1rem;
     }
 
-    .input-field-group {
+    .form-field-group {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
-
-      .field-label {
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: var(--color-text-main);
-        display: flex;
-        gap: 0.2rem;
-        .req { color: #ef4444; }
-      }
-
-      .input-with-icon {
-        position: relative;
-        display: flex;
-        align-items: center;
-
-        .leading-icon {
-          position: absolute;
-          left: 0.85rem;
-          color: var(--color-text-muted);
-          font-size: 1.15rem;
-          pointer-events: none;
-        }
-
-        .field-input {
-          width: 100%;
-          padding: 0.65rem 0.85rem 0.65rem 2.5rem;
-          border-radius: var(--radius-md);
-          border: 1px solid var(--color-border-subtle);
-          background: var(--color-bg-app);
-          color: var(--color-text-main);
-          font-size: 0.9rem;
-          transition: all 0.2s;
-
-          &:focus {
-            outline: none;
-            border-color: var(--color-primary-ocean);
-            background: var(--color-surface-card);
-            box-shadow: 0 0 0 3px rgba(8, 131, 149, 0.12);
-          }
-
-          &.invalid {
-            border-color: #ef4444;
-          }
-        }
-
-        .trailing-toggle-btn {
-          position: absolute;
-          right: 0.65rem;
-          background: none;
-          border: none;
-          color: var(--color-text-muted);
-          cursor: pointer;
-        }
-      }
-
-      .field-input.no-icon {
-        padding: 0.65rem 0.85rem;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--color-border-subtle);
-        background: var(--color-bg-app);
-        color: var(--color-text-main);
-        font-size: 0.9rem;
-
-        &:focus {
-          outline: none;
-          border-color: var(--color-primary-ocean);
-        }
-      }
-
-      .field-error-msg {
-        font-size: 0.75rem;
-        color: #ef4444;
-        font-weight: 600;
-      }
+      gap: 0.45rem;
     }
 
-    :host-context([dir="rtl"]) .input-with-icon {
-      .leading-icon {
-        left: auto;
-        right: 0.85rem;
-      }
-      .field-input {
-        padding: 0.65rem 2.5rem 0.65rem 0.85rem;
-      }
-      .trailing-toggle-btn {
-        right: auto;
-        left: 0.65rem;
-      }
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--color-text-main, #0F172A);
     }
 
-    .submit-action-btn {
+    .required-star {
+      color: #EF4444;
+    }
+
+    .field-input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 1rem;
+      color: var(--color-text-muted, #64748B);
+      font-size: 1.25rem;
+      pointer-events: none;
+    }
+
+    .form-input {
       width: 100%;
-      padding: 0.85rem 1.5rem;
-      border-radius: var(--radius-full);
+      padding: 0.8rem 1rem 0.8rem 2.85rem;
+      border-radius: 14px;
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: var(--color-bg-app, #FAFCFB);
+      color: var(--color-text-main, #0F172A);
+      font-size: 0.92rem;
+      transition: all 0.2s ease;
+    }
+
+    .form-input.plain-input {
+      padding: 0.8rem 1rem;
+    }
+
+    :host-context([data-theme="dark"]) .form-input,
+    :host-context(.dark-theme) .form-input {
+      background: #031B26;
+      border-color: rgba(5, 191, 219, 0.2);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary-base, #088395);
+      background: var(--color-surface-card, #FFFFFF);
+      box-shadow: 0 0 0 3px rgba(8, 131, 149, 0.15);
+    }
+
+    .form-input.invalid {
+      border-color: #EF4444;
+    }
+
+    .font-mono {
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .eye-toggle-btn {
+      position: absolute;
+      right: 0.85rem;
+      background: transparent;
       border: none;
-      background: linear-gradient(135deg, var(--color-primary-deep), var(--color-primary-ocean));
-      color: #fff;
-      font-size: 1rem;
+      color: var(--color-text-muted, #64748B);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem;
+    }
+
+    .eye-toggle-btn:hover {
+      color: var(--color-primary-base, #088395);
+    }
+
+    .field-error-text {
+      font-size: 0.78rem;
+      color: #EF4444;
+      font-weight: 600;
+    }
+
+    /* RTL specific input alignment */
+    :host-context(.rtl) .field-input-box,
+    :host-context([dir="rtl"]) .field-input-box {
+      .field-icon {
+        left: auto;
+        right: 1rem;
+      }
+      .form-input:not(.plain-input) {
+        padding: 0.8rem 2.85rem 0.8rem 1rem;
+      }
+      .eye-toggle-btn {
+        right: auto;
+        left: 0.85rem;
+      }
+    }
+
+    .doctor-extra-box {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px dashed rgba(16, 185, 129, 0.3);
+      padding: 1rem;
+      border-radius: 16px;
+    }
+
+    /* Submit Button */
+    .btn-submit-register {
+      width: 100%;
+      padding: 0.95rem 1.5rem;
+      border-radius: 9999px;
+      border: none;
+      background: var(--color-primary-base, #088395);
+      color: #FFFFFF;
+      font-size: 1.05rem;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
@@ -625,79 +751,113 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       box-shadow: 0 6px 20px rgba(8, 131, 149, 0.3);
       transition: all 0.25s ease;
       margin-top: 0.5rem;
+    }
 
-      &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(8, 131, 149, 0.4);
-      }
+    .btn-submit-register:hover:not(:disabled) {
+      background: var(--color-primary-dark, #0A4D68);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(8, 131, 149, 0.4);
+    }
 
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
+    .btn-submit-register:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-      .loading-spinner {
-        width: 18px;
-        height: 18px;
-        border: 2px solid rgba(255,255,255,0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
+    .spinner-dot {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #FFFFFF;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    .card-bottom-bar {
+    /* Bottom Navigation to Login */
+    .card-bottom-navigation {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.85rem;
-      border-top: 1px solid var(--color-border-subtle);
-      padding-top: 1.25rem;
-
-      .create-account-text {
-        font-size: 0.88rem;
-        color: var(--color-text-muted);
-        margin: 0;
-
-        .action-link {
-          color: var(--color-primary-ocean);
-          font-weight: 700;
-          text-decoration: none;
-          &:hover { text-decoration: underline; }
-        }
-      }
-
-      .alternative-links {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 0.82rem;
-        color: var(--color-text-muted);
-
-        a {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-          color: var(--color-text-muted);
-          text-decoration: none;
-          font-weight: 600;
-
-          &:hover { color: var(--color-primary-ocean); }
-          span.material-symbols-outlined { font-size: 0.95rem; }
-        }
-      }
+      gap: 1.25rem;
+      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+      padding-top: 1.5rem;
     }
 
-    @media (max-width: 600px) {
-      .form-row-2, .form-row-3 {
+    .login-prompt {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.92rem;
+      color: var(--color-text-muted, #64748B);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-goto-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 1rem;
+      border-radius: 9999px;
+      background: rgba(8, 131, 149, 0.08);
+      border: 1px solid rgba(8, 131, 149, 0.2);
+      color: var(--color-primary-base, #088395);
+      font-weight: 800;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-goto-login:hover {
+      background: rgba(8, 131, 149, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .quick-assist-links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.82rem;
+      color: var(--color-text-muted, #64748B);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .assist-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: var(--color-text-muted, #64748B);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .assist-link:hover {
+      color: var(--color-primary-base, #088395);
+    }
+
+    .assist-link.text-red {
+      color: #EF4444;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .roles-cards-row {
         grid-template-columns: 1fr;
       }
-      .role-selector-group .roles-grid {
+
+      .form-grid-2,
+      .form-grid-3 {
         grid-template-columns: 1fr;
+      }
+
+      .auth-glass-card {
+        padding: 1.5rem 1.25rem;
       }
     }
   `]
