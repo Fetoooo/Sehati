@@ -32,10 +32,22 @@ export const APP_TRANSLATIONS: Translations = {
     ar: 'أدخل بريدك الإلكتروني أو رقم هاتفك للوصول إلى سجلك الطبي الموحد.'
   },
   identifierLabel: { en: 'Email or Phone Number', ar: 'البريد الإلكتروني أو رقم الهاتف' },
-  identifierPlaceholder: { en: 'name@example.com or 01012345678', ar: 'name@example.com أو 01012345678' },
+  identifierPlaceholder: { en: 'patient@sehati.gov.eg or 01012345678', ar: 'patient@sehati.gov.eg أو 01012345678' },
   passwordLabel: { en: 'Password', ar: 'كلمة المرور' },
   passwordPlaceholder: { en: '••••••••', ar: '••••••••' },
   rememberMe: { en: 'Remember this device', ar: 'تذكر هذا الجهاز' },
+  forgotPasswordLink: { en: 'Forgot password?', ar: 'نسيت كلمة المرور؟' },
+  forgotPasswordTitle: { en: 'Reset Password', ar: 'استعادة كلمة المرور' },
+  forgotPasswordSubtitle: {
+    en: 'Enter your registered National ID or Email to receive instant account recovery instructions.',
+    ar: 'أدخل رقمك القومي أو بريدك الإلكتروني المسجل لاستلام رمز استعادة الحساب فوراً.'
+  },
+  sendResetCode: { en: 'Send Recovery Instructions', ar: 'إرسال تعليمات الاستعادة' },
+  backToLoginBtn: { en: 'Back to Sign In', ar: 'العودة لتسجيل الدخول' },
+  privacyPolicy: { en: 'Privacy Policy', ar: 'سياسة الخصوصية' },
+  termsOfService: { en: 'Terms of Service', ar: 'الشروط والأحكام' },
+  helpCenter: { en: 'Help & Support', ar: 'مركز المساعدة والدعم' },
+  contactUs: { en: 'Contact Us', ar: 'تواصل معنا' },
   signInBtn: { en: 'Sign In', ar: 'تسجيل الدخول' },
   dontHaveAccount: { en: "Don't have an account yet?", ar: 'ليس لديك حساب بعد؟' },
   createAccountLink: { en: 'Create Account', ar: 'إنشاء حساب جديد' },
@@ -132,4 +144,3 @@ export class LanguageService {
     }
   }
 }
-

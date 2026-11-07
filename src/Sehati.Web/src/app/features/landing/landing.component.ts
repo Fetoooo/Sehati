@@ -29,27 +29,15 @@ interface PersonaRole {
   route: string;
 }
 
-interface HeroSlide {
-  id: number;
-  badgeEn: string;
-  badgeAr: string;
-  titleEn: string;
-  titleAr: string;
-  subtitleEn: string;
-  subtitleAr: string;
-  accentColor: string;
-}
-
 @Component({
   selector: 'app-landing',
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
     <div class="landing-page" [class.rtl]="langService.isRtl()">
-      <!-- Background Ambient Glow & Micro-Grid -->
-      <div class="ambient-glow glow-top-left"></div>
+      <!-- Background Ambient Lighting -->
       <div class="ambient-glow glow-top-right"></div>
-      <div class="ambient-glow glow-center"></div>
+      <div class="ambient-glow glow-top-left"></div>
 
       <!-- Top Navigation Bar -->
       <header class="top-navbar">
@@ -67,8 +55,9 @@ interface HeroSlide {
 
           <!-- Navigation Links (Centered) -->
           <nav class="nav-menu">
+            <a href="#hero" class="nav-link">{{ langService.isRtl() ? 'نظرة عامة' : 'Overview' }}</a>
             <a href="#capabilities" class="nav-link">{{ langService.isRtl() ? 'المميزات' : 'Capabilities' }}</a>
-            <a href="#personas" class="nav-link">{{ langService.isRtl() ? 'الفئات والخدمات' : 'Personas' }}</a>
+            <a href="#personas" class="nav-link">{{ langService.isRtl() ? 'الفئات والخدمات' : 'Roles' }}</a>
             <a href="#how-it-works" class="nav-link">{{ langService.isRtl() ? 'كيف تعمل؟' : 'How It Works' }}</a>
             <a href="#faq" class="nav-link">{{ langService.isRtl() ? 'الأسئلة الشائعة' : 'FAQ' }}</a>
             <a routerLink="/preview" class="nav-link showcase-pill">
@@ -77,7 +66,7 @@ interface HeroSlide {
             </a>
           </nav>
 
-          <!-- Navigation Actions (Left in Arabic RTL / Right in LTR) -->
+          <!-- Navigation Actions -->
           <div class="nav-actions">
             <!-- Theme Toggle Button -->
             <button
@@ -98,7 +87,7 @@ interface HeroSlide {
               (click)="langService.toggleLanguage()"
             >
               <span class="material-symbols-outlined">translate</span>
-              <span>{{ langService.currentLang() === 'en' ? 'العربية' : 'EN' }}</span>
+              <span>{{ langService.currentLang() === 'en' ? 'العربية' : 'English' }}</span>
             </button>
 
             <!-- Auth Buttons -->
@@ -107,7 +96,7 @@ interface HeroSlide {
                 {{ langService.isRtl() ? 'تسجيل الدخول' : 'Sign In' }}
               </a>
               <a routerLink="/auth/register" class="join-pill-btn">
-                <span>{{ langService.isRtl() ? 'انضم مجاناً' : 'Get Started' }}</span>
+                <span>{{ langService.isRtl() ? 'أنشئ حسابك' : 'Get Started' }}</span>
                 <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
               </a>
             </ng-container>
@@ -132,11 +121,14 @@ interface HeroSlide {
 
         <!-- Mobile Drawer -->
         <div class="mobile-drawer" *ngIf="isMobileMenuOpen">
+          <a href="#hero" class="drawer-item" (click)="isMobileMenuOpen = false">
+            {{ langService.isRtl() ? 'نظرة عامة' : 'Overview' }}
+          </a>
           <a href="#capabilities" class="drawer-item" (click)="isMobileMenuOpen = false">
             {{ langService.isRtl() ? 'المميزات الرقمية' : 'Capabilities' }}
           </a>
           <a href="#personas" class="drawer-item" (click)="isMobileMenuOpen = false">
-            {{ langService.isRtl() ? 'الفئات والخدمات' : 'Personas' }}
+            {{ langService.isRtl() ? 'الفئات والخدمات' : 'Healthcare Roles' }}
           </a>
           <a href="#how-it-works" class="drawer-item" (click)="isMobileMenuOpen = false">
             {{ langService.isRtl() ? 'كيف تعمل المنظومة' : 'How It Works' }}
@@ -153,7 +145,7 @@ interface HeroSlide {
                 {{ langService.isRtl() ? 'تسجيل الدخول' : 'Sign In' }}
               </a>
               <a routerLink="/auth/register" class="btn-drawer-solid" (click)="isMobileMenuOpen = false">
-                {{ langService.isRtl() ? 'انضم مجاناً الآن' : 'Get Started Free' }}
+                {{ langService.isRtl() ? 'إنشاء حساب جديد' : 'Get Started Free' }}
               </a>
             </ng-container>
             <ng-container *ngIf="authService.isAuthenticated()">
@@ -166,494 +158,498 @@ interface HeroSlide {
       </header>
 
       <!-- ================================================================= -->
-      <!-- HERO SECTION (Matching User Jsoor Reference Screenshot 1)        -->
+      <!-- HERO SECTION (Clean, Spacious, Uncluttered, No Overlapping Chips) -->
       <!-- ================================================================= -->
       <section class="hero-section" id="hero">
-        <!-- Floating Medical Status Chips Scattered Across Canvas -->
-        <div class="floating-chip chip-1">
-          <span class="chip-flag">🩸</span>
-          <span class="chip-text">{{ langService.isRtl() ? 'A+ متبرع عام' : 'A+ Universal Donor' }}</span>
-        </div>
-        <div class="floating-chip chip-2">
-          <span class="chip-flag">🪪</span>
-          <span class="chip-text">SH-2026-000101</span>
-        </div>
-        <div class="floating-chip chip-3">
-          <span class="chip-flag">❤️</span>
-          <span class="chip-text">{{ langService.isRtl() ? '72 bpm نبض سليم' : '72 bpm Normal Pulse' }}</span>
-        </div>
-        <div class="floating-chip chip-4">
-          <span class="chip-flag">🛡️</span>
-          <span class="chip-text">{{ langService.isRtl() ? 'إذن الطبيب سارٍ' : 'Consent Active' }}</span>
-        </div>
-        <div class="floating-chip chip-5">
-          <span class="chip-flag">🚨</span>
-          <span class="chip-text">{{ langService.isRtl() ? 'QR طوارئ فوري' : 'Instant ER QR' }}</span>
-        </div>
-        <div class="floating-chip chip-6">
-          <span class="chip-flag">📋</span>
-          <span class="chip-text">{{ langService.isRtl() ? 'روشتة معتمدة' : 'Verified Rx' }}</span>
-        </div>
-        <div class="floating-chip chip-7">
-          <span class="chip-flag">🔒</span>
-          <span class="chip-text">{{ langService.isRtl() ? 'تشفير 256-bit' : '256-Bit Encrypted' }}</span>
-        </div>
-
         <div class="hero-container">
-          <!-- Right Column (In RTL Arabic): Main Typography & CTAs -->
+          <!-- Text Column -->
           <div class="hero-text-col">
-            <!-- Small Top Pill Badge -->
-            <div class="hero-top-badge">
-              <span class="badge-dot"></span>
+            <!-- Official National Badge -->
+            <div class="hero-national-badge">
+              <span class="flag-icon">🇪🇬</span>
               <span class="badge-text">
-                {{ langService.isRtl() ? 'المنظومة الوطنية الموحدة للسجلات الصحية' : 'National Digital Health Infrastructure' }}
+                {{ langService.isRtl() ? 'المنظومة الوطنية الموحدة للسجلات الصحية في مصر' : 'National Digital Health Infrastructure • Egypt' }}
               </span>
             </div>
 
-            <!-- Big High-Contrast Headline (3 Lines with Color Accent) -->
+            <!-- Clear, Inspiring Headline (No overlapping text) -->
             <h1 class="hero-headline">
-              <span class="headline-line1">{{ langService.isRtl() ? 'ملفك الطبي' : 'Your Unified' }}</span>
-              <span class="headline-accent">{{ langService.isRtl() ? 'الموحد' : 'Health Passport' }}</span>
-              <span class="headline-line3">{{ langService.isRtl() ? 'ورعايتك الصحية تبدأ هنا' : 'Starts Here' }}</span>
+              <span class="headline-part-1">{{ langService.isRtl() ? 'رعايتك الصحية، في سجل رقمي' : 'One Patient, One Record,' }}</span>
+              <span class="headline-accent">{{ langService.isRtl() ? 'موحد ومدى الحياة' : 'Better Healthcare' }}</span>
             </h1>
 
             <!-- Subtitle Description -->
             <p class="hero-subtext">
               {{ langService.isRtl()
-                ? 'سجل طبي رقمي موحد يربط بين المستشفيات والعيادات والمعامل وطوارئ الإسعاف بكود صحي وطني. بياناتك ملكك وبأعلى معايير الأمان والخصوصية.'
-                : 'A unified digital medical record linking hospitals, clinics, pathology labs, and emergency dispatch under one national code with patient-governed privacy.' }}
+                ? 'منصة صحتي تنهي تشتت السجلات الطبية الورقية، وتربط بين المستشفيات والعيادات والمعامل وطوارئ الإسعاف بكود صحي موحد، تحت تحكمك الكامل وبأعلى معايير الخصوصية.'
+                : 'Sehati terminates fragmented paper records by unifying hospitals, clinics, pathology labs, and emergency dispatch under one lifelong digital health passport with patient-governed privacy.' }}
             </p>
 
-            <!-- Dual CTA Action Buttons -->
+            <!-- Dual CTAs -->
             <div class="hero-cta-wrapper">
               <a routerLink="/auth/register" class="btn-hero-primary">
-                <span>{{ langService.isRtl() ? 'أنشئ جوازك الصحي الآن' : 'Claim Your Passport' }}</span>
+                <span>{{ langService.isRtl() ? 'إصدار جوازك الطبي الموحد' : 'Claim Your Health Passport' }}</span>
                 <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
               </a>
 
-              <a routerLink="/auth/login" class="btn-hero-secondary">
-                <span class="material-symbols-outlined">login</span>
-                <span>{{ langService.isRtl() ? 'تسجيل الدخول' : 'Sign In' }}</span>
+              <a routerLink="/preview" class="btn-hero-secondary">
+                <span class="material-symbols-outlined">play_circle</span>
+                <span>{{ langService.isRtl() ? 'تجربة المنظومة الحية' : 'Explore Live Showcase' }}</span>
               </a>
             </div>
 
-            <!-- Social Proof Bar Under CTAs -->
-            <div class="hero-trust-bar">
-              <span class="trust-caption">
-                {{ langService.isRtl() ? 'انضم إلى منظومة الرعاية المعتمدة:' : 'Join accredited medical network:' }}
-              </span>
-              <div class="trust-mini-chips">
-                <span class="t-pill">🇪🇬 مصر</span>
-                <span class="t-pill">🏥 120+ منشأة</span>
-                <span class="t-pill">🛡️ HIPAA</span>
-                <span class="t-pill">⚡ &lt; 2s طوارئ</span>
+            <!-- Structured Trust Metrics Bar (Neat, Solid, Not Overlapping) -->
+            <div class="hero-trust-metrics">
+              <div class="metric-pill">
+                <span class="metric-icon material-symbols-outlined">badge</span>
+                <div class="metric-info">
+                  <strong>SH-YYYY-NNNNNN</strong>
+                  <span>{{ langService.isRtl() ? 'كود طبي وطني مركزي' : 'Unified Lifetime ID' }}</span>
+                </div>
+              </div>
+              <div class="metric-pill">
+                <span class="metric-icon material-symbols-outlined text-red">emergency</span>
+                <div class="metric-info">
+                  <strong>&lt; 2s</strong>
+                  <span>{{ langService.isRtl() ? 'استجابة طوارئ فورية' : 'Rapid ER QR Retrieval' }}</span>
+                </div>
+              </div>
+              <div class="metric-pill">
+                <span class="metric-icon material-symbols-outlined text-teal">shield</span>
+                <div class="metric-info">
+                  <strong>Zero-Trust</strong>
+                  <span>{{ langService.isRtl() ? 'أذونات خصوصية يتحكم بها المريض' : 'Patient-Governed Consent' }}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Left Column (In RTL Arabic): 3D Floating Interactive Card Simulator -->
-          <div class="hero-card-col">
-            <div class="simulator-stack" (mouseenter)="pauseAutoSlide()" (mouseleave)="resumeAutoSlide()">
-              <!-- Background Angled Ghost Layer for genuine 3D Depth -->
-              <div class="ghost-depth-card"></div>
-
-              <!-- Main Foreground Card -->
-              <div class="floating-main-card">
-                <!-- Top Brand Header inside card -->
-                <div class="card-inner-header">
-                  <div class="c-brand">
-                    <img src="/sehati_logo.png" alt="Sehati" class="c-logo" />
-                    <span class="c-name">{{ langService.isRtl() ? 'صِحّتي' : 'SEHATI' }}</span>
+          <!-- Hero Visual: The Official Egyptian Smart Health Passport Terminal -->
+          <div class="hero-visual-col">
+            <div class="passport-terminal-card">
+              <!-- Passport Card Header -->
+              <div class="terminal-header">
+                <div class="t-brand">
+                  <img src="/sehati_logo.png" alt="Sehati" class="t-logo" />
+                  <div>
+                    <div class="t-title-ar">{{ langService.isRtl() ? 'جمهورية مصر العربية • صِحّتي' : 'Arab Republic of Egypt • SEHATI' }}</div>
+                    <div class="t-title-en">SMART HEALTH PASSPORT</div>
                   </div>
-                  <div class="c-live-indicator">
-                    <span class="live-dot"></span>
-                    <span>{{ langService.isRtl() ? 'نظام حي' : 'LIVE SYSTEM' }}</span>
+                </div>
+                <div class="t-chip-nfc">
+                  <div class="smart-chip-icon"></div>
+                  <span class="material-symbols-outlined nfc-icon">contactless</span>
+                </div>
+              </div>
+
+              <!-- Interactive Passport Screen Tabs -->
+              <div class="terminal-nav-tabs">
+                <button
+                  type="button"
+                  class="t-tab-btn"
+                  [class.active]="activePassportTab === 0"
+                  (click)="activePassportTab = 0"
+                >
+                  <span class="material-symbols-outlined">badge</span>
+                  <span>{{ langService.isRtl() ? 'الجواز الطبي' : 'Passport' }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="t-tab-btn"
+                  [class.active]="activePassportTab === 1"
+                  (click)="activePassportTab = 1"
+                >
+                  <span class="material-symbols-outlined text-red">emergency</span>
+                  <span>{{ langService.isRtl() ? 'طوارئ QR' : 'ER QR' }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="t-tab-btn"
+                  [class.active]="activePassportTab === 2"
+                  (click)="activePassportTab = 2"
+                >
+                  <span class="material-symbols-outlined text-teal">clinical_notes</span>
+                  <span>{{ langService.isRtl() ? 'روشتة رقمية' : 'E-Rx' }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="t-tab-btn"
+                  [class.active]="activePassportTab === 3"
+                  (click)="activePassportTab = 3"
+                >
+                  <span class="material-symbols-outlined text-purple">vital_signs</span>
+                  <span>{{ langService.isRtl() ? 'المؤشرات' : 'Vitals' }}</span>
+                </button>
+              </div>
+
+              <!-- SCREEN 0: UNIFIED HEALTH PASSPORT -->
+              <div class="terminal-screen" *ngIf="activePassportTab === 0">
+                <div class="id-banner-block">
+                  <div class="id-code-wrap">
+                    <span class="id-label">{{ langService.isRtl() ? 'الكود الصحي الموحد' : 'UNIFIED HEALTH CODE' }}</span>
+                    <strong class="id-number font-mono">SH-2026-000101</strong>
+                  </div>
+                  <span class="blood-group-badge">A+</span>
+                </div>
+
+                <div class="patient-profile-grid">
+                  <div class="p-field">
+                    <span class="f-lbl">{{ langService.isRtl() ? 'اسم المواطن' : 'CITIZEN NAME' }}</span>
+                    <strong class="f-val">Ahmed Mahmoud Hassan</strong>
+                  </div>
+                  <div class="p-field">
+                    <span class="f-lbl">{{ langService.isRtl() ? 'الرقم القومي' : 'NATIONAL ID' }}</span>
+                    <strong class="f-val font-mono">29805121601234</strong>
+                  </div>
+                  <div class="p-field">
+                    <span class="f-lbl">{{ langService.isRtl() ? 'تاريخ الميلاد' : 'DATE OF BIRTH' }}</span>
+                    <span class="f-val">12 Jun 1988</span>
+                  </div>
+                  <div class="p-field">
+                    <span class="f-lbl">{{ langService.isRtl() ? 'حالة السجل' : 'STATUS' }}</span>
+                    <span class="f-val verified-tag">
+                      <span class="material-symbols-outlined">verified</span>
+                      <span>ACTIVE & VERIFIED</span>
+                    </span>
                   </div>
                 </div>
 
-                <!-- SLIDE 1: UNIFIED HEALTH PASSPORT -->
-                <div class="slide-content-view" *ngIf="activeSlide === 0">
-                  <div class="slide-highlight-box theme-orange">
-                    <div class="box-top-row">
-                      <span class="box-tag">EG {{ langService.isRtl() ? 'المصرية' : 'EGYPT' }}</span>
-                      <span class="blood-pill">A+</span>
-                    </div>
-                    <div class="box-main-title">SH-2026-000101</div>
-                    <div class="box-sub">{{ langService.isRtl() ? 'الكود الصحي الموحد' : 'Unified National Health ID' }}</div>
+                <div class="terminal-footer-bar">
+                  <div class="encryption-badge">
+                    <span class="material-symbols-outlined">lock</span>
+                    <span>AES-256 ENCRYPTED</span>
                   </div>
+                  <div class="consent-status-badge">
+                    <span class="material-symbols-outlined">verified_user</span>
+                    <span>CONSENT: ACTIVE</span>
+                  </div>
+                </div>
+              </div>
 
-                  <div class="card-meta-list">
-                    <div class="meta-row">
-                      <span class="m-label">{{ langService.isRtl() ? 'اسم المواطن' : 'Patient Name' }}</span>
-                      <strong class="m-value">Ahmed Mahmoud Hassan</strong>
-                    </div>
-                    <div class="meta-row">
-                      <span class="m-label">{{ langService.isRtl() ? 'الرقم القومي' : 'National ID' }}</span>
-                      <span class="m-value font-mono">29805121601234</span>
-                    </div>
-                    <div class="meta-row">
-                      <span class="m-label">{{ langService.isRtl() ? 'حالة السجل' : 'Record Status' }}</span>
-                      <span class="status-verified-pill">
-                        <span class="material-symbols-outlined">verified</span>
-                        <span>{{ langService.isRtl() ? 'سجل موثق ونشط' : 'Active & Verified' }}</span>
-                      </span>
-                    </div>
+              <!-- SCREEN 1: EMERGENCY RESCUE QR -->
+              <div class="terminal-screen" *ngIf="activePassportTab === 1">
+                <div class="er-rescue-banner">
+                  <span class="material-symbols-outlined er-alert-icon">e911_emergency</span>
+                  <div>
+                    <strong>{{ langService.isRtl() ? 'بطاقة الإنقاذ السريع لطواقم الإسعاف' : 'First Responder Triage Profile' }}</strong>
+                    <p>{{ langService.isRtl() ? 'متاح فوراً دون كلمة مرور لإنقاذ الحياة' : 'Immediate anonymous access during trauma & triage' }}</p>
                   </div>
                 </div>
 
-                <!-- SLIDE 2: EMERGENCY RESCUE QR -->
-                <div class="slide-content-view" *ngIf="activeSlide === 1">
-                  <div class="slide-highlight-box theme-red">
-                    <div class="box-top-row">
-                      <span class="box-tag">ER {{ langService.isRtl() ? 'طوارئ' : 'EMERGENCY' }}</span>
-                      <span class="blood-pill red-bg">CRITICAL</span>
-                    </div>
-                    <div class="box-main-title">{{ langService.isRtl() ? 'بطاقة الإنقاذ الفوري' : 'Rapid Rescue QR Profile' }}</div>
-                    <div class="box-sub">{{ langService.isRtl() ? 'متاح للإسعاف بدون كلمة مرور' : 'Instant anonymous first-responder triage' }}</div>
+                <div class="er-content-layout">
+                  <div class="qr-visual-box">
+                    <span class="material-symbols-outlined qr-big-icon">qr_code_2</span>
+                    <span class="qr-scan-label">{{ langService.isRtl() ? 'امسح للإسعاف' : 'SCAN TO RESCUE' }}</span>
                   </div>
-
-                  <div class="qr-preview-box">
-                    <div class="qr-code-graphic">
-                      <span class="material-symbols-outlined qr-icon">qr_code_2</span>
-                      <div class="scan-laser-line"></div>
+                  <div class="er-critical-details">
+                    <div class="er-detail-item">
+                      <span class="lbl">{{ langService.isRtl() ? 'فصيلة الدم:' : 'Blood Group:' }}</span>
+                      <strong class="val blood-red">A+ Positive</strong>
                     </div>
-                    <div class="qr-critical-info">
-                      <div class="crit-item">
-                        <span class="crit-label">{{ langService.isRtl() ? 'فصيلة الدم:' : 'Blood Group:' }}</span>
-                        <strong>A+ Positive</strong>
-                      </div>
-                      <div class="crit-item alert-danger">
-                        <span class="crit-label">{{ langService.isRtl() ? 'حساسية دوائية:' : 'Allergy:' }}</span>
-                        <strong>بنسلين (Penicillin)</strong>
-                      </div>
-                      <div class="crit-item">
-                        <span class="crit-label">{{ langService.isRtl() ? 'طوارئ ICE:' : 'Emergency ICE:' }}</span>
-                        <strong class="font-mono">0101-234-5678</strong>
-                      </div>
+                    <div class="er-detail-item allergy-alert">
+                      <span class="lbl">{{ langService.isRtl() ? 'حساسية دوائية حرجة:' : 'Severe Drug Allergy:' }}</span>
+                      <strong class="val">بنسلين (Penicillin)</strong>
+                    </div>
+                    <div class="er-detail-item">
+                      <span class="lbl">{{ langService.isRtl() ? 'طوارئ الأقارب (ICE):' : 'Emergency Contact:' }}</span>
+                      <strong class="val font-mono">0101-234-5678</strong>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- SLIDE 3: DIGITAL PRESCRIPTION -->
-                <div class="slide-content-view" *ngIf="activeSlide === 2">
-                  <div class="slide-highlight-box theme-teal">
-                    <div class="box-top-row">
-                      <span class="box-tag">RX {{ langService.isRtl() ? 'روشتة معتمدة' : 'CERTIFIED RX' }}</span>
-                      <span class="rx-date">2026-11-04</span>
-                    </div>
-                    <div class="box-main-title">Dr. Sarah Samir Hassan</div>
-                    <div class="box-sub">{{ langService.isRtl() ? 'استشاري الباطنة والجهاز الهضمي' : 'Consultant Internal Medicine' }}</div>
+              <!-- SCREEN 2: DIGITAL PRESCRIPTION -->
+              <div class="terminal-screen" *ngIf="activePassportTab === 2">
+                <div class="rx-header-banner">
+                  <div>
+                    <span class="rx-doc-name">Dr. Sarah Samir Hassan</span>
+                    <span class="rx-doc-spec">{{ langService.isRtl() ? 'استشاري الباطنة والجهاز الهضمي' : 'Consultant Internal Medicine' }}</span>
                   </div>
+                  <span class="rx-pill-tag">VERIFIED E-RX</span>
+                </div>
 
-                  <div class="rx-meds-box">
-                    <div class="med-item">
-                      <div class="med-name">Augmentin 1g (Amoxicillin)</div>
-                      <div class="med-dose">{{ langService.isRtl() ? 'قرص واحد كل 12 ساعة بعد الأكل لمدة 7 أيام' : '1 tablet every 12 hrs after meals (7 days)' }}</div>
-                    </div>
-                    <div class="med-item">
-                      <div class="med-name">Panadol Extra 500mg</div>
-                      <div class="med-dose">{{ langService.isRtl() ? 'قرص عند اللزوم لتخفيف الصداع' : '1 tablet as needed for headache' }}</div>
-                    </div>
-                    <div class="rx-signature-row">
-                      <span class="material-symbols-outlined sig-icon">draw</span>
-                      <span class="sig-text">{{ langService.isRtl() ? 'توقيع إلكتروني مشفر بمعيار SHA-256' : 'SHA-256 Digitally Signed & Sealed' }}</span>
-                    </div>
+                <div class="rx-medicines-list">
+                  <div class="rx-med-card">
+                    <div class="med-name">Augmentin 1g (Amoxicillin)</div>
+                    <div class="med-instructions">{{ langService.isRtl() ? 'قرص واحد كل 12 ساعة بعد الأكل لمدة 7 أيام' : '1 tablet every 12 hrs after meals (7 days)' }}</div>
+                  </div>
+                  <div class="rx-med-card">
+                    <div class="med-name">Panadol Extra 500mg</div>
+                    <div class="med-instructions">{{ langService.isRtl() ? 'قرص عند اللزوم لتخفيف الصداع' : '1 tablet as needed for headache' }}</div>
                   </div>
                 </div>
 
-                <!-- SLIDE 4: LIVE VITALS -->
-                <div class="slide-content-view" *ngIf="activeSlide === 3">
-                  <div class="slide-highlight-box theme-purple">
-                    <div class="box-top-row">
-                      <span class="box-tag">VT {{ langService.isRtl() ? 'مؤشرات حيوية' : 'LIVE VITALS' }}</span>
-                      <span class="vitals-live-pill">NORMAL</span>
-                    </div>
-                    <div class="box-main-title">{{ langService.isRtl() ? 'المؤشرات الحيوية اللحظية' : 'Real-time Vital Telemetry' }}</div>
-                    <div class="box-sub">{{ langService.isRtl() ? 'تحديث تلقائي من أجهزة الفحص' : 'Synchronized clinical telemetry' }}</div>
-                  </div>
+                <div class="rx-signature-seal">
+                  <span class="material-symbols-outlined">draw</span>
+                  <span>{{ langService.isRtl() ? 'موقعة إلكترونياً بمعيار SHA-256 • صيدليات مصر المعتمدة' : 'SHA-256 Digitally Signed & Sealed' }}</span>
+                </div>
+              </div>
 
-                  <div class="vitals-four-grid">
-                    <div class="v-card-mini">
-                      <span class="v-icon material-symbols-outlined text-red">favorite</span>
-                      <div class="v-val">72 bpm</div>
-                      <div class="v-lbl">{{ langService.isRtl() ? 'النبض' : 'Pulse' }}</div>
-                    </div>
-                    <div class="v-card-mini">
-                      <span class="v-icon material-symbols-outlined text-teal">vital_signs</span>
-                      <div class="v-val">120/80</div>
-                      <div class="v-lbl">{{ langService.isRtl() ? 'الضغط' : 'BP (mmHg)' }}</div>
-                    </div>
-                    <div class="v-card-mini">
-                      <span class="v-icon material-symbols-outlined text-amber">bloodtype</span>
-                      <div class="v-val">95 mg/dL</div>
-                      <div class="v-lbl">{{ langService.isRtl() ? 'السكر' : 'Glucose' }}</div>
-                    </div>
-                    <div class="v-card-mini">
-                      <span class="v-icon material-symbols-outlined text-purple">fitness_center</span>
-                      <div class="v-val">22.4</div>
-                      <div class="v-lbl">{{ langService.isRtl() ? 'كتلة الجسم' : 'BMI' }}</div>
-                    </div>
-                  </div>
+              <!-- SCREEN 3: LIVE VITALS -->
+              <div class="terminal-screen" *ngIf="activePassportTab === 3">
+                <div class="vitals-header-banner">
+                  <span class="vitals-pulse-dot"></span>
+                  <strong>{{ langService.isRtl() ? 'المؤشرات الحيوية المتزامنة لحظياً' : 'Live Synchronized Clinical Telemetry' }}</strong>
                 </div>
 
-                <!-- Bottom Interactive Pagination Dots (● ○ ○ ○) -->
-                <div class="card-pagination-dots">
-                  <button
-                    *ngFor="let s of heroSlides; let idx = index"
-                    type="button"
-                    class="dot-btn"
-                    [class.active]="activeSlide === idx"
-                    (click)="setActiveSlide(idx)"
-                    [title]="langService.isRtl() ? s.titleAr : s.titleEn"
-                  ></button>
+                <div class="vitals-matrix-grid">
+                  <div class="vital-tile">
+                    <span class="material-symbols-outlined v-icon red">favorite</span>
+                    <span class="v-value">72 bpm</span>
+                    <span class="v-label">{{ langService.isRtl() ? 'نبض سليم' : 'Heart Rate' }}</span>
+                  </div>
+                  <div class="vital-tile">
+                    <span class="material-symbols-outlined v-icon teal">vital_signs</span>
+                    <span class="v-value">120/80</span>
+                    <span class="v-label">{{ langService.isRtl() ? 'ضغط الدم (mmHg)' : 'Blood Pressure' }}</span>
+                  </div>
+                  <div class="vital-tile">
+                    <span class="material-symbols-outlined v-icon amber">bloodtype</span>
+                    <span class="v-value">95 mg/dL</span>
+                    <span class="v-label">{{ langService.isRtl() ? 'سكر عشوائي' : 'Glucose' }}</span>
+                  </div>
+                  <div class="vital-tile">
+                    <span class="material-symbols-outlined v-icon purple">fitness_center</span>
+                    <span class="v-value">22.4</span>
+                    <span class="v-label">{{ langService.isRtl() ? 'كتلة الجسم (BMI)' : 'BMI (Normal)' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Mouse Scroll Down Indicator at Bottom Center -->
-        <a href="#personas" class="scroll-down-indicator">
-          <div class="mouse-icon">
-            <span class="wheel-dot"></span>
-          </div>
-          <span class="scroll-text">{{ langService.isRtl() ? 'اكتشف المزيد' : 'Scroll to explore' }}</span>
-        </a>
       </section>
 
       <!-- ================================================================= -->
-      <!-- PERSONAS / ROLE SHOWCASE (Matching User Jsoor Reference Image 2)   -->
+      <!-- HEALTHCARE ROLES & WORKSPACES EXPLORER                            -->
       <!-- ================================================================= -->
-      <section class="personas-section" id="personas">
+      <section class="roles-section" id="personas">
         <div class="section-container">
-          <!-- Section Centered Header -->
           <div class="section-title-block">
-            <span class="section-tag-pill">{{ langService.isRtl() ? 'الفئات والخدمات' : 'Personas & Workspaces' }}</span>
+            <span class="section-tag-pill">{{ langService.isRtl() ? 'واجهات متخصصة' : 'Role-Based Workspaces' }}</span>
             <h2 class="section-headline">
-              {{ langService.isRtl() ? 'منظومة واحدة تجمع كل أطراف الرعاية الصحية' : 'One Unified Platform for All Healthcare Actors' }}
+              {{ langService.isRtl() ? 'منظومة واحدة متكاملة لكل أطراف الرعاية الصحية' : 'One Integrated Platform for All Healthcare Actors' }}
             </h2>
             <p class="section-subheadline">
-              {{ langService.isRtl() ? 'واجهات متخصصة ومصممة بدقة لتلبية احتياجات الأطباء، المرضى، المستشفيات، وطواقم الطوارئ.' : 'Tailor-made portals built for clinical efficiency, patient empowerment, and instant emergency response.' }}
+              {{ langService.isRtl()
+                ? 'واجهات مصممة باحترافية لتناسب كل طرف في المنظومة: المواطن، الأطباء، المستشفيات، طواقم الطوارئ، والصيدليات.'
+                : 'Tailored workspaces engineered for clinical speed, patient empowerment, and instant emergency triage.' }}
             </p>
           </div>
 
-          <!-- Showcase Interactive Layout: Preview Card on Left & Colored Pill Badges on Right -->
-          <div class="persona-interactive-layout">
-            <!-- Dynamic Preview Card (Left in Arabic RTL / Right in LTR) -->
-            <div class="persona-display-card">
-              <div class="display-card-inner">
-                <!-- Large Role Code Watermark (EG / MD / ER etc.) -->
-                <div class="card-code-watermark" [style.color]="selectedPersona.color">
-                  {{ selectedPersona.code }}
+          <!-- Role Selector Navigation Tabs -->
+          <div class="roles-nav-bar">
+            <button
+              *ngFor="let role of rolesList"
+              type="button"
+              class="role-pill-btn"
+              [class.active]="selectedRole.id === role.id"
+              [style.--role-color]="role.color"
+              (click)="selectedRole = role"
+            >
+              <span class="material-symbols-outlined">{{ role.icon }}</span>
+              <span>{{ langService.isRtl() ? role.nameAr : role.nameEn }}</span>
+            </button>
+          </div>
+
+          <!-- Active Role Showcase Console -->
+          <div class="role-console-card">
+            <!-- Left: Clinical Details -->
+            <div class="console-info-col">
+              <span class="console-role-tag" [style.background]="selectedRole.color + '18'" [style.color]="selectedRole.color">
+                <span class="material-symbols-outlined">{{ selectedRole.icon }}</span>
+                <span>{{ langService.isRtl() ? selectedRole.nameAr : selectedRole.nameEn }}</span>
+              </span>
+
+              <h3 class="console-title">{{ langService.isRtl() ? selectedRole.headlineAr : selectedRole.headlineEn }}</h3>
+              <p class="console-desc">{{ langService.isRtl() ? selectedRole.descAr : selectedRole.descEn }}</p>
+
+              <div class="console-bullets-list">
+                <div class="bullet-row" *ngFor="let f of (langService.isRtl() ? selectedRole.featuresAr : selectedRole.featuresEn)">
+                  <span class="material-symbols-outlined check-mark" [style.color]="selectedRole.color">check_circle</span>
+                  <span>{{ f }}</span>
                 </div>
+              </div>
 
-                <!-- Big Main Title in Role Accent Color -->
-                <h3 class="display-main-title" [style.color]="selectedPersona.color">
-                  {{ langService.isRtl() ? selectedPersona.headlineAr : selectedPersona.headlineEn }}
-                </h3>
-
-                <!-- Subtitle Badge -->
-                <div class="display-role-sub">
-                  <span class="material-symbols-outlined">{{ selectedPersona.icon }}</span>
-                  <span>{{ langService.isRtl() ? selectedPersona.nameAr : selectedPersona.nameEn }}</span>
-                </div>
-
-                <!-- Description -->
-                <p class="display-description">
-                  {{ langService.isRtl() ? selectedPersona.descAr : selectedPersona.descEn }}
-                </p>
-
-                <!-- Key Feature Bullets -->
-                <div class="display-features-grid">
-                  <div class="feat-item" *ngFor="let f of (langService.isRtl() ? selectedPersona.featuresAr : selectedPersona.featuresEn)">
-                    <span class="material-symbols-outlined check-bullet" [style.color]="selectedPersona.color">check_circle</span>
-                    <span>{{ f }}</span>
-                  </div>
-                </div>
-
-                <!-- Action Button to Launch Workspace -->
-                <div class="display-card-actions">
-                  <a [routerLink]="selectedPersona.route" class="btn-role-action" [style.background]="selectedPersona.color">
-                    <span class="material-symbols-outlined">launch</span>
-                    <span>{{ langService.isRtl() ? 'الدخول إلى بوابة ' + selectedPersona.nameAr : 'Open ' + selectedPersona.nameEn + ' Portal' }}</span>
-                  </a>
-                </div>
+              <div class="console-action-row">
+                <a [routerLink]="selectedRole.route" class="btn-console-launch" [style.background]="selectedRole.color">
+                  <span class="material-symbols-outlined">launch</span>
+                  <span>{{ langService.isRtl() ? 'الدخول إلى بوابة ' + selectedRole.nameAr : 'Launch ' + selectedRole.nameEn + ' Workspace' }}</span>
+                </a>
               </div>
             </div>
 
-            <!-- Grid of Colored Badge Pills (Matching Reference Image 2) -->
-            <div class="persona-pills-grid">
-              <button
-                *ngFor="let p of personaList"
-                type="button"
-                class="persona-pill-item"
-                [class.active]="selectedPersona.id === p.id"
-                [style.--pill-color]="p.color"
-                (click)="selectedPersona = p"
-              >
-                <span class="pill-code">{{ p.code }}</span>
-                <span class="pill-name">{{ langService.isRtl() ? p.nameAr : p.nameEn }}</span>
-              </button>
+            <!-- Right: Role Workspace Mockup -->
+            <div class="console-preview-col">
+              <div class="mockup-frame">
+                <div class="mockup-top-bar">
+                  <span class="dot red"></span>
+                  <span class="dot yellow"></span>
+                  <span class="dot green"></span>
+                  <span class="mockup-url">sehati.gov.eg{{ selectedRole.route }}</span>
+                </div>
+                <div class="mockup-body">
+                  <div class="mockup-hero-icon" [style.background]="selectedRole.color + '18'" [style.color]="selectedRole.color">
+                    <span class="material-symbols-outlined">{{ selectedRole.icon }}</span>
+                  </div>
+                  <h4>{{ langService.isRtl() ? selectedRole.headlineAr : selectedRole.headlineEn }}</h4>
+                  <p>{{ langService.isRtl() ? 'واجهة مهيأة بأحدث معايير الأمان وسرعة الإنجاز السريري' : 'Engineered for high-throughput clinical performance' }}</p>
+                  <div class="mockup-tags">
+                    <span>ARABIC RTL</span>
+                    <span>LIGHT / DARK</span>
+                    <span>AES-256</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- ================================================================= -->
-      <!-- HOW IT WORKS SECTION (Numbered Workflow 01, 02, 03)               -->
+      <!-- HOW IT WORKS STEP-BY-STEP WORKFLOW                                -->
       <!-- ================================================================= -->
       <section class="how-it-works-section" id="how-it-works">
         <div class="section-container">
           <div class="section-title-block">
-            <span class="section-tag-pill">{{ langService.isRtl() ? 'خطوات الاستخدام' : 'How It Works' }}</span>
+            <span class="section-tag-pill">{{ langService.isRtl() ? 'خطوات الاستخدام' : 'Simple 3-Step Journey' }}</span>
             <h2 class="section-headline">
               {{ langService.isRtl() ? 'كيف تعمل منظومة صحتي في 3 خطوات بسيطة؟' : 'How Sehati Empowers Healthcare In 3 Simple Steps' }}
             </h2>
             <p class="section-subheadline">
-              {{ langService.isRtl() ? 'تجربة رقمية سلسة تبدأ من تسجيل بياناتك وحتى استلام العلاج والمتابعة المستمرة.' : 'A frictionless journey from single-sign-on verification to lifelong medical records and medication management.' }}
+              {{ langService.isRtl()
+                ? 'تجربة رقمية ميسرة للمواطن تبدأ من التسجيل وحتى المتابعة الطبية الشاملة.'
+                : 'A seamless journey from registration to lifelong medical records and clinical follow-ups.' }}
             </p>
           </div>
 
-          <div class="steps-container-grid">
-            <!-- Step 1 -->
-            <div class="step-modern-card">
-              <div class="step-top-number">01</div>
-              <div class="step-card-body">
-                <div class="step-icon-frame teal">
-                  <span class="material-symbols-outlined">badge</span>
-                </div>
-                <h3 class="step-card-title">{{ langService.isRtl() ? 'أنشئ حسابك واستلم كودك الموحد' : 'Claim Your Unified ID' }}</h3>
-                <p class="step-card-text">
-                  {{ langService.isRtl()
-                    ? 'سجّل ببياناتك القومية في أقل من دقيقة لتوليد كود صحتي الموحد، وربط سجلاتك الطبية وبطاقة الطوارئ الذكية.'
-                    : 'Sign up with your national ID in under 60 seconds to generate your unified health passport and emergency QR.' }}
-                </p>
+          <div class="steps-grid">
+            <div class="step-card">
+              <div class="step-watermark">01</div>
+              <div class="step-icon-box teal">
+                <span class="material-symbols-outlined">badge</span>
               </div>
+              <h3 class="step-title">{{ langService.isRtl() ? 'أنشئ حسابك واستلم كودك الموحد' : 'Claim Your Lifetime Unified ID' }}</h3>
+              <p class="step-desc">
+                {{ langService.isRtl()
+                  ? 'سجّل ببياناتك القومية في أقل من دقيقة لتوليد كود صحتي الموحد، وتفعيل بطاقة الطوارئ الذكية.'
+                  : 'Sign up in under 60 seconds with your national ID to generate your lifetime health passport and emergency rescue QR.' }}
+              </p>
             </div>
 
-            <!-- Step 2 -->
-            <div class="step-modern-card">
-              <div class="step-top-number">02</div>
-              <div class="step-card-body">
-                <div class="step-icon-frame orange">
-                  <span class="material-symbols-outlined">shield_person</span>
-                </div>
-                <h3 class="step-card-title">{{ langService.isRtl() ? 'احجز واكشف وامنح الإذن لطبيبك' : 'Book & Grant Doctor Permission' }}</h3>
-                <p class="step-card-text">
-                  {{ langService.isRtl()
-                    ? 'احجز موعدك بالعيادة وامنح طبيبك تصريح الاطلاع على تاريخك المرضي وفحوصاتك السابقة لتقديم أدق تشخيص علاجي.'
-                    : 'Schedule clinic visits and grant your attending physician time-limited access to your comprehensive clinical history.' }}
-                </p>
+            <div class="step-card">
+              <div class="step-watermark">02</div>
+              <div class="step-icon-box orange">
+                <span class="material-symbols-outlined">shield_person</span>
               </div>
+              <h3 class="step-title">{{ langService.isRtl() ? 'احجز واكشف وامنح الإذن لطبيبك' : 'Book & Grant Doctor Consent' }}</h3>
+              <p class="step-desc">
+                {{ langService.isRtl()
+                  ? 'احجز موعدك بالعيادة وامنح طبيبك تصريح الاطلاع على تاريخك المرضي وفحوصاتك السابقة لتقديم أدق تشخيص.'
+                  : 'Schedule clinic visits and grant your attending physician time-limited access to your comprehensive clinical history.' }}
+              </p>
             </div>
 
-            <!-- Step 3 -->
-            <div class="step-modern-card">
-              <div class="step-top-number">03</div>
-              <div class="step-card-body">
-                <div class="step-icon-frame purple">
-                  <span class="material-symbols-outlined">clinical_notes</span>
-                </div>
-                <h3 class="step-card-title">{{ langService.isRtl() ? 'سجل طبي متكامل وروشتاتك في جيبك' : 'Lifelong Health Chart in Your Pocket' }}</h3>
-                <p class="step-card-text">
-                  {{ langService.isRtl()
-                    ? 'استلم الروشتات الرقمية ونتائج التحاليل فوراً على هاتفك الذكي دون قلق من فقدان التقارير الورقية أبداً.'
-                    : 'Access certified digital prescriptions, lab test reports, and imaging scans anytime on any device with zero paperwork.' }}
-                </p>
+            <div class="step-card">
+              <div class="step-watermark">03</div>
+              <div class="step-icon-box purple">
+                <span class="material-symbols-outlined">clinical_notes</span>
               </div>
+              <h3 class="step-title">{{ langService.isRtl() ? 'سجل طبي رقمي وروشتاتك في جيبك' : 'Lifelong Health Chart In Your Pocket' }}</h3>
+              <p class="step-desc">
+                {{ langService.isRtl()
+                  ? 'استلم الروشتات الرقمية ونتائج التحاليل فوراً على هاتفك دون قلق من فقدان التقارير الورقية أبداً.'
+                  : 'Access certified digital prescriptions, lab test reports, and imaging scans anytime on any device with zero paperwork.' }}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       <!-- ================================================================= -->
-      <!-- CAPABILITIES SECTION (Grid of Core Medical Primitives)             -->
+      <!-- PLATFORM CAPABILITIES GRID                                        -->
       <!-- ================================================================= -->
       <section class="capabilities-section" id="capabilities">
         <div class="section-container">
           <div class="section-title-block">
-            <span class="section-tag-pill">{{ langService.isRtl() ? 'المميزات السريرية' : 'Clinical Primitives' }}</span>
+            <span class="section-tag-pill">{{ langService.isRtl() ? 'المميزات السريرية' : 'Core Capabilities' }}</span>
             <h2 class="section-headline">
               {{ langService.isRtl() ? 'بنية تحتية طبية رقمية متطورة' : 'Next-Generation Healthcare Architecture' }}
             </h2>
             <p class="section-subheadline">
-              {{ langService.isRtl() ? 'حلول تقنية تنهي عهد الدفاتر الورقية وتضمن الأمان التام لمعلومات المرضى.' : 'Engineered to eliminate paper fragmentation while enforcing strict patient privacy and high-speed clinical workflows.' }}
+              {{ langService.isRtl()
+                ? 'حلول برمجية متقدمة تنهي عهد الدفاتر الورقية وتضمن الأمان التام لمعلومات المرضى.'
+                : 'Advanced healthcare primitives ensuring record integrity, zero-trust consent, and instant emergency response.' }}
             </p>
           </div>
 
-          <div class="cap-grid-cards">
-            <!-- Cap 1 -->
-            <div class="cap-feature-box">
-              <div class="cap-box-icon teal">
+          <div class="capabilities-grid">
+            <div class="cap-card">
+              <div class="cap-icon-box teal">
                 <span class="material-symbols-outlined">badge</span>
               </div>
-              <h3 class="cap-box-title">{{ langService.isRtl() ? 'الكود الصحي الموحد (Unified ID)' : 'Unified Health Passport' }}</h3>
-              <p class="cap-box-desc">
+              <h3 class="cap-title">{{ langService.isRtl() ? 'الكود الصحي الموحد (Unified ID)' : 'Unified Health Passport' }}</h3>
+              <p class="cap-desc">
                 {{ langService.isRtl()
                   ? 'رقم طبي مركزي موحد بصيغة (SH-YYYY-NNNNNN) يربط كافة كشوفاتك، روشتاتك، وتحاليلك عبر جميع المنشآت الطبية مدى الحياة.'
-                  : 'A unique lifetime health code (SH-YYYY-NNNNNN) synchronizing visits, prescriptions, labs, and scans across all providers nationwide.' }}
+                  : 'A lifetime health code (SH-YYYY-NNNNNN) synchronizing visits, prescriptions, labs, and scans across all providers nationwide.' }}
               </p>
             </div>
 
-            <!-- Cap 2 -->
-            <div class="cap-feature-box">
-              <div class="cap-box-icon ocean">
+            <div class="cap-card">
+              <div class="cap-icon-box ocean">
                 <span class="material-symbols-outlined">shield_lock</span>
               </div>
-              <h3 class="cap-box-title">{{ langService.isRtl() ? 'محرك الأذونات والخصوصية' : 'Dynamic Zero-Trust Consent' }}</h3>
-              <p class="cap-box-desc">
+              <h3 class="cap-title">{{ langService.isRtl() ? 'محرك الأذونات والخصوصية' : 'Zero-Trust Consent Engine' }}</h3>
+              <p class="cap-desc">
                 {{ langService.isRtl()
                   ? 'المريض هو المالك الوحيد لبياناته؛ يمنح الأطباء حق الاطلاع أو الإضافة لفترات محددة مع إمكانية الإلغاء الفوري بضغطة واحدة.'
                   : 'Zero-trust governance where patients grant time-limited permissions to doctors with instant one-click revocation.' }}
               </p>
             </div>
 
-            <!-- Cap 3 -->
-            <div class="cap-feature-box">
-              <div class="cap-box-icon red">
+            <div class="cap-card">
+              <div class="cap-icon-box red">
                 <span class="material-symbols-outlined">emergency</span>
               </div>
-              <h3 class="cap-box-title">{{ langService.isRtl() ? 'بطاقة الإنقاذ السريع (QR)' : 'Rapid ER Rescue Profile' }}</h3>
-              <p class="cap-box-desc">
+              <h3 class="cap-title">{{ langService.isRtl() ? 'بطاقة الإنقاذ السريع (QR)' : 'Rapid ER Rescue Profile' }}</h3>
+              <p class="cap-desc">
                 {{ langService.isRtl()
                   ? 'رمز استجابة سريع يتيح لأطقم الإسعاف معرفة فصيلة الدم والحساسيات الحرجة وجهات الاتصال فوراً في الحوادث دون كلمة مرور.'
-                  : 'Instant anonymous triage profile giving paramedics immediate access to blood type, severe allergies, and emergency contacts in under 2 seconds.' }}
+                  : 'Instant anonymous triage profile giving paramedics immediate access to blood type, severe allergies, and emergency contacts in under 2s.' }}
               </p>
             </div>
 
-            <!-- Cap 4 -->
-            <div class="cap-feature-box">
-              <div class="cap-box-icon mint">
+            <div class="cap-card">
+              <div class="cap-icon-box mint">
                 <span class="material-symbols-outlined">clinical_notes</span>
               </div>
-              <h3 class="cap-box-title">{{ langService.isRtl() ? 'عيادة الطبيب والروشتة الرقمية' : 'Doctor Encounter & E-Rx Builder' }}</h3>
-              <p class="cap-box-desc">
+              <h3 class="cap-title">{{ langService.isRtl() ? 'عيادة الطبيب والروشتة الرقمية' : 'Doctor Encounter & E-Rx Builder' }}</h3>
+              <p class="cap-desc">
                 {{ langService.isRtl()
                   ? 'توثيق سريري فوري مع قياس المؤشرات الحيوية وحساب كتلة الجسم (BMI)، وتصنيف الأمراض (ICD-10)، وإصدار روشتات إلكترونية معتمدة.'
-                  : 'Fast clinical notes, automatic BMI calculation, ICD-10 diagnostic coding, and tamper-proof digital prescriptions with electronic signature.' }}
+                  : 'Fast clinical notes, automatic BMI calculation, ICD-10 diagnostic coding, and tamper-proof digital prescriptions with digital signature.' }}
               </p>
             </div>
 
-            <!-- Cap 5 -->
-            <div class="cap-feature-box">
-              <div class="cap-box-icon amber">
+            <div class="cap-card">
+              <div class="cap-icon-box amber">
                 <span class="material-symbols-outlined">reduce_capacity</span>
               </div>
-              <h3 class="cap-box-title">{{ langService.isRtl() ? 'تنظيم طوابير الحجز والكشف' : 'Live Clinic Queue Orchestration' }}</h3>
-              <p class="cap-box-desc">
+              <h3 class="cap-title">{{ langService.isRtl() ? 'تنظيم طوابير الحجز والكشف' : 'Live Clinic Queue Orchestration' }}</h3>
+              <p class="cap-desc">
                 {{ langService.isRtl()
                   ? 'جدولة مواعيد دقيقة تمنع التضارب وحجز المواعيد المزدوجة، مع إدارة طابور الانتظار وتوزيع الأرقام اللحظية بغرف الكشف.'
                   : 'Intelligent scheduling with collision prevention and live token queues coordinating waiting lounges with examination rooms.' }}
               </p>
             </div>
 
-            <!-- Cap 6 -->
-            <div class="cap-feature-box">
-              <div class="cap-box-icon purple">
+            <div class="cap-card">
+              <div class="cap-icon-box purple">
                 <span class="material-symbols-outlined">policy</span>
               </div>
-              <h3 class="cap-box-title">{{ langService.isRtl() ? 'سجل العمليات والرقابة الأمنية' : 'Forensic Immutable Audit Trail' }}</h3>
-              <p class="cap-box-desc">
+              <h3 class="cap-title">{{ langService.isRtl() ? 'سجل العمليات والرقابة الأمنية' : 'Forensic Immutable Audit Trail' }}</h3>
+              <p class="cap-desc">
                 {{ langService.isRtl()
                   ? 'تسجيل أمني غير قابل للتعديل (WORM) لكل محاولة قراءة أو كتابة أو تعديل للسجلات الطبية وفقاً لمعايير HIPAA و GDPR الصارمة.'
                   : 'Cryptographically accountable audit log recording every single view, modification, and access attempt with timestamp and client IP.' }}
@@ -669,12 +665,14 @@ interface HeroSlide {
       <section class="faq-section" id="faq">
         <div class="section-container">
           <div class="section-title-block">
-            <span class="section-tag-pill">{{ langService.isRtl() ? 'الأسئلة الأكثر تكراراً' : 'FAQ' }}</span>
+            <span class="section-tag-pill">{{ langService.isRtl() ? 'الأسئلة الشائعة' : 'FAQ' }}</span>
             <h2 class="section-headline">
               {{ langService.isRtl() ? 'كل ما تحتاج لمعرفته عن منصة صحتي' : 'Frequently Asked Questions' }}
             </h2>
             <p class="section-subheadline">
-              {{ langService.isRtl() ? 'إجابات واضحة ومباشرة حول الأمان، طريقة التسجيل، والخدمات المتاحة.' : 'Clear answers about security, access control, and platform usage.' }}
+              {{ langService.isRtl()
+                ? 'إجابات مباشرة وموثوقة حول الأمان، خصوصية البيانات، واستخدام بطاقة الطوارئ.'
+                : 'Clear answers about security, patient consent, and platform usage.' }}
             </p>
           </div>
 
@@ -706,13 +704,13 @@ interface HeroSlide {
         <div class="section-container">
           <div class="cta-modern-box">
             <div class="cta-inner-content">
-              <span class="cta-mini-tag">{{ langService.isRtl() ? 'رعاية صحية ذكية' : 'SMART HEALTHCARE' }}</span>
+              <span class="cta-mini-tag">{{ langService.isRtl() ? 'رعاية صحية موحدة' : 'SMART HEALTHCARE' }}</span>
               <h2 class="cta-main-title">
                 {{ langService.isRtl() ? 'هل أنت مستعد لتجربة مستقبل الرعاية الصحية في مصر؟' : 'Ready to Experience the Future of Unified Healthcare?' }}
               </h2>
               <p class="cta-subtext">
                 {{ langService.isRtl()
-                  ? 'انضم الآن إلى أكثر من 100,000 مواطن واستمتع بسجل طبي موحد مدى الحياة تحت أمان كامل.'
+                  ? 'انضم الآن إلى منظومة صحتي واستمتع بسجل طبي موحد مدى الحياة تحت أمان كامل وبدون أوراق.'
                   : 'Join thousands of citizens and accredited healthcare providers under one unified medical cloud.' }}
               </p>
               <div class="cta-buttons-row">
@@ -730,7 +728,7 @@ interface HeroSlide {
       </section>
 
       <!-- ================================================================= -->
-      <!-- FOOTER                                                            -->
+      <!-- FOOTER (NO GITHUB LINK, CLEAN ENTERPRISE STRUCTURE)               -->
       <!-- ================================================================= -->
       <footer class="landing-footer">
         <div class="footer-container">
@@ -768,13 +766,23 @@ interface HeroSlide {
 
             <!-- Quick Links -->
             <div class="footer-col-links">
-              <h4>{{ langService.isRtl() ? 'روابط سريعة' : 'Quick Links' }}</h4>
+              <h4>{{ langService.isRtl() ? 'خدمات سريعة' : 'Quick Access' }}</h4>
               <ul>
                 <li><a routerLink="/auth/login">{{ langService.isRtl() ? 'تسجيل الدخول' : 'Sign In' }}</a></li>
                 <li><a routerLink="/auth/register">{{ langService.isRtl() ? 'إنشاء حساب جديد' : 'Register Account' }}</a></li>
-                <li><a routerLink="/preview">{{ langService.isRtl() ? 'استعراض الهيكلية' : 'Architecture Showcase' }}</a></li>
-                <li><a routerLink="/emergency">{{ langService.isRtl() ? 'طوارئ QR' : 'Emergency Rescue QR' }}</a></li>
-                <li><a href="https://github.com/Fetoooo/Sehati" target="_blank" rel="noopener">GitHub Repository</a></li>
+                <li><a routerLink="/preview">{{ langService.isRtl() ? 'استعراض الهيكلية والأنظمة' : 'Architecture Showcase' }}</a></li>
+                <li><a routerLink="/emergency">{{ langService.isRtl() ? 'طوارئ QR السريعة' : 'Emergency Rescue QR' }}</a></li>
+              </ul>
+            </div>
+
+            <!-- Legal & Support (Replaces GitHub) -->
+            <div class="footer-col-links">
+              <h4>{{ langService.isRtl() ? 'الدعم والخصوصية' : 'Legal & Support' }}</h4>
+              <ul>
+                <li><a href="#faq">{{ langService.isRtl() ? 'الأسئلة الشائعة' : 'FAQ' }}</a></li>
+                <li><a href="#hero">{{ langService.isRtl() ? 'سياسة الخصوصية وأمان البيانات' : 'Privacy Policy' }}</a></li>
+                <li><a href="#hero">{{ langService.isRtl() ? 'الشروط والأحكام' : 'Terms of Service' }}</a></li>
+                <li><a href="#hero">{{ langService.isRtl() ? 'مركز المساعدة والدعم الفني' : 'Help & Support' }}</a></li>
               </ul>
             </div>
           </div>
@@ -786,13 +794,13 @@ interface HeroSlide {
               <span>•</span>
               <span>AES-256 Encrypted</span>
               <span>•</span>
-              <span>GDPR Certified</span>
+              <span>Zero-Trust Architecture</span>
             </div>
           </div>
         </div>
       </footer>
 
-      <!-- Floating Rescue Button at Bottom Corner (Like Reference Image 1) -->
+      <!-- Floating Emergency Rescue Button -->
       <a routerLink="/emergency" class="floating-rescue-fab" [title]="langService.isRtl() ? 'طوارئ الإسعاف والإنقاذ السريع' : 'Emergency Quick Rescue'">
         <span class="material-symbols-outlined fab-icon">emergency</span>
       </a>
@@ -800,19 +808,14 @@ interface HeroSlide {
   `,
   styles: [`
     /* ==========================================================================
-       SEHATI REIMAGINED LANDING PAGE STYLES (Light Default, Crisp & Organized)
-       Inspired by clean modern layout, micro-grid canvas & playful floating chips
+       SEHATI WORLD-CLASS HEALTHCARE LANDING PAGE
+       Clean, spacious, high-contrast, zero overlapping chips
        ========================================================================== */
 
     .landing-page {
       position: relative;
       min-height: 100vh;
-      background-color: var(--color-bg-app, #FAFCFB);
-      /* Subtle, delicate micro-grid pattern matching user screenshot 1 */
-      background-image: 
-        linear-gradient(to right, rgba(8, 131, 149, 0.045) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(8, 131, 149, 0.045) 1px, transparent 1px);
-      background-size: 36px 36px;
+      background-color: var(--color-bg-app, #F8FAFC);
       color: var(--color-text-main, #0F172A);
       font-family: var(--font-latin, 'Plus Jakarta Sans', sans-serif);
       overflow-x: hidden;
@@ -828,39 +831,30 @@ interface HeroSlide {
       }
     }
 
-    /* Ambient Pastel Lighting Glows */
+    /* Ambient Glow */
     .ambient-glow {
       position: absolute;
       border-radius: 50%;
       pointer-events: none;
-      filter: blur(100px);
+      filter: blur(120px);
       z-index: 0;
-      opacity: 0.65;
-    }
-
-    .glow-top-left {
-      top: -100px;
-      left: 5%;
-      width: 480px;
-      height: 480px;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 70%);
+      opacity: 0.55;
     }
 
     .glow-top-right {
-      top: -60px;
+      top: -80px;
       right: 5%;
-      width: 520px;
-      height: 520px;
-      background: radial-gradient(circle, rgba(8, 131, 149, 0.14) 0%, rgba(5, 191, 219, 0) 70%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(8, 131, 149, 0.15) 0%, transparent 70%);
     }
 
-    .glow-center {
-      top: 45%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(8, 131, 149, 0.06) 0%, transparent 70%);
+    .glow-top-left {
+      top: -60px;
+      left: 5%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
     }
 
     /* TOP NAVBAR */
@@ -869,23 +863,23 @@ interface HeroSlide {
       top: 0;
       width: 100%;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(8, 131, 149, 0.08);
+      border-bottom: 1px solid var(--color-border-subtle, #E2E8F0);
       transition: all 0.3s ease;
     }
 
     :host-context([data-theme="dark"]) .top-navbar,
     :host-context(.dark-theme) .top-navbar {
-      background: rgba(8, 38, 53, 0.88);
-      border-bottom: 1px solid rgba(5, 191, 219, 0.12);
+      background: rgba(8, 38, 53, 0.92);
+      border-bottom-color: rgba(5, 191, 219, 0.14);
     }
 
     .nav-container {
       max-width: 1300px;
       margin: 0 auto;
-      padding: 0.85rem 1.5rem;
+      padding: 0.9rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -901,10 +895,10 @@ interface HeroSlide {
     }
 
     .brand-logo-frame {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
-      background: linear-gradient(135deg, rgba(8, 131, 149, 0.1), rgba(5, 191, 219, 0.18));
+      background: linear-gradient(135deg, rgba(8, 131, 149, 0.12), rgba(5, 191, 219, 0.22));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -913,8 +907,8 @@ interface HeroSlide {
     }
 
     .brand-img {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       object-fit: contain;
     }
 
@@ -925,10 +919,9 @@ interface HeroSlide {
     }
 
     .brand-ar {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: var(--color-primary-dark, #0A4D68);
-      letter-spacing: -0.5px;
     }
 
     :host-context([data-theme="dark"]) .brand-ar,
@@ -937,7 +930,7 @@ interface HeroSlide {
     }
 
     .brand-en {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 2px;
       color: var(--color-text-muted, #64748B);
@@ -955,8 +948,6 @@ interface HeroSlide {
       font-weight: 600;
       color: var(--color-text-muted, #64748B);
       transition: color 0.2s ease;
-      position: relative;
-      padding: 0.25rem 0;
     }
 
     .nav-link:hover {
@@ -966,16 +957,12 @@ interface HeroSlide {
     .nav-link.showcase-pill {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       background: rgba(8, 131, 149, 0.08);
       color: var(--color-primary-base, #088395);
       padding: 0.35rem 0.85rem;
       border-radius: 9999px;
       font-size: 0.85rem;
-    }
-
-    .nav-link.showcase-pill:hover {
-      background: rgba(8, 131, 149, 0.14);
     }
 
     .nav-actions {
@@ -1001,17 +988,16 @@ interface HeroSlide {
     .icon-action-btn:hover {
       border-color: var(--color-primary-base, #088395);
       color: var(--color-primary-base, #088395);
-      transform: translateY(-1px);
     }
 
     .lang-action-btn {
       height: 40px;
-      padding: 0 0.85rem;
+      padding: 0 0.9rem;
       border-radius: 9999px;
       border: 1px solid var(--color-border-subtle, #E2E8F0);
       background: var(--color-surface-card, #FFFFFF);
       color: var(--color-text-main, #0F172A);
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -1031,7 +1017,6 @@ interface HeroSlide {
       font-weight: 700;
       color: var(--color-text-main, #0F172A);
       padding: 0.5rem 0.85rem;
-      border-radius: 8px;
       transition: color 0.2s ease;
     }
 
@@ -1056,7 +1041,6 @@ interface HeroSlide {
 
     .join-pill-btn:hover {
       background: var(--color-primary-dark, #0A4D68);
-      box-shadow: 0 6px 20px rgba(8, 131, 149, 0.38);
       transform: translateY(-1px);
     }
 
@@ -1085,14 +1069,11 @@ interface HeroSlide {
     /* HERO SECTION                                                      */
     /* ================================================================= */
     .hero-section {
-      position: relative;
-      padding: 3.5rem 1.5rem 4rem 1.5rem;
+      padding: 4rem 1.5rem 5rem 1.5rem;
       max-width: 1300px;
       margin: 0 auto;
-      min-height: calc(100vh - 80px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      position: relative;
+      z-index: 2;
     }
 
     .hero-container {
@@ -1100,99 +1081,75 @@ interface HeroSlide {
       grid-template-columns: 1.15fr 1fr;
       align-items: center;
       gap: 3.5rem;
-      position: relative;
-      z-index: 2;
     }
 
     .hero-text-col {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 1.35rem;
+      gap: 1.5rem;
     }
 
-    .landing-page.rtl .hero-text-col {
-      align-items: flex-start;
-    }
-
-    .hero-top-badge {
+    .hero-national-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.55rem;
-      padding: 0.45rem 1rem;
+      gap: 0.6rem;
+      padding: 0.45rem 1.1rem;
       border-radius: 9999px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #059669;
-      font-size: 0.85rem;
+      background: rgba(8, 131, 149, 0.08);
+      border: 1px solid rgba(8, 131, 149, 0.22);
+      color: var(--color-primary-base, #088395);
+      font-size: 0.88rem;
       font-weight: 700;
+      width: fit-content;
     }
 
-    :host-context([data-theme="dark"]) .hero-top-badge,
-    :host-context(.dark-theme) .hero-top-badge {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: rgba(16, 185, 129, 0.4);
-      color: #10B981;
+    :host-context([data-theme="dark"]) .hero-national-badge,
+    :host-context(.dark-theme) .hero-national-badge {
+      background: rgba(5, 191, 219, 0.12);
+      border-color: rgba(5, 191, 219, 0.3);
+      color: #05BFDB;
     }
 
-    .badge-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10B981;
-      box-shadow: 0 0 8px #10B981;
-      animation: pulse 2s infinite ease-in-out;
+    .flag-icon {
+      font-size: 1.15rem;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
-    }
-
-    /* Multi-line headline with color highlight */
     .hero-headline {
       display: flex;
       flex-direction: column;
-      font-size: 3.6rem;
+      gap: 0.35rem;
+      font-size: 3.4rem;
       font-weight: 900;
-      line-height: 1.18;
-      letter-spacing: -0.5px;
+      line-height: 1.2;
       color: var(--color-text-main, #0F172A);
+      letter-spacing: -0.5px;
       margin: 0;
     }
 
     .landing-page.rtl .hero-headline {
       font-family: var(--font-arabic, 'Cairo', sans-serif);
-      font-weight: 900;
-    }
-
-    .headline-line1 {
-      color: var(--color-text-main, #0F172A);
+      line-height: 1.3;
     }
 
     .headline-accent {
-      color: #D97706; /* Striking warm gold/amber matching Jsoor reference highlight */
-      background: linear-gradient(120deg, #D97706, #F59E0B);
+      color: var(--color-primary-base, #088395);
+      background: linear-gradient(120deg, #088395, #05BFDB);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      display: inline-block;
-      font-size: 3.9rem;
     }
 
-    .headline-line3 {
-      color: var(--color-primary-dark, #0A4D68);
-    }
-
-    :host-context([data-theme="dark"]) .headline-line3,
-    :host-context(.dark-theme) .headline-line3 {
-      color: #05BFDB;
+    :host-context([data-theme="dark"]) .headline-accent,
+    :host-context(.dark-theme) .headline-accent {
+      background: linear-gradient(120deg, #05BFDB, #38BDF8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .hero-subtext {
-      font-size: 1.12rem;
+      font-size: 1.15rem;
       line-height: 1.85;
       color: var(--color-text-muted, #64748B);
-      max-width: 540px;
+      max-width: 580px;
       margin: 0;
     }
 
@@ -1208,21 +1165,21 @@ interface HeroSlide {
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
-      padding: 0.95rem 2rem;
+      padding: 0.95rem 2.25rem;
       background: var(--color-primary-base, #088395);
       color: #FFFFFF;
       font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 800;
       border-radius: 9999px;
       text-decoration: none;
-      box-shadow: 0 8px 24px rgba(8, 131, 149, 0.35);
+      box-shadow: 0 8px 25px rgba(8, 131, 149, 0.35);
       transition: all 0.25s ease;
     }
 
     .btn-hero-primary:hover {
       background: var(--color-primary-dark, #0A4D68);
-      box-shadow: 0 12px 30px rgba(8, 131, 149, 0.45);
       transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(8, 131, 149, 0.45);
     }
 
     .btn-hero-secondary {
@@ -1245,516 +1202,496 @@ interface HeroSlide {
       border-color: var(--color-primary-base, #088395);
       color: var(--color-primary-base, #088395);
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(8, 131, 149, 0.12);
     }
 
-    .hero-trust-bar {
+    /* Structured Trust Metrics (Neat and solid) */
+    .hero-trust-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+    }
+
+    .metric-pill {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-top: 0.75rem;
-      font-size: 0.85rem;
+      gap: 0.65rem;
+    }
+
+    .metric-icon {
+      font-size: 1.75rem;
+      color: var(--color-primary-base, #088395);
+    }
+
+    .metric-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+    }
+
+    .metric-info strong {
+      font-size: 0.95rem;
+      color: var(--color-text-main, #0F172A);
+    }
+
+    .metric-info span {
+      font-size: 0.78rem;
       color: var(--color-text-muted, #64748B);
     }
 
-    .trust-mini-chips {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .t-pill {
-      padding: 0.25rem 0.65rem;
-      background: rgba(8, 131, 149, 0.06);
-      border: 1px solid rgba(8, 131, 149, 0.12);
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 0.8rem;
-    }
-
     /* ================================================================= */
-    /* FLOATING STATUS CHIPS (Scattered Gracefully Across Canvas)        */
+    /* HERO VISUAL: SMART HEALTH PASSPORT TERMINAL CARD                   */
     /* ================================================================= */
-    .floating-chip {
-      position: absolute;
-      z-index: 1;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.5rem 0.95rem;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(8, 131, 149, 0.16);
-      border-radius: 9999px;
-      box-shadow: 0 8px 24px rgba(8, 131, 149, 0.1);
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--color-text-main, #0F172A);
-      animation: floatChip 4.5s ease-in-out infinite alternate;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    :host-context([data-theme="dark"]) .floating-chip,
-    :host-context(.dark-theme) .floating-chip {
-      background: rgba(8, 38, 53, 0.92);
-      border-color: rgba(5, 191, 219, 0.25);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .chip-1 { top: 12%; right: 48%; animation-delay: 0s; }
-    .chip-2 { top: 22%; left: 8%; animation-delay: 1.2s; }
-    .chip-3 { top: 38%; right: 46%; animation-delay: 2.1s; }
-    .chip-4 { bottom: 24%; left: 12%; animation-delay: 0.8s; }
-    .chip-5 { bottom: 32%; right: 44%; animation-delay: 1.8s; }
-    .chip-6 { bottom: 14%; left: 45%; animation-delay: 2.6s; }
-    .chip-7 { top: 8%; left: 42%; animation-delay: 1.5s; }
-
-    @keyframes floatChip {
-      0% { transform: translateY(0px) rotate(0deg); }
-      100% { transform: translateY(-12px) rotate(1deg); }
-    }
-
-    /* ================================================================= */
-    /* 3D FLOATING HERO CARD SIMULATOR (Layered Depth Card)              */
-    /* ================================================================= */
-    .hero-card-col {
+    .hero-visual-col {
       display: flex;
       justify-content: center;
-      position: relative;
     }
 
-    .simulator-stack {
-      position: relative;
+    .passport-terminal-card {
       width: 100%;
-      max-width: 440px;
-    }
-
-    /* Ghost layer behind creating depth */
-    .ghost-depth-card {
-      position: absolute;
-      top: -14px;
-      left: -14px;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(8, 131, 149, 0.15), rgba(5, 191, 219, 0.08));
-      border: 1px solid rgba(8, 131, 149, 0.2);
-      border-radius: 32px;
-      transform: rotate(-3deg);
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    .floating-main-card {
-      position: relative;
-      z-index: 2;
+      max-width: 480px;
       background: var(--color-surface-card, #FFFFFF);
-      border: 1px solid rgba(8, 131, 149, 0.15);
-      border-radius: 32px;
-      padding: 1.75rem;
-      box-shadow: 0 20px 45px -10px rgba(8, 131, 149, 0.18), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 28px;
+      padding: 1.85rem;
+      box-shadow: 0 20px 45px -10px rgba(8, 131, 149, 0.12), 0 4px 14px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 1.35rem;
       transition: all 0.3s ease;
     }
 
-    :host-context([data-theme="dark"]) .floating-main-card,
-    :host-context(.dark-theme) .floating-main-card {
+    :host-context([data-theme="dark"]) .passport-terminal-card,
+    :host-context(.dark-theme) .passport-terminal-card {
       background: #082635;
-      border-color: rgba(5, 191, 219, 0.25);
+      border-color: rgba(5, 191, 219, 0.22);
       box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
     }
 
-    .card-inner-header {
+    .terminal-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding-bottom: 1rem;
       border-bottom: 1px solid var(--color-border-subtle, #E2E8F0);
-      margin-bottom: 1.25rem;
     }
 
-    .c-brand {
+    .t-brand {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.65rem;
     }
 
-    .c-logo {
-      width: 22px;
-      height: 22px;
+    .t-logo {
+      width: 28px;
+      height: 28px;
       object-fit: contain;
     }
 
-    .c-name {
+    .t-title-ar {
       font-size: 0.95rem;
       font-weight: 800;
       color: var(--color-primary-dark, #0A4D68);
     }
 
-    :host-context([data-theme="dark"]) .c-name,
-    :host-context(.dark-theme) .c-name {
+    :host-context([data-theme="dark"]) .t-title-ar,
+    :host-context(.dark-theme) .t-title-ar {
       color: #05BFDB;
     }
 
-    .c-live-indicator {
-      display: inline-flex;
+    .t-title-en {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    .t-chip-nfc {
+      display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.5rem;
+    }
+
+    .smart-chip-icon {
+      width: 28px;
+      height: 22px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      border: 1px solid #B45309;
+    }
+
+    .nfc-icon {
+      font-size: 1.4rem;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    /* Screen Selector Tabs */
+    .terminal-nav-tabs {
+      display: flex;
+      background: rgba(8, 131, 149, 0.05);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 14px;
+      padding: 0.25rem;
+      gap: 0.25rem;
+    }
+
+    .t-tab-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.55rem 0.35rem;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted, #64748B);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .t-tab-btn:hover {
+      color: var(--color-primary-base, #088395);
+    }
+
+    .t-tab-btn.active {
+      background: var(--color-surface-card, #FFFFFF);
+      color: var(--color-primary-base, #088395);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    :host-context([data-theme="dark"]) .t-tab-btn.active,
+    :host-context(.dark-theme) .t-tab-btn.active {
+      background: #0B3347;
+      color: #05BFDB;
+    }
+
+    .terminal-screen {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Screen 0: Health Passport */
+    .id-banner-block {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8, 131, 149, 0.06);
+      border: 1px solid rgba(8, 131, 149, 0.18);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+    }
+
+    .id-code-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .id-label {
       font-size: 0.72rem;
       font-weight: 800;
       letter-spacing: 1px;
-      color: #059669;
-      background: rgba(16, 185, 129, 0.1);
-      padding: 0.25rem 0.6rem;
-      border-radius: 9999px;
-    }
-
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #10B981;
-      animation: pulse 1.5s infinite;
-    }
-
-    /* Highlight inner box styled like reference orange card */
-    .slide-highlight-box {
-      border-radius: 20px;
-      padding: 1.25rem;
-      margin-bottom: 1.25rem;
-      border: 2px solid;
-    }
-
-    .slide-highlight-box.theme-orange {
-      background: rgba(245, 158, 11, 0.06);
-      border-color: #F59E0B;
-    }
-
-    .slide-highlight-box.theme-red {
-      background: rgba(239, 68, 68, 0.06);
-      border-color: #EF4444;
-    }
-
-    .slide-highlight-box.theme-teal {
-      background: rgba(8, 131, 149, 0.06);
-      border-color: #088395;
-    }
-
-    .slide-highlight-box.theme-purple {
-      background: rgba(139, 92, 246, 0.06);
-      border-color: #8B5CF6;
-    }
-
-    .box-top-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-    }
-
-    .box-tag {
-      font-size: 0.8rem;
-      font-weight: 800;
-      letter-spacing: 1px;
       color: var(--color-text-muted, #64748B);
     }
 
-    .blood-pill {
-      font-size: 0.85rem;
+    .id-number {
+      font-size: 1.45rem;
       font-weight: 900;
-      background: #EF4444;
-      color: #FFFFFF;
-      padding: 0.15rem 0.55rem;
-      border-radius: 6px;
-    }
-
-    .blood-pill.red-bg {
-      background: #DC2626;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-    }
-
-    .box-main-title {
-      font-size: 1.5rem;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      color: var(--color-text-main, #0F172A);
-      margin-bottom: 0.25rem;
-    }
-
-    .box-sub {
-      font-size: 0.85rem;
-      color: var(--color-text-muted, #64748B);
-    }
-
-    .card-meta-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .meta-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.9rem;
-    }
-
-    .m-label {
-      color: var(--color-text-muted, #64748B);
-    }
-
-    .m-value {
-      font-weight: 700;
-    }
-
-    .font-mono {
-      font-family: monospace;
+      color: var(--color-primary-dark, #0A4D68);
       letter-spacing: 0.5px;
     }
 
-    .status-verified-pill {
+    :host-context([data-theme="dark"]) .id-number,
+    :host-context(.dark-theme) .id-number {
+      color: #05BFDB;
+    }
+
+    .blood-group-badge {
+      font-size: 1.25rem;
+      font-weight: 900;
+      background: #EF4444;
+      color: #FFFFFF;
+      padding: 0.35rem 0.85rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+    }
+
+    .patient-profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .p-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .f-lbl {
+      font-size: 0.75rem;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    .f-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .verified-tag {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
       color: #059669;
-      background: rgba(16, 185, 129, 0.1);
-      padding: 0.25rem 0.65rem;
-      border-radius: 9999px;
       font-size: 0.8rem;
+    }
+
+    .verified-tag .material-symbols-outlined {
+      font-size: 1.1rem;
+    }
+
+    .terminal-footer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+      font-size: 0.78rem;
       font-weight: 700;
+      color: var(--color-text-muted, #64748B);
     }
 
-    .status-verified-pill .material-symbols-outlined {
-      font-size: 1rem;
+    .encryption-badge,
+    .consent-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
-    /* QR Slide specifics */
-    .qr-preview-box {
+    .consent-status-badge {
+      color: #059669;
+    }
+
+    /* Screen 1: Emergency QR */
+    .er-rescue-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      color: #DC2626;
+      font-size: 0.85rem;
+    }
+
+    .er-alert-icon {
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    .er-rescue-banner p {
+      margin: 0;
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+
+    .er-content-layout {
       display: flex;
       align-items: center;
       gap: 1.25rem;
     }
 
-    .qr-code-graphic {
-      position: relative;
-      width: 90px;
-      height: 90px;
+    .qr-visual-box {
+      width: 100px;
+      height: 100px;
       background: #FFFFFF;
       border: 2px solid #EF4444;
       border-radius: 14px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
       flex-shrink: 0;
-    }
-
-    .qr-icon {
-      font-size: 4rem;
       color: #0F172A;
     }
 
-    .scan-laser-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: #EF4444;
-      box-shadow: 0 0 8px #EF4444;
-      animation: scanLaser 2s linear infinite;
+    .qr-big-icon {
+      font-size: 4.5rem;
+      line-height: 1;
     }
 
-    @keyframes scanLaser {
-      0% { top: 0%; }
-      50% { top: 100%; }
-      100% { top: 0%; }
-    }
-
-    .qr-critical-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.45rem;
-      font-size: 0.85rem;
-    }
-
-    .crit-item {
-      display: flex;
-      gap: 0.4rem;
-    }
-
-    .crit-item.alert-danger strong {
+    .qr-scan-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
       color: #DC2626;
     }
 
-    /* RX Slide specifics */
-    .rx-meds-box {
+    .er-critical-details {
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
-    }
-
-    .med-item {
-      background: rgba(8, 131, 149, 0.04);
-      padding: 0.6rem 0.85rem;
-      border-radius: 10px;
-      border-left: 3px solid #088395;
-    }
-
-    .landing-page.rtl .med-item {
-      border-left: none;
-      border-right: 3px solid #088395;
-    }
-
-    .med-name {
-      font-weight: 800;
+      gap: 0.55rem;
       font-size: 0.88rem;
     }
 
-    .med-dose {
-      font-size: 0.78rem;
-      color: var(--color-text-muted, #64748B);
-    }
-
-    .rx-signature-row {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.78rem;
-      color: #059669;
-      font-weight: 700;
-      margin-top: 0.25rem;
-    }
-
-    .sig-icon {
-      font-size: 1rem;
-    }
-
-    /* Vitals Slide specifics */
-    .vitals-four-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-
-    .v-card-mini {
-      background: rgba(8, 131, 149, 0.04);
-      border: 1px solid var(--color-border-subtle, #E2E8F0);
-      border-radius: 14px;
-      padding: 0.75rem;
-      text-align: center;
+    .er-detail-item {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 0.2rem;
     }
 
-    .v-val {
-      font-size: 1.15rem;
-      font-weight: 800;
-    }
-
-    .v-lbl {
+    .er-detail-item .lbl {
       font-size: 0.75rem;
       color: var(--color-text-muted, #64748B);
     }
 
-    .text-red { color: #EF4444; }
-    .text-teal { color: #088395; }
-    .text-amber { color: #F59E0B; }
-    .text-purple { color: #8B5CF6; }
+    .er-detail-item.allergy-alert .val {
+      color: #DC2626;
+      font-weight: 800;
+    }
 
-    /* Interactive Pagination Dots (● ○ ○ ○) */
-    .card-pagination-dots {
+    /* Screen 2: Prescription */
+    .rx-header-banner {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.65rem;
-      margin-top: 1.5rem;
-      padding-top: 0.85rem;
-      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+      justify-content: space-between;
+      background: rgba(8, 131, 149, 0.06);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
     }
 
-    .dot-btn {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: none;
-      background: var(--color-border-subtle, #E2E8F0);
-      cursor: pointer;
-      transition: all 0.25s ease;
-      padding: 0;
+    .rx-doc-name {
+      display: block;
+      font-weight: 800;
+      font-size: 0.92rem;
     }
 
-    .dot-btn:hover {
-      background: var(--color-primary-accent, #05BFDB);
-      transform: scale(1.2);
+    .rx-doc-spec {
+      font-size: 0.75rem;
+      color: var(--color-text-muted, #64748B);
     }
 
-    .dot-btn.active {
-      width: 28px;
+    .rx-pill-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: var(--color-primary-base, #088395);
+      color: #FFFFFF;
+      padding: 0.2rem 0.6rem;
       border-radius: 9999px;
-      background: #F59E0B; /* Warm orange dot matching reference */
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
     }
 
-    /* Scroll Down Indicator */
-    .scroll-down-indicator {
+    .rx-medicines-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .rx-med-card {
+      background: rgba(8, 131, 149, 0.04);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+    }
+
+    .med-name {
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .med-instructions {
+      font-size: 0.78rem;
+      color: var(--color-text-muted, #64748B);
+      margin-top: 0.15rem;
+    }
+
+    .rx-signature-seal {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      color: #059669;
+      font-weight: 700;
+    }
+
+    /* Screen 3: Vitals */
+    .vitals-header-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    .vitals-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    .vitals-matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .vital-tile {
+      background: rgba(8, 131, 149, 0.04);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 14px;
+      padding: 0.85rem;
+      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
-      text-decoration: none;
+      gap: 0.25rem;
+    }
+
+    .v-icon { font-size: 1.5rem; }
+    .v-icon.red { color: #EF4444; }
+    .v-icon.teal { color: #088395; }
+    .v-icon.amber { color: #F59E0B; }
+    .v-icon.purple { color: #8B5CF6; }
+
+    .v-value {
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .v-label {
+      font-size: 0.75rem;
       color: var(--color-text-muted, #64748B);
-      font-size: 0.85rem;
-      font-weight: 700;
-      transition: color 0.2s ease;
-      z-index: 2;
     }
 
-    .scroll-down-indicator:hover {
-      color: var(--color-primary-base, #088395);
-    }
-
-    .mouse-icon {
-      width: 22px;
-      height: 36px;
-      border: 2px solid currentColor;
-      border-radius: 12px;
-      display: flex;
-      justify-content: center;
-      padding-top: 6px;
-    }
-
-    .wheel-dot {
-      width: 4px;
-      height: 8px;
-      background: currentColor;
-      border-radius: 2px;
-      animation: mouseScroll 1.8s infinite ease-in-out;
-    }
-
-    @keyframes mouseScroll {
-      0% { transform: translateY(0); opacity: 1; }
-      100% { transform: translateY(12px); opacity: 0; }
+    .font-mono {
+      font-family: monospace;
     }
 
     /* ================================================================= */
-    /* PERSONAS & ROLES SECTION (Matching Reference Image 2)             */
+    /* ROLES & WORKSPACES EXPLORER                                       */
     /* ================================================================= */
-    .personas-section {
+    .roles-section {
       padding: 6rem 1.5rem;
-      position: relative;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(8, 131, 149, 0.06);
-      border-bottom: 1px solid rgba(8, 131, 149, 0.06);
+      background: rgba(255, 255, 255, 0.5);
+      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-bottom: 1px solid var(--color-border-subtle, #E2E8F0);
     }
 
-    :host-context([data-theme="dark"]) .personas-section,
-    :host-context(.dark-theme) .personas-section {
+    :host-context([data-theme="dark"]) .roles-section,
+    :host-context(.dark-theme) .roles-section {
       background: rgba(8, 38, 53, 0.4);
     }
 
@@ -1765,7 +1702,7 @@ interface HeroSlide {
 
     .section-title-block {
       text-align: center;
-      margin-bottom: 3.5rem;
+      margin-bottom: 3rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1774,9 +1711,9 @@ interface HeroSlide {
 
     .section-tag-pill {
       display: inline-block;
-      padding: 0.35rem 0.95rem;
+      padding: 0.35rem 1rem;
       background: rgba(8, 131, 149, 0.08);
-      border: 1px solid rgba(8, 131, 149, 0.18);
+      border: 1px solid rgba(8, 131, 149, 0.2);
       border-radius: 9999px;
       color: var(--color-primary-base, #088395);
       font-size: 0.85rem;
@@ -1795,113 +1732,126 @@ interface HeroSlide {
 
     .section-subheadline {
       font-size: 1.1rem;
-      line-height: 1.7;
+      line-height: 1.75;
       color: var(--color-text-muted, #64748B);
       max-width: 680px;
       margin: 0;
     }
 
-    /* Showcase Layout: Preview Card on Left & Colored Pill Badges on Right */
-    .persona-interactive-layout {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 3rem;
+    .roles-nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.65rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .role-pill-btn {
+      display: inline-flex;
       align-items: center;
-    }
-
-    /* Dynamic Preview Card */
-    .persona-display-card {
-      position: relative;
+      gap: 0.45rem;
+      padding: 0.65rem 1.15rem;
+      border-radius: 9999px;
+      border: 1.5px solid var(--color-border-subtle, #E2E8F0);
       background: var(--color-surface-card, #FFFFFF);
-      border: 1px solid var(--color-border-subtle, #E2E8F0);
-      border-radius: 28px;
-      padding: 2.75rem 2.25rem;
-      box-shadow: 0 15px 35px -5px rgba(8, 131, 149, 0.08);
-      overflow: hidden;
-      transition: all 0.3s ease;
+      color: var(--color-text-main, #0F172A);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
     }
 
-    :host-context([data-theme="dark"]) .persona-display-card,
-    :host-context(.dark-theme) .persona-display-card {
+    :host-context([data-theme="dark"]) .role-pill-btn,
+    :host-context(.dark-theme) .role-pill-btn {
       background: #082635;
       border-color: rgba(5, 191, 219, 0.2);
     }
 
-    .display-card-inner {
-      position: relative;
-      z-index: 2;
+    .role-pill-btn:hover {
+      border-color: var(--role-color, #088395);
+      color: var(--role-color, #088395);
+      transform: translateY(-2px);
+    }
+
+    .role-pill-btn.active {
+      background: var(--role-color, #088395);
+      border-color: var(--role-color, #088395);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    .role-console-card {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 28px;
+      padding: 3rem;
+      box-shadow: 0 16px 40px -10px rgba(8, 131, 149, 0.1);
+    }
+
+    :host-context([data-theme="dark"]) .role-console-card,
+    :host-context(.dark-theme) .role-console-card {
+      background: #082635;
+      border-color: rgba(5, 191, 219, 0.22);
+    }
+
+    .console-info-col {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
       gap: 1.25rem;
     }
 
-    .card-code-watermark {
-      font-size: 4.5rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      opacity: 0.9;
-      line-height: 1;
-    }
-
-    .display-main-title {
-      font-size: 2.25rem;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      line-height: 1.25;
-      margin: 0;
-    }
-
-    .display-role-sub {
+    .console-role-tag {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--color-text-muted, #64748B);
+      padding: 0.35rem 0.95rem;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      width: fit-content;
     }
 
-    .display-description {
+    .console-title {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--color-text-main, #0F172A);
+      letter-spacing: -0.5px;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .console-desc {
       font-size: 1.05rem;
       line-height: 1.75;
       color: var(--color-text-muted, #64748B);
-      max-width: 480px;
       margin: 0;
     }
 
-    .display-features-grid {
+    .console-bullets-list {
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
-      text-align: right;
-      width: 100%;
-      max-width: 420px;
+      gap: 0.75rem;
       margin: 0.5rem 0;
     }
 
-    .landing-page:not(.rtl) .display-features-grid {
-      text-align: left;
-    }
-
-    .feat-item {
+    .bullet-row {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
-      font-size: 0.92rem;
+      gap: 0.65rem;
+      font-size: 0.95rem;
       font-weight: 600;
-      color: var(--color-text-main, #0F172A);
     }
 
-    .check-bullet {
-      font-size: 1.2rem;
+    .check-mark {
+      font-size: 1.25rem;
+      flex-shrink: 0;
     }
 
-    .display-card-actions {
-      margin-top: 0.5rem;
-    }
-
-    .btn-role-action {
+    .btn-console-launch {
       display: inline-flex;
       align-items: center;
       gap: 0.55rem;
@@ -1909,156 +1859,196 @@ interface HeroSlide {
       border-radius: 9999px;
       color: #FFFFFF;
       font-size: 0.95rem;
-      font-weight: 700;
+      font-weight: 800;
       text-decoration: none;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
       transition: all 0.25s ease;
+      width: fit-content;
     }
 
-    .btn-role-action:hover {
+    .btn-console-launch:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     }
 
-    /* Grid of Colored Badge Pills (Matching Reference Image 2) */
-    .persona-pills-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
+    .console-preview-col {
+      display: flex;
+      justify-content: center;
     }
 
-    .persona-pill-item {
+    .mockup-frame {
+      width: 100%;
+      max-width: 400px;
+      background: var(--color-bg-app, #F8FAFC);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    :host-context([data-theme="dark"]) .mockup-frame,
+    :host-context(.dark-theme) .mockup-frame {
+      background: #031B26;
+      border-color: rgba(5, 191, 219, 0.2);
+    }
+
+    .mockup-top-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1rem;
+      background: rgba(0, 0, 0, 0.03);
+      border-bottom: 1px solid var(--color-border-subtle, #E2E8F0);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.red { background: #EF4444; }
+    .dot.yellow { background: #F59E0B; }
+    .dot.green { background: #10B981; }
+
+    .mockup-url {
+      font-size: 0.72rem;
+      font-family: monospace;
+      color: var(--color-text-muted, #64748B);
+      margin-inline-start: auto;
+    }
+
+    .mockup-body {
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mockup-hero-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.65rem;
-      padding: 0.85rem 1.15rem;
-      background: var(--color-surface-card, #FFFFFF);
-      border: 2px solid var(--pill-color, #088395);
-      border-radius: 9999px;
-      color: var(--pill-color, #088395);
-      font-size: 0.95rem;
+    }
+
+    .mockup-hero-icon .material-symbols-outlined {
+      font-size: 2.25rem;
+    }
+
+    .mockup-body h4 {
+      font-size: 1.15rem;
       font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
-      transition: all 0.25s ease;
+      margin: 0;
     }
 
-    :host-context([data-theme="dark"]) .persona-pill-item,
-    :host-context(.dark-theme) .persona-pill-item {
-      background: #082635;
+    .mockup-body p {
+      font-size: 0.85rem;
+      color: var(--color-text-muted, #64748B);
+      margin: 0;
     }
 
-    .persona-pill-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-      background: rgba(8, 131, 149, 0.05);
+    .mockup-tags {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    .persona-pill-item.active {
-      background: var(--pill-color, #088395);
-      color: #FFFFFF;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
-      transform: scale(1.02);
-    }
-
-    .pill-code {
-      font-size: 0.78rem;
-      font-weight: 900;
-      letter-spacing: 1px;
-      opacity: 0.85;
-    }
-
-    .pill-name {
-      font-size: 0.95rem;
+    .mockup-tags span {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.2rem 0.6rem;
+      background: rgba(8, 131, 149, 0.08);
+      border-radius: 6px;
+      color: var(--color-primary-base, #088395);
     }
 
     /* ================================================================= */
-    /* HOW IT WORKS SECTION (Numbered Workflow 01, 02, 03)               */
+    /* HOW IT WORKS SECTION                                              */
     /* ================================================================= */
     .how-it-works-section {
       padding: 6rem 1.5rem;
     }
 
-    .steps-container-grid {
+    .steps-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
     }
 
-    .step-modern-card {
+    .step-card {
       position: relative;
       background: var(--color-surface-card, #FFFFFF);
       border: 1px solid var(--color-border-subtle, #E2E8F0);
       border-radius: 24px;
-      padding: 2.25rem 1.75rem;
-      box-shadow: 0 10px 25px -5px rgba(8, 131, 149, 0.06);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
       transition: all 0.3s ease;
       overflow: hidden;
     }
 
-    :host-context([data-theme="dark"]) .step-modern-card,
-    :host-context(.dark-theme) .step-modern-card {
+    :host-context([data-theme="dark"]) .step-card,
+    :host-context(.dark-theme) .step-card {
       background: #082635;
-      border-color: rgba(5, 191, 219, 0.15);
+      border-color: rgba(5, 191, 219, 0.16);
     }
 
-    .step-modern-card:hover {
+    .step-card:hover {
       transform: translateY(-4px);
       border-color: var(--color-primary-base, #088395);
-      box-shadow: 0 18px 35px -10px rgba(8, 131, 149, 0.15);
+      box-shadow: 0 16px 35px -10px rgba(8, 131, 149, 0.15);
     }
 
-    .step-top-number {
+    .step-watermark {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
       font-size: 3.5rem;
       font-weight: 900;
-      color: rgba(8, 131, 149, 0.12);
-      line-height: 1;
-      margin-bottom: 0.75rem;
+      color: rgba(8, 131, 149, 0.08);
       font-family: monospace;
+      line-height: 1;
     }
 
-    .step-card-body {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
+    .landing-page.rtl .step-watermark {
+      right: auto;
+      left: 1.5rem;
     }
 
-    .step-icon-frame {
-      width: 48px;
-      height: 48px;
+    .step-icon-box {
+      width: 50px;
+      height: 50px;
       border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 0.5rem;
     }
 
-    .step-icon-frame.teal {
-      background: rgba(8, 131, 149, 0.1);
-      color: #088395;
+    .step-icon-box.teal { background: rgba(8, 131, 149, 0.12); color: #088395; }
+    .step-icon-box.orange { background: rgba(245, 158, 11, 0.12); color: #D97706; }
+    .step-icon-box.purple { background: rgba(139, 92, 246, 0.12); color: #8B5CF6; }
+
+    .step-icon-box .material-symbols-outlined {
+      font-size: 1.75rem;
     }
 
-    .step-icon-frame.orange {
-      background: rgba(245, 158, 11, 0.1);
-      color: #D97706;
-    }
-
-    .step-icon-frame.purple {
-      background: rgba(139, 92, 246, 0.1);
-      color: #8B5CF6;
-    }
-
-    .step-card-title {
+    .step-title {
       font-size: 1.25rem;
       font-weight: 800;
-      color: var(--color-text-main, #0F172A);
       margin: 0;
+      line-height: 1.35;
     }
 
-    .step-card-text {
+    .step-desc {
       font-size: 0.95rem;
-      line-height: 1.7;
+      line-height: 1.75;
       color: var(--color-text-muted, #64748B);
       margin: 0;
     }
@@ -2076,37 +2066,36 @@ interface HeroSlide {
       background: rgba(8, 38, 53, 0.3);
     }
 
-    .cap-grid-cards {
+    .capabilities-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1.75rem;
     }
 
-    .cap-feature-box {
+    .cap-card {
       background: var(--color-surface-card, #FFFFFF);
       border: 1px solid var(--color-border-subtle, #E2E8F0);
       border-radius: 20px;
-      padding: 2rem;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
-      transition: all 0.3s ease;
+      padding: 2.25rem 1.75rem;
       display: flex;
       flex-direction: column;
       gap: 0.85rem;
+      transition: all 0.3s ease;
     }
 
-    :host-context([data-theme="dark"]) .cap-feature-box,
-    :host-context(.dark-theme) .cap-feature-box {
+    :host-context([data-theme="dark"]) .cap-card,
+    :host-context(.dark-theme) .cap-card {
       background: #082635;
-      border-color: rgba(5, 191, 219, 0.15);
+      border-color: rgba(5, 191, 219, 0.16);
     }
 
-    .cap-feature-box:hover {
+    .cap-card:hover {
       transform: translateY(-3px);
       border-color: var(--color-primary-base, #088395);
       box-shadow: 0 12px 28px -5px rgba(8, 131, 149, 0.12);
     }
 
-    .cap-box-icon {
+    .cap-icon-box {
       width: 48px;
       height: 48px;
       border-radius: 12px;
@@ -2116,21 +2105,25 @@ interface HeroSlide {
       margin-bottom: 0.5rem;
     }
 
-    .cap-box-icon.teal { background: rgba(8, 131, 149, 0.1); color: #088395; }
-    .cap-box-icon.ocean { background: rgba(10, 77, 104, 0.1); color: #0A4D68; }
-    .cap-box-icon.red { background: rgba(239, 68, 68, 0.1); color: #DC2626; }
-    .cap-box-icon.mint { background: rgba(5, 191, 219, 0.15); color: #088395; }
-    .cap-box-icon.amber { background: rgba(245, 158, 11, 0.1); color: #D97706; }
-    .cap-box-icon.purple { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
+    .cap-icon-box.teal { background: rgba(8, 131, 149, 0.1); color: #088395; }
+    .cap-icon-box.ocean { background: rgba(10, 77, 104, 0.1); color: #0A4D68; }
+    .cap-icon-box.red { background: rgba(239, 68, 68, 0.1); color: #DC2626; }
+    .cap-icon-box.mint { background: rgba(5, 191, 219, 0.15); color: #088395; }
+    .cap-icon-box.amber { background: rgba(245, 158, 11, 0.1); color: #D97706; }
+    .cap-icon-box.purple { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
 
-    .cap-box-title {
+    .cap-icon-box .material-symbols-outlined {
+      font-size: 1.65rem;
+    }
+
+    .cap-title {
       font-size: 1.15rem;
       font-weight: 800;
       color: var(--color-text-main, #0F172A);
       margin: 0;
     }
 
-    .cap-box-desc {
+    .cap-desc {
       font-size: 0.92rem;
       line-height: 1.7;
       color: var(--color-text-muted, #64748B);
@@ -2156,7 +2149,7 @@ interface HeroSlide {
       background: var(--color-surface-card, #FFFFFF);
       border: 1px solid var(--color-border-subtle, #E2E8F0);
       border-radius: 16px;
-      padding: 1.25rem 1.75rem;
+      padding: 1.35rem 1.75rem;
       cursor: pointer;
       transition: all 0.25s ease;
     }
@@ -2184,7 +2177,7 @@ interface HeroSlide {
     }
 
     .faq-q-text {
-      font-size: 1.08rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: var(--color-text-main, #0F172A);
     }
@@ -2213,17 +2206,13 @@ interface HeroSlide {
     .cta-modern-box {
       background: linear-gradient(135deg, #0A4D68 0%, #088395 50%, #05BFDB 100%);
       border-radius: 32px;
-      padding: 4rem 2.5rem;
+      padding: 4.5rem 2.5rem;
       color: #FFFFFF;
       text-align: center;
       box-shadow: 0 25px 50px -12px rgba(8, 131, 149, 0.4);
-      position: relative;
-      overflow: hidden;
     }
 
     .cta-inner-content {
-      position: relative;
-      z-index: 2;
       max-width: 720px;
       margin: 0 auto;
       display: flex;
@@ -2242,15 +2231,15 @@ interface HeroSlide {
     }
 
     .cta-main-title {
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       font-weight: 900;
       line-height: 1.25;
       margin: 0;
     }
 
     .cta-subtext {
-      font-size: 1.1rem;
-      line-height: 1.7;
+      font-size: 1.15rem;
+      line-height: 1.75;
       opacity: 0.92;
       margin: 0;
     }
@@ -2315,7 +2304,7 @@ interface HeroSlide {
     :host-context([data-theme="dark"]) .landing-footer,
     :host-context(.dark-theme) .landing-footer {
       background: #031B26;
-      border-color: rgba(5, 191, 219, 0.12);
+      border-color: rgba(5, 191, 219, 0.14);
     }
 
     .footer-container {
@@ -2325,8 +2314,8 @@ interface HeroSlide {
 
     .footer-top-grid {
       display: grid;
-      grid-template-columns: 1.6fr 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      gap: 2.5rem;
       margin-bottom: 3.5rem;
     }
 
@@ -2432,16 +2421,16 @@ interface HeroSlide {
       font-weight: 600;
     }
 
-    /* Floating Emergency FAB Button (Bottom Corner) */
+    /* Floating Emergency FAB */
     .floating-rescue-fab {
       position: fixed;
       bottom: 24px;
       left: 24px;
       z-index: 99;
-      width: 54px;
-      height: 54px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      background: #059669; /* Emergency rescue emerald/teal */
+      background: #059669;
       color: #FFFFFF;
       display: flex;
       align-items: center;
@@ -2457,60 +2446,41 @@ interface HeroSlide {
     }
 
     .floating-rescue-fab:hover {
-      transform: scale(1.12);
+      transform: scale(1.1);
       box-shadow: 0 12px 30px rgba(5, 150, 105, 0.55);
       background: #047857;
     }
 
     .fab-icon {
-      font-size: 1.75rem;
+      font-size: 1.85rem;
     }
 
-    /* ================================================================= */
-    /* RESPONSIVE MEDIA QUERIES (Mobile, Tablet, Desktop)               */
-    /* ================================================================= */
+    /* Responsive */
     @media (max-width: 1024px) {
       .hero-container {
         grid-template-columns: 1fr;
         gap: 3rem;
-        text-align: center;
       }
 
-      .hero-text-col {
-        align-items: center;
-      }
-
-      .landing-page.rtl .hero-text-col {
-        align-items: center;
-      }
-
-      .hero-subtext {
-        max-width: 100%;
-      }
-
-      .hero-cta-wrapper {
-        justify-content: center;
-      }
-
-      .hero-trust-bar {
-        justify-content: center;
-      }
-
-      .persona-interactive-layout {
+      .hero-trust-metrics {
         grid-template-columns: 1fr;
       }
 
-      .steps-container-grid,
-      .cap-grid-cards {
+      .role-console-card {
+        grid-template-columns: 1fr;
+      }
+
+      .steps-grid,
+      .capabilities-grid {
         grid-template-columns: repeat(2, 1fr);
       }
 
       .footer-top-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
-    @media (max-width: 820px) {
+    @media (max-width: 768px) {
       .nav-menu {
         display: none;
       }
@@ -2571,28 +2541,17 @@ interface HeroSlide {
       }
 
       .hero-headline {
-        font-size: 2.6rem;
+        font-size: 2.5rem;
       }
 
-      .headline-accent {
-        font-size: 2.9rem;
-      }
-
-      .floating-chip {
-        display: none; /* Hide floating scatter chips on mobile to prevent clutter */
-      }
-
-      .persona-pills-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .steps-container-grid,
-      .cap-grid-cards {
-        grid-template-columns: 1fr;
-      }
-
+      .steps-grid,
+      .capabilities-grid,
       .footer-top-grid {
         grid-template-columns: 1fr;
+      }
+
+      .role-console-card {
+        padding: 1.75rem;
       }
     }
   `]
@@ -2603,60 +2562,17 @@ export class LandingComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
 
   isMobileMenuOpen = false;
-  activeSlide = 0;
-  private slideInterval: any;
+  activePassportTab = 0;
+  private tabInterval: any;
 
-  heroSlides: HeroSlide[] = [
-    {
-      id: 0,
-      badgeEn: 'PASSPORT',
-      badgeAr: 'جواز صحتي',
-      titleEn: 'Unified Medical Passport',
-      titleAr: 'جواز صحتي الموحد',
-      subtitleEn: 'Lifetime Health ID',
-      subtitleAr: 'الكود الطبي المركزي',
-      accentColor: '#F59E0B'
-    },
-    {
-      id: 1,
-      badgeEn: 'EMERGENCY',
-      badgeAr: 'طوارئ',
-      titleEn: 'Instant ER Rescue QR',
-      titleAr: 'رمز طوارئ الإنقاذ',
-      subtitleEn: 'Triage without password',
-      subtitleAr: 'متاح للإسعاف فوراً',
-      accentColor: '#EF4444'
-    },
-    {
-      id: 2,
-      badgeEn: 'E-RX',
-      badgeAr: 'روشتة رقمية',
-      titleEn: 'Certified Digital Rx',
-      titleAr: 'الروشتة الإلكترونية',
-      subtitleEn: 'SHA-256 Signed',
-      subtitleAr: 'توقيع إلكتروني معتمد',
-      accentColor: '#088395'
-    },
-    {
-      id: 3,
-      badgeEn: 'VITALS',
-      badgeAr: 'مؤشرات حيوية',
-      titleEn: 'Realtime Telemetry',
-      titleAr: 'المؤشرات الحيوية',
-      subtitleEn: 'Live Vitals & BMI',
-      subtitleAr: 'نبض وضغط وسكر لحظي',
-      accentColor: '#8B5CF6'
-    }
-  ];
-
-  personaList: PersonaRole[] = [
+  rolesList: PersonaRole[] = [
     {
       id: 'patient',
       code: 'EG',
       nameEn: 'Citizen & Patient',
       nameAr: 'المريض والمواطن',
       headlineEn: 'Your Complete Health Record In Your Pocket',
-      headlineAr: 'ملفك الطبي بين يديك أينما كنت',
+      headlineAr: 'ملفك الطبي وسجلاتك بين يديك أينما كنت',
       descEn: 'Full ownership of your consultations, prescriptions, lab results, and instant emergency QR rescue profile.',
       descAr: 'تحكم كامل في سجلاتك الطبية، مواعيدك، وروشتاتك الرقمية مع بطاقة إنقاذ ذكية للطوارئ.',
       color: '#088395',
@@ -2667,7 +2583,7 @@ export class LandingComponent implements OnInit, OnDestroy {
         'Certified digital prescriptions archive'
       ],
       featuresAr: [
-        'كود صحي موحد يربط كافة المنشآت الطبية',
+        'كود صحي موحد يربط كافة المنشآت الطبية مدى الحياة',
         'محرك أذونات يمنحك التحكم الكامل في من يرى بياناتك',
         'أرشيف رقمي دائم للروشتات والتحاليل والأشعة'
       ],
@@ -2679,9 +2595,9 @@ export class LandingComponent implements OnInit, OnDestroy {
       nameEn: 'Doctors & Specialists',
       nameAr: 'الأطباء والاستشاريون',
       headlineEn: 'Smart Clinical Practice & Digital Rx',
-      headlineAr: 'عيادة سريرية ذكية وروشتات معتمدة',
+      headlineAr: 'عيادة سريرية ذكية وروشتات رقمية معتمدة',
       descEn: 'Instant patient history lookup with granted consent, structured encounter notes, ICD-10 coding, and tamper-proof prescriptions.',
-      descAr: 'الاطلاع على التاريخ المرضي بعد إذن المريض، كشوفات سريعة، تشخيص ICD-10، وروشتات إلكترونية.',
+      descAr: 'الاطلاع على التاريخ المرضي بعد إذن المريض، كشوفات سريعة، تشخيص ICD-10، وروشتات إلكترونية معتمدة.',
       color: '#10B981',
       icon: 'stethoscope',
       featuresEn: [
@@ -2702,7 +2618,7 @@ export class LandingComponent implements OnInit, OnDestroy {
       nameEn: 'Clinics & Hospitals',
       nameAr: 'العيادات والمستشفيات',
       headlineEn: 'Orchestrated Healthcare Operations',
-      headlineAr: 'إدارة متكاملة للمنشأة الطبية',
+      headlineAr: 'إدارة متكاملة للمنشأة والعيادات',
       descEn: 'Manage multi-specialty polyclinics, doctor schedules, room allocations, and patient flows without double booking.',
       descAr: 'تنظيم مواعيد العيادات، توزيع غرف الكشف، وإدارة الطاقة الاستيعابية بدقة فائقة وبدون تضارب.',
       color: '#F59E0B',
@@ -2766,52 +2682,6 @@ export class LandingComponent implements OnInit, OnDestroy {
       route: '/receptionist'
     },
     {
-      id: 'labs',
-      code: 'LB',
-      nameEn: 'Pathology Labs & Scans',
-      nameAr: 'معامل التحاليل والأشعة',
-      headlineEn: 'Direct Diagnostic Cloud Sync',
-      headlineAr: 'ربط مباشر لنتائج التحاليل والفحوصات',
-      descEn: 'Upload certified lab reports and radiology images directly to patient timeline with automated doctor notifications.',
-      descAr: 'رفع تقارير التحاليل وصور الأشعة مباشرة على السجل الطبي للمريض مع إشعار الطبيب المعالج فوراً.',
-      color: '#06B6D4',
-      icon: 'biotech',
-      featuresEn: [
-        'Digital PDF and DICOM imaging attachment',
-        'Automated abnormal value flagging',
-        'Permanent lifelong diagnostic archive'
-      ],
-      featuresAr: [
-        'ربط التقارير الرقمية وصور الأشعة مباشرة',
-        'تمييز القيم الحرجة وتنبيه الطبيب تلقائياً',
-        'سجل تشخيصي دائم لا يضيع بمرور السنوات'
-      ],
-      route: '/passport'
-    },
-    {
-      id: 'pharmacy',
-      code: 'RX',
-      nameEn: 'Certified Pharmacies',
-      nameAr: 'الصيدليات المعتمدة',
-      headlineEn: 'Tamper-Proof Prescription Dispensing',
-      headlineAr: 'صرف الروشتات الرقمية بدون أخطاء',
-      descEn: 'Verify doctor signature, inspect dosages, and mark medications as dispensed preventing double redemption and drug conflicts.',
-      descAr: 'التحقق من صحة الروشتة وتوقيع الطبيب، وصرف الجرعات بدقة مع منع تكرار الصرف غير القانوني.',
-      color: '#EC4899',
-      icon: 'medication',
-      featuresEn: [
-        'Barcode / QR verification of prescriptions',
-        'Real-time drug-drug interaction warning',
-        'Single-use redemption tracking'
-      ],
-      featuresAr: [
-        'فحص كود الروشتة بالباركود للتأكد من أصالتها',
-        'تنبيه فوري عند وجود تعارض بين الأدوية',
-        'إغلاق الروشتة فور الصرف لمنع التكرار'
-      ],
-      route: '/passport'
-    },
-    {
       id: 'admin',
       code: 'AD',
       nameEn: 'Governance & Audit',
@@ -2836,7 +2706,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   ];
 
-  selectedPersona: PersonaRole = this.personaList[0];
+  selectedRole: PersonaRole = this.rolesList[0];
 
   faqList: FaqItem[] = [
     {
@@ -2877,38 +2747,25 @@ export class LandingComponent implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
-    this.startAutoSlide();
+    this.startTabCycle();
   }
 
   ngOnDestroy(): void {
-    this.stopAutoSlide();
+    this.stopTabCycle();
   }
 
-  startAutoSlide(): void {
-    this.stopAutoSlide();
-    this.slideInterval = setInterval(() => {
-      this.activeSlide = (this.activeSlide + 1) % this.heroSlides.length;
-    }, 5000);
+  startTabCycle(): void {
+    this.stopTabCycle();
+    this.tabInterval = setInterval(() => {
+      this.activePassportTab = (this.activePassportTab + 1) % 4;
+    }, 6000);
   }
 
-  stopAutoSlide(): void {
-    if (this.slideInterval) {
-      clearInterval(this.slideInterval);
-      this.slideInterval = null;
+  stopTabCycle(): void {
+    if (this.tabInterval) {
+      clearInterval(this.tabInterval);
+      this.tabInterval = null;
     }
-  }
-
-  pauseAutoSlide(): void {
-    this.stopAutoSlide();
-  }
-
-  resumeAutoSlide(): void {
-    this.startAutoSlide();
-  }
-
-  setActiveSlide(index: number): void {
-    this.activeSlide = index;
-    this.startAutoSlide();
   }
 
   toggleFaq(index: number): void {

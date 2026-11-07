@@ -30,7 +30,7 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
         <div class="card-header-block">
           <span class="header-mini-badge">
             <span class="badge-dot"></span>
-            <span>{{ langService.isRtl() ? 'إصدار الجواز الصحي الموحد' : 'Claim Your Unified Health Passport' }}</span>
+            <span>{{ langService.isRtl() ? 'إصدار الجواز الصحي الموحد' : 'Claim Your Lifetime Unified ID' }}</span>
           </span>
           <h1 class="card-main-title">{{ langService.t('registerTitle') }}</h1>
           <p class="card-subtitle">{{ langService.t('registerSubtitle') }}</p>
@@ -162,7 +162,7 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
                   formControlName="email"
                   class="form-input"
                   [class.invalid]="isFieldInvalid('email')"
-                  placeholder="user@sehati.com"
+                  placeholder="patient@sehati.gov.eg"
                   autocomplete="email"
                 />
               </div>
@@ -526,7 +526,7 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       padding: 0.75rem 0.85rem;
       border-radius: 16px;
       border: 1.5px solid var(--color-border-subtle, #E2E8F0);
-      background: var(--color-bg-app, #FAFCFB);
+      background: var(--color-bg-app, #F8FAFC);
       cursor: pointer;
       text-align: right;
       transition: all 0.25s ease;
@@ -655,7 +655,7 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       padding: 0.8rem 1rem 0.8rem 2.85rem;
       border-radius: 14px;
       border: 1px solid var(--color-border-subtle, #E2E8F0);
-      background: var(--color-bg-app, #FAFCFB);
+      background: var(--color-bg-app, #F8FAFC);
       color: var(--color-text-main, #0F172A);
       font-size: 0.92rem;
       transition: all 0.2s ease;
@@ -801,13 +801,13 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.45rem 1rem;
+      padding: 0.45rem 1.1rem;
       border-radius: 9999px;
       background: rgba(8, 131, 149, 0.08);
       border: 1px solid rgba(8, 131, 149, 0.2);
       color: var(--color-primary-base, #088395);
       font-weight: 800;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       text-decoration: none;
       transition: all 0.2s ease;
     }
