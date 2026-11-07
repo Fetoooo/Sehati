@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -8,7 +8,7 @@ import { LanguageService } from '../../../core/services/language.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
   template: `
     <div class="auth-card-container">
       <!-- Top Navigation Switcher Tabs (Buttons to Navigate Between Login & Register) -->
@@ -25,149 +25,218 @@ import { LanguageService } from '../../../core/services/language.service';
 
       <!-- Main Login Card -->
       <div class="auth-glass-card">
-        <!-- Card Titles -->
-        <div class="card-header-block">
-          <span class="header-mini-badge">
-            <span class="badge-dot"></span>
-            <span>{{ langService.isRtl() ? 'المنظومة الوطنية الموحدة' : 'National Health Cloud' }}</span>
-          </span>
-          <h1 class="card-main-title">{{ langService.t('loginTitle') }}</h1>
-          <p class="card-subtitle">{{ langService.t('loginSubtitle') }}</p>
-        </div>
-
-        <!-- Quick 1-Click Demo Accounts Selector -->
-        <div class="demo-quick-box">
-          <div class="demo-box-label">
-            <span class="material-symbols-outlined label-icon">smart_toy</span>
-            <span>{{ langService.isRtl() ? 'تجربة سريعة بضغطة زر واحدة:' : 'Quick 1-Click Demo Fill:' }}</span>
-          </div>
-          <div class="demo-pills-wrap">
-            <button type="button" class="demo-chip chip-patient" (click)="fillDemo('patient')">
-              <span class="material-symbols-outlined chip-icon">person</span>
-              <span>{{ langService.isRtl() ? 'مريض تجريبي' : 'Patient' }}</span>
-            </button>
-            <button type="button" class="demo-chip chip-doctor" (click)="fillDemo('doctor')">
-              <span class="material-symbols-outlined chip-icon">stethoscope</span>
-              <span>{{ langService.isRtl() ? 'طبيب' : 'Doctor' }}</span>
-            </button>
-            <button type="button" class="demo-chip chip-reception" (click)="fillDemo('receptionist')">
-              <span class="material-symbols-outlined chip-icon">desk</span>
-              <span>{{ langService.isRtl() ? 'استقبال' : 'Reception' }}</span>
-            </button>
-            <button type="button" class="demo-chip chip-admin" (click)="fillDemo('admin')">
-              <span class="material-symbols-outlined chip-icon">admin_panel_settings</span>
-              <span>{{ langService.isRtl() ? 'مدير' : 'Admin' }}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Error Alert -->
-        <div class="auth-error-banner" *ngIf="errorMessage">
-          <span class="material-symbols-outlined">error</span>
-          <span>{{ errorMessage }}</span>
-        </div>
-
-        <!-- Login Form -->
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-          <!-- Identifier Input -->
-          <div class="form-field-group">
-            <label class="field-label" for="identifier">
-              <span>{{ langService.t('identifierLabel') }}</span>
-              <span class="required-star">*</span>
-            </label>
-            <div class="field-input-box">
-              <span class="material-symbols-outlined field-icon">alternate_email</span>
-              <input
-                id="identifier"
-                type="text"
-                formControlName="identifier"
-                class="form-input"
-                [class.invalid]="isFieldInvalid('identifier')"
-                [placeholder]="langService.t('identifierPlaceholder')"
-                autocomplete="username"
-              />
-            </div>
-            <div class="field-error-text" *ngIf="isFieldInvalid('identifier')">
-              {{ langService.isRtl() ? 'يرجى إدخال البريد الإلكتروني أو رقم الهاتف المسجل.' : 'Please enter your registered email or phone number.' }}
-            </div>
+        <!-- MODE 1: STANDARD LOGIN -->
+        <ng-container *ngIf="!isForgotPasswordMode">
+          <!-- Card Header -->
+          <div class="card-header-block">
+            <span class="header-mini-badge">
+              <span class="badge-dot"></span>
+              <span>{{ langService.isRtl() ? 'بوابة الدخول الموحدة' : 'Unified Health Access' }}</span>
+            </span>
+            <h1 class="card-main-title">{{ langService.t('loginTitle') }}</h1>
+            <p class="card-subtitle">{{ langService.t('loginSubtitle') }}</p>
           </div>
 
-          <!-- Password Input -->
-          <div class="form-field-group">
-            <div class="label-with-link">
-              <label class="field-label" for="password">
-                <span>{{ langService.t('passwordLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
+          <!-- Quick 1-Click Demo Accounts Selector -->
+          <div class="demo-quick-box">
+            <div class="demo-box-label">
+              <span class="material-symbols-outlined label-icon">smart_toy</span>
+              <span>{{ langService.isRtl() ? 'تجربة سريعة بضغطة زر واحدة:' : '1-Click Quick Demo Fill:' }}</span>
             </div>
-            <div class="field-input-box">
-              <span class="material-symbols-outlined field-icon">lock</span>
-              <input
-                id="password"
-                [type]="showPassword ? 'text' : 'password'"
-                formControlName="password"
-                class="form-input"
-                [class.invalid]="isFieldInvalid('password')"
-                [placeholder]="langService.t('passwordPlaceholder')"
-                autocomplete="current-password"
-              />
-              <button
-                type="button"
-                class="eye-toggle-btn"
-                (click)="showPassword = !showPassword"
-                [title]="showPassword ? 'Hide password' : 'Show password'"
-              >
-                <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            <div class="demo-pills-wrap">
+              <button type="button" class="demo-chip chip-patient" (click)="fillDemo('patient')">
+                <span class="material-symbols-outlined chip-icon">person</span>
+                <span>{{ langService.isRtl() ? 'مريض تجريبي' : 'Patient' }}</span>
+              </button>
+              <button type="button" class="demo-chip chip-doctor" (click)="fillDemo('doctor')">
+                <span class="material-symbols-outlined chip-icon">stethoscope</span>
+                <span>{{ langService.isRtl() ? 'طبيب معالج' : 'Doctor' }}</span>
+              </button>
+              <button type="button" class="demo-chip chip-reception" (click)="fillDemo('receptionist')">
+                <span class="material-symbols-outlined chip-icon">desk</span>
+                <span>{{ langService.isRtl() ? 'استقبال' : 'Reception' }}</span>
+              </button>
+              <button type="button" class="demo-chip chip-admin" (click)="fillDemo('admin')">
+                <span class="material-symbols-outlined chip-icon">admin_panel_settings</span>
+                <span>{{ langService.isRtl() ? 'مدير نظام' : 'Admin' }}</span>
               </button>
             </div>
-            <div class="field-error-text" *ngIf="isFieldInvalid('password')">
-              {{ langService.isRtl() ? 'كلمة المرور مطلوبة (8 أحرف على الأقل).' : 'Password is required (min 8 characters).' }}
+          </div>
+
+          <!-- Error Alert -->
+          <div class="auth-error-banner" *ngIf="errorMessage">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ errorMessage }}</span>
+          </div>
+
+          <!-- Login Form -->
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+            <!-- Identifier Input -->
+            <div class="form-field-group">
+              <label class="field-label" for="identifier">
+                <span>{{ langService.t('identifierLabel') }}</span>
+                <span class="required-star">*</span>
+              </label>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">alternate_email</span>
+                <input
+                  id="identifier"
+                  type="text"
+                  formControlName="identifier"
+                  class="form-input"
+                  [class.invalid]="isFieldInvalid('identifier')"
+                  [placeholder]="langService.t('identifierPlaceholder')"
+                  autocomplete="username"
+                />
+              </div>
+              <div class="field-error-text" *ngIf="isFieldInvalid('identifier')">
+                {{ langService.isRtl() ? 'يرجى إدخال البريد الإلكتروني أو رقم الهاتف المسجل.' : 'Please enter your registered email or phone number.' }}
+              </div>
+            </div>
+
+            <!-- Password Input -->
+            <div class="form-field-group">
+              <div class="label-with-link">
+                <label class="field-label" for="password">
+                  <span>{{ langService.t('passwordLabel') }}</span>
+                  <span class="required-star">*</span>
+                </label>
+                <!-- Forgot Password Trigger -->
+                <button
+                  type="button"
+                  class="forgot-password-link"
+                  (click)="openForgotPassword()"
+                >
+                  {{ langService.t('forgotPasswordLink') }}
+                </button>
+              </div>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">lock</span>
+                <input
+                  id="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  class="form-input"
+                  [class.invalid]="isFieldInvalid('password')"
+                  [placeholder]="langService.t('passwordPlaceholder')"
+                  autocomplete="current-password"
+                />
+                <button
+                  type="button"
+                  class="eye-toggle-btn"
+                  (click)="showPassword = !showPassword"
+                  [title]="showPassword ? 'Hide password' : 'Show password'"
+                >
+                  <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                </button>
+              </div>
+              <div class="field-error-text" *ngIf="isFieldInvalid('password')">
+                {{ langService.isRtl() ? 'كلمة المرور مطلوبة (8 أحرف على الأقل).' : 'Password is required (min 8 characters).' }}
+              </div>
+            </div>
+
+            <!-- Options Row -->
+            <div class="options-row">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="rememberMe" class="custom-checkbox" />
+                <span>{{ langService.t('rememberMe') }}</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit-login" [disabled]="loginForm.invalid || isLoading">
+              <span class="spinner-dot" *ngIf="isLoading"></span>
+              <span *ngIf="!isLoading">{{ langService.t('signInBtn') }}</span>
+              <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">arrow_forward</span>
+            </button>
+          </form>
+
+          <!-- Reciprocal Navigation Helper to Register Page -->
+          <div class="card-bottom-navigation">
+            <div class="register-prompt">
+              <span>{{ langService.t('dontHaveAccount') }}</span>
+              <a routerLink="/auth/register" class="btn-goto-register">
+                <span>{{ langService.t('createAccountLink') }}</span>
+                <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+              </a>
+            </div>
+
+            <div class="quick-assist-links">
+              <a routerLink="/" class="assist-link">
+                <span class="material-symbols-outlined">home</span>
+                <span>{{ langService.isRtl() ? 'الرئيسية' : 'Homepage' }}</span>
+              </a>
+              <span>•</span>
+              <a routerLink="/preview" class="assist-link">
+                <span class="material-symbols-outlined">architecture</span>
+                <span>{{ langService.t('architectureShowcase') }}</span>
+              </a>
+              <span>•</span>
+              <a routerLink="/emergency" class="assist-link text-red">
+                <span class="material-symbols-outlined">emergency</span>
+                <span>{{ langService.isRtl() ? 'طوارئ QR' : 'Emergency QR' }}</span>
+              </a>
             </div>
           </div>
+        </ng-container>
 
-          <!-- Options Row -->
-          <div class="options-row">
-            <label class="checkbox-label">
-              <input type="checkbox" formControlName="rememberMe" class="custom-checkbox" />
-              <span>{{ langService.t('rememberMe') }}</span>
-            </label>
+        <!-- MODE 2: FORGOT PASSWORD RECOVERY WORKFLOW -->
+        <ng-container *ngIf="isForgotPasswordMode">
+          <div class="card-header-block">
+            <span class="header-mini-badge warning">
+              <span class="material-symbols-outlined badge-mini-icon">key</span>
+              <span>{{ langService.isRtl() ? 'استعادة الوصول إلى الحساب' : 'Account Recovery' }}</span>
+            </span>
+            <h1 class="card-main-title">{{ langService.t('forgotPasswordTitle') }}</h1>
+            <p class="card-subtitle">{{ langService.t('forgotPasswordSubtitle') }}</p>
           </div>
 
-          <!-- Submit Button -->
-          <button type="submit" class="btn-submit-login" [disabled]="loginForm.invalid || isLoading">
-            <span class="spinner-dot" *ngIf="isLoading"></span>
-            <span *ngIf="!isLoading">{{ langService.t('signInBtn') }}</span>
-            <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">arrow_forward</span>
-          </button>
-        </form>
-
-        <!-- Reciprocal Navigation Helper to Register Page -->
-        <div class="card-bottom-navigation">
-          <div class="register-prompt">
-            <span>{{ langService.t('dontHaveAccount') }}</span>
-            <a routerLink="/auth/register" class="btn-goto-register">
-              <span>{{ langService.t('createAccountLink') }}</span>
-              <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
-            </a>
+          <!-- Recovery Success Alert -->
+          <div class="auth-success-banner" *ngIf="resetSuccessMessage">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span>{{ resetSuccessMessage }}</span>
           </div>
 
-          <div class="quick-assist-links">
-            <a routerLink="/" class="assist-link">
-              <span class="material-symbols-outlined">home</span>
-              <span>{{ langService.isRtl() ? 'الرئيسية' : 'Homepage' }}</span>
-            </a>
-            <span>•</span>
-            <a routerLink="/preview" class="assist-link">
-              <span class="material-symbols-outlined">architecture</span>
-              <span>{{ langService.t('architectureShowcase') }}</span>
-            </a>
-            <span>•</span>
-            <a routerLink="/emergency" class="assist-link text-red">
-              <span class="material-symbols-outlined">emergency</span>
-              <span>{{ langService.isRtl() ? 'طوارئ QR' : 'Emergency QR' }}</span>
-            </a>
+          <!-- Recovery Form -->
+          <form (ngSubmit)="sendPasswordReset()" class="recovery-form" *ngIf="!resetSuccessMessage">
+            <div class="form-field-group">
+              <label class="field-label" for="recoveryIdentifier">
+                <span>{{ langService.t('identifierLabel') }}</span>
+                <span class="required-star">*</span>
+              </label>
+              <div class="field-input-box">
+                <span class="material-symbols-outlined field-icon">contact_mail</span>
+                <input
+                  id="recoveryIdentifier"
+                  type="text"
+                  [(ngModel)]="recoveryInput"
+                  name="recoveryIdentifier"
+                  class="form-input"
+                  [placeholder]="langService.t('identifierPlaceholder')"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn-submit-login"
+              [disabled]="!recoveryInput.trim() || isRecoveryLoading"
+            >
+              <span class="spinner-dot" *ngIf="isRecoveryLoading"></span>
+              <span *ngIf="!isRecoveryLoading">{{ langService.t('sendResetCode') }}</span>
+              <span class="material-symbols-outlined flip-rtl" *ngIf="!isRecoveryLoading">send</span>
+            </button>
+          </form>
+
+          <!-- Back to Login Button -->
+          <div class="card-bottom-navigation">
+            <button type="button" class="btn-back-to-login" (click)="closeForgotPassword()">
+              <span class="material-symbols-outlined flip-rtl">arrow_back</span>
+              <span>{{ langService.t('backToLoginBtn') }}</span>
+            </button>
           </div>
-        </div>
+        </ng-container>
       </div>
     </div>
   `,
@@ -180,7 +249,7 @@ import { LanguageService } from '../../../core/services/language.service';
       gap: 1.25rem;
     }
 
-    /* Top Navigation Tabs */
+    /* Top Navigation Tabs (1-Click Switch between Login & Register) */
     .auth-navigation-tabs {
       display: flex;
       background: var(--color-surface-card, #FFFFFF);
@@ -265,11 +334,20 @@ import { LanguageService } from '../../../core/services/language.service';
       margin-bottom: 0.25rem;
     }
 
+    .header-mini-badge.warning {
+      color: #D97706;
+      background: rgba(245, 158, 11, 0.12);
+    }
+
     .badge-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: #10B981;
+    }
+
+    .badge-mini-icon {
+      font-size: 1rem;
     }
 
     .card-main-title {
@@ -354,7 +432,7 @@ import { LanguageService } from '../../../core/services/language.service';
     .chip-reception:hover { color: #8B5CF6; border-color: #8B5CF6; }
     .chip-admin:hover { color: #475569; border-color: #475569; }
 
-    /* Error Alert */
+    /* Alerts */
     .auth-error-banner {
       display: flex;
       align-items: center;
@@ -368,8 +446,23 @@ import { LanguageService } from '../../../core/services/language.service';
       font-weight: 600;
     }
 
+    .auth-success-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #059669;
+      padding: 0.85rem 1.1rem;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
     /* Form Fields */
-    .login-form {
+    .login-form,
+    .recovery-form {
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
@@ -379,6 +472,12 @@ import { LanguageService } from '../../../core/services/language.service';
       display: flex;
       flex-direction: column;
       gap: 0.45rem;
+    }
+
+    .label-with-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .field-label {
@@ -392,6 +491,21 @@ import { LanguageService } from '../../../core/services/language.service';
 
     .required-star {
       color: #EF4444;
+    }
+
+    .forgot-password-link {
+      background: transparent;
+      border: none;
+      color: var(--color-primary-base, #088395);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    .forgot-password-link:hover {
+      color: var(--color-primary-dark, #0A4D68);
     }
 
     .field-input-box {
@@ -413,7 +527,7 @@ import { LanguageService } from '../../../core/services/language.service';
       padding: 0.85rem 1rem 0.85rem 3rem;
       border-radius: 14px;
       border: 1px solid var(--color-border-subtle, #E2E8F0);
-      background: var(--color-bg-app, #FAFCFB);
+      background: var(--color-bg-app, #F8FAFC);
       color: var(--color-text-main, #0F172A);
       font-size: 0.95rem;
       transition: all 0.2s ease;
@@ -540,7 +654,7 @@ import { LanguageService } from '../../../core/services/language.service';
       to { transform: rotate(360deg); }
     }
 
-    /* Bottom Navigation to Register */
+    /* Bottom Navigation */
     .card-bottom-navigation {
       display: flex;
       flex-direction: column;
@@ -564,13 +678,13 @@ import { LanguageService } from '../../../core/services/language.service';
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.45rem 1rem;
+      padding: 0.45rem 1.1rem;
       border-radius: 9999px;
       background: rgba(8, 131, 149, 0.08);
       border: 1px solid rgba(8, 131, 149, 0.2);
       color: var(--color-primary-base, #088395);
       font-weight: 800;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       text-decoration: none;
       transition: all 0.2s ease;
     }
@@ -578,6 +692,26 @@ import { LanguageService } from '../../../core/services/language.service';
     .btn-goto-register:hover {
       background: rgba(8, 131, 149, 0.16);
       transform: translateY(-1px);
+    }
+
+    .btn-back-to-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 9999px;
+      background: var(--color-bg-app, #F8FAFC);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      color: var(--color-text-main, #0F172A);
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-back-to-login:hover {
+      border-color: var(--color-primary-base, #088395);
+      color: var(--color-primary-base, #088395);
     }
 
     .quick-assist-links {
@@ -620,6 +754,12 @@ export class LoginComponent {
   public errorMessage: string | null = null;
   public showPassword = false;
 
+  // Forgot Password feature state
+  public isForgotPasswordMode = false;
+  public isRecoveryLoading = false;
+  public recoveryInput = '';
+  public resetSuccessMessage: string | null = null;
+
   public loginForm = this.fb.group({
     identifier: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(8)]],
@@ -647,6 +787,31 @@ export class LoginComponent {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.loginForm.get(fieldName);
     return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  openForgotPassword(): void {
+    this.isForgotPasswordMode = true;
+    this.recoveryInput = this.loginForm.get('identifier')?.value || '';
+    this.resetSuccessMessage = null;
+    this.errorMessage = null;
+  }
+
+  closeForgotPassword(): void {
+    this.isForgotPasswordMode = false;
+    this.resetSuccessMessage = null;
+    this.errorMessage = null;
+  }
+
+  sendPasswordReset(): void {
+    if (!this.recoveryInput.trim()) return;
+
+    this.isRecoveryLoading = true;
+    setTimeout(() => {
+      this.isRecoveryLoading = false;
+      this.resetSuccessMessage = this.langService.isRtl()
+        ? 'تم إرسال تعليمات إعادة تعيين كلمة المرور إلى البريد الإلكتروني والهاتف المسجل بنجاح!'
+        : 'Password reset recovery instructions have been sent to your registered email and phone!';
+    }, 1200);
   }
 
   onSubmit(): void {
