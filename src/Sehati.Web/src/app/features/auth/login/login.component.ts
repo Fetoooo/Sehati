@@ -11,137 +11,160 @@ import { LanguageService } from '../../../core/services/language.service';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="auth-card-container">
-      <!-- Switcher Tabs -->
-      <div class="auth-switch-tabs">
-        <a routerLink="/auth/login" class="tab-item active">
-          <span class="material-symbols-outlined">login</span>
+      <!-- Top Navigation Switcher Tabs (Buttons to Navigate Between Login & Register) -->
+      <div class="auth-navigation-tabs">
+        <a routerLink="/auth/login" class="nav-tab-pill active">
+          <span class="material-symbols-outlined tab-icon">login</span>
           <span>{{ langService.t('signInBtn') }}</span>
         </a>
-        <a routerLink="/auth/register" class="tab-item">
-          <span class="material-symbols-outlined">person_add</span>
+        <a routerLink="/auth/register" class="nav-tab-pill">
+          <span class="material-symbols-outlined tab-icon">person_add</span>
           <span>{{ langService.t('createAccountLink') }}</span>
         </a>
       </div>
 
-      <div class="auth-main-card">
-        <div class="card-titles">
-          <h1 class="main-title">{{ langService.t('loginTitle') }}</h1>
-          <p class="subtitle">{{ langService.t('loginSubtitle') }}</p>
+      <!-- Main Login Card -->
+      <div class="auth-glass-card">
+        <!-- Card Titles -->
+        <div class="card-header-block">
+          <span class="header-mini-badge">
+            <span class="badge-dot"></span>
+            <span>{{ langService.isRtl() ? 'المنظومة الوطنية الموحدة' : 'National Health Cloud' }}</span>
+          </span>
+          <h1 class="card-main-title">{{ langService.t('loginTitle') }}</h1>
+          <p class="card-subtitle">{{ langService.t('loginSubtitle') }}</p>
         </div>
 
-        <!-- Quick Demo Accounts One-Click Fill -->
-        <div class="demo-selector-box">
-          <span class="demo-label">{{ langService.isRtl() ? 'تجربة سريعة بحساب تجريبي:' : 'Quick Demo Fill:' }}</span>
-          <div class="demo-pills-row">
-            <button type="button" class="demo-pill" (click)="fillDemo('patient')">
-              <span class="material-symbols-outlined">person</span>
-              <span>{{ langService.isRtl() ? 'مريض' : 'Patient' }}</span>
+        <!-- Quick 1-Click Demo Accounts Selector -->
+        <div class="demo-quick-box">
+          <div class="demo-box-label">
+            <span class="material-symbols-outlined label-icon">smart_toy</span>
+            <span>{{ langService.isRtl() ? 'تجربة سريعة بضغطة زر واحدة:' : 'Quick 1-Click Demo Fill:' }}</span>
+          </div>
+          <div class="demo-pills-wrap">
+            <button type="button" class="demo-chip chip-patient" (click)="fillDemo('patient')">
+              <span class="material-symbols-outlined chip-icon">person</span>
+              <span>{{ langService.isRtl() ? 'مريض تجريبي' : 'Patient' }}</span>
             </button>
-            <button type="button" class="demo-pill" (click)="fillDemo('doctor')">
-              <span class="material-symbols-outlined">stethoscope</span>
+            <button type="button" class="demo-chip chip-doctor" (click)="fillDemo('doctor')">
+              <span class="material-symbols-outlined chip-icon">stethoscope</span>
               <span>{{ langService.isRtl() ? 'طبيب' : 'Doctor' }}</span>
             </button>
-            <button type="button" class="demo-pill" (click)="fillDemo('receptionist')">
-              <span class="material-symbols-outlined">desk</span>
+            <button type="button" class="demo-chip chip-reception" (click)="fillDemo('receptionist')">
+              <span class="material-symbols-outlined chip-icon">desk</span>
               <span>{{ langService.isRtl() ? 'استقبال' : 'Reception' }}</span>
             </button>
-            <button type="button" class="demo-pill" (click)="fillDemo('admin')">
-              <span class="material-symbols-outlined">admin_panel_settings</span>
+            <button type="button" class="demo-chip chip-admin" (click)="fillDemo('admin')">
+              <span class="material-symbols-outlined chip-icon">admin_panel_settings</span>
               <span>{{ langService.isRtl() ? 'مدير' : 'Admin' }}</span>
             </button>
           </div>
         </div>
 
         <!-- Error Alert -->
-        <div class="auth-alert alert-error" *ngIf="errorMessage">
+        <div class="auth-error-banner" *ngIf="errorMessage">
           <span class="material-symbols-outlined">error</span>
           <span>{{ errorMessage }}</span>
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="modern-auth-form">
+        <!-- Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
           <!-- Identifier Input -->
-          <div class="input-field-group">
+          <div class="form-field-group">
             <label class="field-label" for="identifier">
               <span>{{ langService.t('identifierLabel') }}</span>
-              <span class="req">*</span>
+              <span class="required-star">*</span>
             </label>
-            <div class="input-with-icon">
-              <span class="material-symbols-outlined leading-icon">alternate_email</span>
+            <div class="field-input-box">
+              <span class="material-symbols-outlined field-icon">alternate_email</span>
               <input
                 id="identifier"
                 type="text"
                 formControlName="identifier"
-                class="field-input"
+                class="form-input"
                 [class.invalid]="isFieldInvalid('identifier')"
                 [placeholder]="langService.t('identifierPlaceholder')"
                 autocomplete="username"
               />
             </div>
-            <div class="field-error-msg" *ngIf="isFieldInvalid('identifier')">
+            <div class="field-error-text" *ngIf="isFieldInvalid('identifier')">
               {{ langService.isRtl() ? 'يرجى إدخال البريد الإلكتروني أو رقم الهاتف المسجل.' : 'Please enter your registered email or phone number.' }}
             </div>
           </div>
 
           <!-- Password Input -->
-          <div class="input-field-group">
-            <div class="label-row">
+          <div class="form-field-group">
+            <div class="label-with-link">
               <label class="field-label" for="password">
                 <span>{{ langService.t('passwordLabel') }}</span>
-                <span class="req">*</span>
+                <span class="required-star">*</span>
               </label>
             </div>
-            <div class="input-with-icon">
-              <span class="material-symbols-outlined leading-icon">lock</span>
+            <div class="field-input-box">
+              <span class="material-symbols-outlined field-icon">lock</span>
               <input
                 id="password"
                 [type]="showPassword ? 'text' : 'password'"
                 formControlName="password"
-                class="field-input"
+                class="form-input"
                 [class.invalid]="isFieldInvalid('password')"
                 [placeholder]="langService.t('passwordPlaceholder')"
                 autocomplete="current-password"
               />
-              <button type="button" class="trailing-toggle-btn" (click)="showPassword = !showPassword">
+              <button
+                type="button"
+                class="eye-toggle-btn"
+                (click)="showPassword = !showPassword"
+                [title]="showPassword ? 'Hide password' : 'Show password'"
+              >
                 <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
-            <div class="field-error-msg" *ngIf="isFieldInvalid('password')">
+            <div class="field-error-text" *ngIf="isFieldInvalid('password')">
               {{ langService.isRtl() ? 'كلمة المرور مطلوبة (8 أحرف على الأقل).' : 'Password is required (min 8 characters).' }}
             </div>
           </div>
 
-          <!-- Form Options -->
+          <!-- Options Row -->
           <div class="options-row">
-            <label class="remember-label">
-              <input type="checkbox" formControlName="rememberMe" />
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="rememberMe" class="custom-checkbox" />
               <span>{{ langService.t('rememberMe') }}</span>
             </label>
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" class="submit-action-btn" [disabled]="loginForm.invalid || isLoading">
-            <span class="loading-spinner" *ngIf="isLoading"></span>
+          <button type="submit" class="btn-submit-login" [disabled]="loginForm.invalid || isLoading">
+            <span class="spinner-dot" *ngIf="isLoading"></span>
             <span *ngIf="!isLoading">{{ langService.t('signInBtn') }}</span>
             <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">arrow_forward</span>
           </button>
         </form>
 
-        <!-- Bottom Links -->
-        <div class="card-bottom-bar">
-          <p class="create-account-text">
-            {{ langService.t('dontHaveAccount') }}
-            <a routerLink="/auth/register" class="action-link">{{ langService.t('createAccountLink') }}</a>
-          </p>
+        <!-- Reciprocal Navigation Helper to Register Page -->
+        <div class="card-bottom-navigation">
+          <div class="register-prompt">
+            <span>{{ langService.t('dontHaveAccount') }}</span>
+            <a routerLink="/auth/register" class="btn-goto-register">
+              <span>{{ langService.t('createAccountLink') }}</span>
+              <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+            </a>
+          </div>
 
-          <div class="alternative-links">
-            <a routerLink="/" class="home-link">
+          <div class="quick-assist-links">
+            <a routerLink="/" class="assist-link">
               <span class="material-symbols-outlined">home</span>
               <span>{{ langService.isRtl() ? 'الرئيسية' : 'Homepage' }}</span>
             </a>
             <span>•</span>
-            <a routerLink="/preview" class="demo-link">
+            <a routerLink="/preview" class="assist-link">
               <span class="material-symbols-outlined">architecture</span>
               <span>{{ langService.t('architectureShowcase') }}</span>
+            </a>
+            <span>•</span>
+            <a routerLink="/emergency" class="assist-link text-red">
+              <span class="material-symbols-outlined">emergency</span>
+              <span>{{ langService.isRtl() ? 'طوارئ QR' : 'Emergency QR' }}</span>
             </a>
           </div>
         </div>
@@ -157,216 +180,298 @@ import { LanguageService } from '../../../core/services/language.service';
       gap: 1.25rem;
     }
 
-    .auth-switch-tabs {
+    /* Top Navigation Tabs */
+    .auth-navigation-tabs {
       display: flex;
-      background: var(--color-surface-card);
-      border: 1px solid var(--color-border-subtle);
-      border-radius: var(--radius-full);
-      padding: 0.3rem;
-      box-shadow: var(--shadow-sm);
-
-      .tab-item {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        padding: 0.55rem;
-        border-radius: var(--radius-full);
-        font-size: 0.88rem;
-        font-weight: 700;
-        text-decoration: none;
-        color: var(--color-text-muted);
-        transition: all 0.2s;
-
-        span.material-symbols-outlined { font-size: 1.1rem; }
-
-        &.active {
-          background: linear-gradient(135deg, var(--color-primary-deep), var(--color-primary-ocean));
-          color: #fff;
-          box-shadow: 0 4px 12px rgba(8, 131, 149, 0.25);
-        }
-      }
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 9999px;
+      padding: 0.35rem;
+      box-shadow: 0 4px 14px rgba(8, 131, 149, 0.05);
     }
 
-    .auth-main-card {
-      background: var(--color-surface-card);
-      border: 1px solid var(--color-border-subtle);
-      border-radius: 24px;
+    :host-context([data-theme="dark"]) .auth-navigation-tabs,
+    :host-context(.dark-theme) .auth-navigation-tabs {
+      background: #082635;
+      border-color: rgba(5, 191, 219, 0.2);
+    }
+
+    .nav-tab-pill {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--color-text-muted, #64748B);
+      transition: all 0.25s ease;
+    }
+
+    .nav-tab-pill:hover {
+      color: var(--color-primary-base, #088395);
+    }
+
+    .nav-tab-pill.active {
+      background: var(--color-primary-base, #088395);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(8, 131, 149, 0.3);
+    }
+
+    .tab-icon {
+      font-size: 1.15rem;
+    }
+
+    /* Main Glass Card */
+    .auth-glass-card {
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 28px;
       padding: 2.25rem;
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 16px 36px -8px rgba(8, 131, 149, 0.1), 0 4px 12px rgba(0, 0, 0, 0.03);
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+      transition: all 0.3s ease;
     }
 
-    .card-titles {
+    :host-context([data-theme="dark"]) .auth-glass-card,
+    :host-context(.dark-theme) .auth-glass-card {
+      background: #082635;
+      border-color: rgba(5, 191, 219, 0.22);
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .card-header-block {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
-
-      .main-title {
-        font-size: 1.7rem;
-        font-weight: 900;
-        color: var(--color-text-main);
-        margin: 0;
-      }
-
-      .subtitle {
-        color: var(--color-text-muted);
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin: 0;
-      }
+      gap: 0.45rem;
     }
 
-    .demo-selector-box {
-      background: var(--color-bg-app);
-      border: 1px dashed var(--color-border-subtle);
-      border-radius: var(--radius-md);
-      padding: 0.75rem 1rem;
+    .header-mini-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #059669;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      width: fit-content;
+      margin-bottom: 0.25rem;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+    }
+
+    .card-main-title {
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: var(--color-text-main, #0F172A);
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+
+    .card-subtitle {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--color-text-muted, #64748B);
+      margin: 0;
+    }
+
+    /* Demo Quick Box */
+    .demo-quick-box {
+      background: rgba(8, 131, 149, 0.04);
+      border: 1px dashed rgba(8, 131, 149, 0.25);
+      border-radius: 16px;
+      padding: 0.85rem 1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-
-      .demo-label {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--color-text-muted);
-        text-transform: uppercase;
-      }
-
-      .demo-pills-row {
-        display: flex;
-        gap: 0.4rem;
-        flex-wrap: wrap;
-
-        .demo-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-          background: var(--color-surface-card);
-          border: 1px solid var(--color-border-subtle);
-          padding: 0.3rem 0.65rem;
-          border-radius: var(--radius-full);
-          font-size: 0.75rem;
-          font-weight: 700;
-          color: var(--color-text-main);
-          cursor: pointer;
-          transition: all 0.2s;
-
-          &:hover {
-            border-color: var(--color-primary-ocean);
-            color: var(--color-primary-ocean);
-          }
-
-          span.material-symbols-outlined { font-size: 0.95rem; }
-        }
-      }
+      gap: 0.65rem;
     }
 
-    .auth-alert {
+    .demo-box-label {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-md);
-      font-size: 0.85rem;
-      font-weight: 600;
-
-      &.alert-error {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.25);
-        color: #b91c1c;
-      }
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--color-primary-base, #088395);
+      letter-spacing: 0.5px;
     }
 
-    .modern-auth-form {
+    .label-icon {
+      font-size: 1rem;
+    }
+
+    .demo-pills-wrap {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .demo-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 9999px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--color-text-main, #0F172A);
+      transition: all 0.2s ease;
+    }
+
+    :host-context([data-theme="dark"]) .demo-chip,
+    :host-context(.dark-theme) .demo-chip {
+      background: #0B3347;
+      border-color: rgba(5, 191, 219, 0.25);
+    }
+
+    .demo-chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      border-color: var(--color-primary-base, #088395);
+    }
+
+    .chip-icon {
+      font-size: 0.95rem;
+    }
+
+    .chip-patient:hover { color: #088395; border-color: #088395; }
+    .chip-doctor:hover { color: #10B981; border-color: #10B981; }
+    .chip-reception:hover { color: #8B5CF6; border-color: #8B5CF6; }
+    .chip-admin:hover { color: #475569; border-color: #475569; }
+
+    /* Error Alert */
+    .auth-error-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #DC2626;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    /* Form Fields */
+    .login-form {
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
     }
 
-    .input-field-group {
+    .form-field-group {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
-
-      .field-label {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--color-text-main);
-        display: flex;
-        gap: 0.2rem;
-        .req { color: #ef4444; }
-      }
-
-      .input-with-icon {
-        position: relative;
-        display: flex;
-        align-items: center;
-
-        .leading-icon {
-          position: absolute;
-          left: 1rem;
-          color: var(--color-text-muted);
-          font-size: 1.25rem;
-          pointer-events: none;
-        }
-
-        .field-input {
-          width: 100%;
-          padding: 0.75rem 1rem 0.75rem 2.85rem;
-          border-radius: var(--radius-md);
-          border: 1px solid var(--color-border-subtle);
-          background: var(--color-bg-app);
-          color: var(--color-text-main);
-          font-size: 0.95rem;
-          transition: all 0.2s;
-
-          &:focus {
-            outline: none;
-            border-color: var(--color-primary-ocean);
-            background: var(--color-surface-card);
-            box-shadow: 0 0 0 3px rgba(8, 131, 149, 0.12);
-          }
-
-          &.invalid {
-            border-color: #ef4444;
-          }
-        }
-
-        .trailing-toggle-btn {
-          position: absolute;
-          right: 0.75rem;
-          background: none;
-          border: none;
-          color: var(--color-text-muted);
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-      }
-
-      .field-error-msg {
-        font-size: 0.75rem;
-        color: #ef4444;
-        font-weight: 600;
-      }
+      gap: 0.45rem;
     }
 
-    :host-context([dir="rtl"]) .input-with-icon {
-      .leading-icon {
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-text-main, #0F172A);
+    }
+
+    .required-star {
+      color: #EF4444;
+    }
+
+    .field-input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 1rem;
+      color: var(--color-text-muted, #64748B);
+      font-size: 1.25rem;
+      pointer-events: none;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 3rem;
+      border-radius: 14px;
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: var(--color-bg-app, #FAFCFB);
+      color: var(--color-text-main, #0F172A);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    :host-context([data-theme="dark"]) .form-input,
+    :host-context(.dark-theme) .form-input {
+      background: #031B26;
+      border-color: rgba(5, 191, 219, 0.2);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary-base, #088395);
+      background: var(--color-surface-card, #FFFFFF);
+      box-shadow: 0 0 0 3px rgba(8, 131, 149, 0.15);
+    }
+
+    .form-input.invalid {
+      border-color: #EF4444;
+    }
+
+    .eye-toggle-btn {
+      position: absolute;
+      right: 0.85rem;
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted, #64748B);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem;
+    }
+
+    .eye-toggle-btn:hover {
+      color: var(--color-primary-base, #088395);
+    }
+
+    .field-error-text {
+      font-size: 0.8rem;
+      color: #EF4444;
+      font-weight: 600;
+    }
+
+    /* RTL specific input alignment */
+    :host-context(.rtl) .field-input-box,
+    :host-context([dir="rtl"]) .field-input-box {
+      .field-icon {
         left: auto;
         right: 1rem;
       }
-      .field-input {
-        padding: 0.75rem 2.85rem 0.75rem 1rem;
+      .form-input {
+        padding: 0.85rem 3rem 0.85rem 1rem;
       }
-      .trailing-toggle-btn {
+      .eye-toggle-btn {
         right: auto;
-        left: 0.75rem;
+        left: 0.85rem;
       }
     }
 
@@ -374,29 +479,32 @@ import { LanguageService } from '../../../core/services/language.service';
       display: flex;
       align-items: center;
       justify-content: space-between;
-
-      .remember-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.45rem;
-        font-size: 0.85rem;
-        color: var(--color-text-muted);
-        cursor: pointer;
-
-        input[type="checkbox"] {
-          accent-color: var(--color-primary-ocean);
-        }
-      }
     }
 
-    .submit-action-btn {
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      color: var(--color-text-muted, #64748B);
+      cursor: pointer;
+    }
+
+    .custom-checkbox {
+      accent-color: var(--color-primary-base, #088395);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Submit Button */
+    .btn-submit-login {
       width: 100%;
-      padding: 0.85rem 1.5rem;
-      border-radius: var(--radius-full);
+      padding: 0.95rem 1.5rem;
+      border-radius: 9999px;
       border: none;
-      background: linear-gradient(135deg, var(--color-primary-deep), var(--color-primary-ocean));
-      color: #fff;
-      font-size: 1rem;
+      background: var(--color-primary-base, #088395);
+      color: #FFFFFF;
+      font-size: 1.05rem;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
@@ -405,71 +513,99 @@ import { LanguageService } from '../../../core/services/language.service';
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(8, 131, 149, 0.3);
       transition: all 0.25s ease;
+      margin-top: 0.25rem;
+    }
 
-      &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(8, 131, 149, 0.4);
-      }
+    .btn-submit-login:hover:not(:disabled) {
+      background: var(--color-primary-dark, #0A4D68);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(8, 131, 149, 0.4);
+    }
 
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
+    .btn-submit-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-      .loading-spinner {
-        width: 18px;
-        height: 18px;
-        border: 2px solid rgba(255,255,255,0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
+    .spinner-dot {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #FFFFFF;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    .card-bottom-bar {
+    /* Bottom Navigation to Register */
+    .card-bottom-navigation {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.85rem;
-      border-top: 1px solid var(--color-border-subtle);
-      padding-top: 1.25rem;
+      gap: 1.25rem;
+      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+      padding-top: 1.5rem;
+    }
 
-      .create-account-text {
-        font-size: 0.88rem;
-        color: var(--color-text-muted);
-        margin: 0;
+    .register-prompt {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.92rem;
+      color: var(--color-text-muted, #64748B);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-        .action-link {
-          color: var(--color-primary-ocean);
-          font-weight: 700;
-          text-decoration: none;
-          &:hover { text-decoration: underline; }
-        }
-      }
+    .btn-goto-register {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 1rem;
+      border-radius: 9999px;
+      background: rgba(8, 131, 149, 0.08);
+      border: 1px solid rgba(8, 131, 149, 0.2);
+      color: var(--color-primary-base, #088395);
+      font-weight: 800;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
 
-      .alternative-links {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 0.82rem;
-        color: var(--color-text-muted);
+    .btn-goto-register:hover {
+      background: rgba(8, 131, 149, 0.16);
+      transform: translateY(-1px);
+    }
 
-        a {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-          color: var(--color-text-muted);
-          text-decoration: none;
-          font-weight: 600;
+    .quick-assist-links {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.82rem;
+      color: var(--color-text-muted, #64748B);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-          &:hover { color: var(--color-primary-ocean); }
-          span.material-symbols-outlined { font-size: 0.95rem; }
-        }
-      }
+    .assist-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: var(--color-text-muted, #64748B);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .assist-link:hover {
+      color: var(--color-primary-base, #088395);
+    }
+
+    .assist-link.text-red {
+      color: #EF4444;
     }
   `]
 })
@@ -536,7 +672,7 @@ export class LoginComponent {
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err?.error?.message ||
-          (this.langService.isRtl() ? 'بيانات تسجيل الدخول غير صحيحة، يرجى التحقق وإعادة المحاولة.' : 'Invalid credentials. Please verify your details.');
+          (this.langService.isRtl() ? 'بيانات تسجيل الدخول غير صحيحة، يرجى التحقق وإعادة المحاولة.' : 'Invalid credentials provided.');
       }
     });
   }

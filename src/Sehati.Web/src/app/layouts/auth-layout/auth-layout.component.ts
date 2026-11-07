@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
 
@@ -9,99 +9,39 @@ import { LanguageService } from '../../core/services/language.service';
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink],
   template: `
-    <div class="auth-split-layout" [class.rtl]="langService.isRtl()">
-      <!-- Left Visual & Brand Presentation Panel -->
-      <aside class="auth-hero-panel">
-        <div class="hero-panel-decorations">
-          <div class="circle-glow orb-1"></div>
-          <div class="circle-glow orb-2"></div>
-        </div>
+    <div class="auth-wrapper" [class.rtl]="langService.isRtl()">
+      <!-- Background Micro-Grid & Ambient Lighting -->
+      <div class="ambient-glow glow-1"></div>
+      <div class="ambient-glow glow-2"></div>
 
-        <!-- Back to Landing Home button -->
-        <div class="top-nav-bar">
-          <a routerLink="/" class="back-home-pill">
-            <span class="material-symbols-outlined flip-rtl">arrow_back</span>
-            <span>{{ langService.isRtl() ? 'العودة إلى الصفحة الرئيسية' : 'Back to Home' }}</span>
-          </a>
-        </div>
-
-        <div class="hero-panel-content">
-          <div class="brand-showcase">
-            <div class="logo-wrapper">
-              <img src="/sehati_logo.png" alt="Sehati Logo" class="brand-logo" />
+      <!-- Top Header Navigation -->
+      <header class="auth-top-header">
+        <div class="header-container">
+          <!-- Brand Logo & Name -->
+          <a routerLink="/" class="auth-brand">
+            <div class="brand-logo-frame">
+              <img src="/sehati_logo.png" alt="Sehati Logo" class="brand-img" />
             </div>
-            <div class="brand-title-group">
+            <div class="brand-typography">
               <span class="brand-ar">صِحّتي</span>
-              <span class="brand-en">SEHATI PLATFORM</span>
+              <span class="brand-en">SEHATI</span>
             </div>
-          </div>
-
-          <h2 class="hero-motto">
-            {{ langService.isRtl() ? 'مريض واحد، سجل طبي موحد، رعاية صحية أفضل.' : 'One Patient, One Medical History, Better Healthcare.' }}
-          </h2>
-
-          <p class="hero-description">
-            {{ langService.isRtl() 
-              ? 'المنظومة الوطنية الموحدة لربط السجلات الطبية والعيادات والمستشفيات وطوارئ الإسعاف بكود صحي مركزي وأعلى معايير الخصوصية.' 
-              : 'The national centralized digital infrastructure linking citizen health passports, polyclinics, certified prescriptions, and emergency dispatch.' }}
-          </p>
-
-          <!-- Floating Simulation Card -->
-          <div class="preview-mini-passport">
-            <div class="passport-mini-head">
-              <span class="passport-flag">🇪🇬 EGYPT</span>
-              <span class="passport-code">SH-2026-000101</span>
-            </div>
-            <div class="passport-mini-body">
-              <div class="patient-line">
-                <strong>Ahmed Mahmoud Hassan</strong>
-                <span class="blood-dot">A+</span>
-              </div>
-              <div class="meta-line">
-                <span>Verified Citizen Health Profile</span>
-                <span class="verified-icon material-symbols-outlined">verified</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Trust Badges -->
-          <div class="hero-trust-list">
-            <div class="trust-pill">
-              <span class="material-symbols-outlined">lock</span>
-              <span>256-Bit Encrypted</span>
-            </div>
-            <div class="trust-pill">
-              <span class="material-symbols-outlined">shield</span>
-              <span>Zero-Trust Consent</span>
-            </div>
-            <div class="trust-pill">
-              <span class="material-symbols-outlined">qr_code</span>
-              <span>Instant ER Access</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="hero-panel-footer">
-          <span>© 2026 Sehati Smart Healthcare Platform</span>
-        </div>
-      </aside>
-
-      <!-- Right Form Container Panel -->
-      <main class="auth-form-panel">
-        <header class="form-panel-header">
-          <!-- Mobile Brand Logo only visible on small screens -->
-          <a routerLink="/" class="mobile-brand">
-            <img src="/sehati_logo.png" alt="Sehati Logo" class="mobile-logo-img" />
-            <span class="mobile-brand-title">صِحّتي</span>
           </a>
 
-          <div class="panel-controls">
+          <!-- Controls: Back Home, Theme, Language -->
+          <div class="auth-controls">
+            <!-- Back to Home Button -->
+            <a routerLink="/" class="back-home-btn">
+              <span class="material-symbols-outlined flip-rtl">arrow_back</span>
+              <span>{{ langService.isRtl() ? 'الرئيسية' : 'Home' }}</span>
+            </a>
+
             <!-- Theme Toggle -->
             <button
-              class="control-btn"
-              (click)="themeService.toggleTheme()"
-              [title]="themeService.isDark() ? langService.t('themeLight') : langService.t('themeDark')"
               type="button"
+              class="icon-control-btn"
+              (click)="themeService.toggleTheme()"
+              [title]="themeService.isDark() ? (langService.isRtl() ? 'الوضع النهاري' : 'Light Mode') : (langService.isRtl() ? 'الوضع الليلي' : 'Dark Mode')"
             >
               <span class="material-symbols-outlined">
                 {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
@@ -110,378 +50,297 @@ import { LanguageService } from '../../core/services/language.service';
 
             <!-- Language Switcher -->
             <button
-              class="control-btn lang-btn"
-              (click)="langService.toggleLanguage()"
               type="button"
+              class="lang-control-btn"
+              (click)="langService.toggleLanguage()"
             >
               <span class="material-symbols-outlined">translate</span>
-              <span>{{ langService.currentLang() === 'en' ? 'العربية' : 'English' }}</span>
+              <span>{{ langService.currentLang() === 'en' ? 'العربية' : 'EN' }}</span>
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
-        <!-- Route Content Outlet (Login / Register) -->
-        <div class="form-scrollable-area">
+      <!-- Main Center Content Area -->
+      <main class="auth-content-area">
+        <div class="auth-card-wrapper">
+          <!-- Outlet for Login & Register -->
           <router-outlet></router-outlet>
         </div>
       </main>
+
+      <!-- Minimal Clean Auth Footer -->
+      <footer class="auth-footer">
+        <div class="footer-inner">
+          <span>© 2026 Sehati Smart Healthcare Platform • 🇪🇬 Egypt</span>
+          <div class="footer-security-chips">
+            <span>🔒 AES-256</span>
+            <span>•</span>
+            <span>🛡️ HIPAA Compliant</span>
+          </div>
+        </div>
+      </footer>
     </div>
   `,
   styles: [`
-    .auth-split-layout {
+    .auth-wrapper {
+      position: relative;
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1.15fr;
-      background: var(--color-bg-app);
-      font-family: var(--font-primary);
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-bg-app, #FAFCFB);
+      /* Subtle micro-grid background matching landing page */
+      background-image: 
+        linear-gradient(to right, rgba(8, 131, 149, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(8, 131, 149, 0.045) 1px, transparent 1px);
+      background-size: 36px 36px;
+      color: var(--color-text-main, #0F172A);
+      font-family: var(--font-latin, 'Plus Jakarta Sans', sans-serif);
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    .auth-split-layout.rtl {
+    .auth-wrapper.rtl {
       direction: rtl;
-      font-family: var(--font-arabic);
+      font-family: var(--font-arabic, 'Cairo', sans-serif);
 
       .flip-rtl {
         transform: rotate(180deg);
       }
     }
 
-    /* LEFT HERO PANEL */
-    .auth-hero-panel {
+    /* Ambient Glow Orbs */
+    .ambient-glow {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(100px);
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .glow-1 {
+      top: -60px;
+      left: 10%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
+    }
+
+    .glow-2 {
+      bottom: 5%;
+      right: 10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(8, 131, 149, 0.12) 0%, transparent 70%);
+    }
+
+    /* Top Header */
+    .auth-top-header {
       position: relative;
-      background: linear-gradient(145deg, #0a4d68 0%, #088395 60%, #05bfdb 100%);
-      color: #fff;
-      padding: 3rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-
-      .hero-panel-decorations {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-
-        .circle-glow {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(50px);
-          opacity: 0.35;
-        }
-
-        .orb-1 {
-          width: 350px;
-          height: 350px;
-          background: #05bfdb;
-          top: -80px;
-          right: -80px;
-        }
-
-        .orb-2 {
-          width: 300px;
-          height: 300px;
-          background: #0a4d68;
-          bottom: -50px;
-          left: -50px;
-        }
-      }
+      z-index: 10;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(8, 131, 149, 0.08);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(14px);
     }
 
-    .top-nav-bar {
-      position: relative;
-      z-index: 2;
-
-      .back-home-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        color: #fff;
-        text-decoration: none;
-        padding: 0.45rem 1rem;
-        border-radius: var(--radius-full);
-        font-size: 0.85rem;
-        font-weight: 700;
-        backdrop-filter: blur(8px);
-        transition: all 0.2s;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.25);
-          transform: translateY(-1px);
-        }
-
-        span.material-symbols-outlined { font-size: 1.1rem; }
-      }
+    :host-context([data-theme="dark"]) .auth-top-header,
+    :host-context(.dark-theme) .auth-top-header {
+      background: rgba(8, 38, 53, 0.88);
+      border-bottom: 1px solid rgba(5, 191, 219, 0.12);
     }
 
-    .hero-panel-content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      max-width: 480px;
-      margin: auto 0;
-
-      .brand-showcase {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-
-        .logo-wrapper {
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          background: #fff;
-          padding: 6px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          .brand-logo {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-          }
-        }
-
-        .brand-title-group {
-          display: flex;
-          flex-direction: column;
-
-          .brand-ar {
-            font-size: 1.5rem;
-            font-weight: 900;
-            line-height: 1.1;
-          }
-
-          .brand-en {
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            opacity: 0.9;
-            font-weight: 700;
-          }
-        }
-      }
-
-      .hero-motto {
-        font-size: 1.9rem;
-        font-weight: 900;
-        line-height: 1.25;
-        margin: 0;
-        letter-spacing: -0.01em;
-      }
-
-      .hero-description {
-        font-size: 1rem;
-        line-height: 1.6;
-        opacity: 0.9;
-        margin: 0;
-      }
-    }
-
-    .preview-mini-passport {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: var(--radius-card);
-      padding: 1.25rem;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-
-      .passport-mini-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.75rem;
-        font-weight: 800;
-
-        .passport-flag {
-          background: rgba(0,0,0,0.2);
-          padding: 0.15rem 0.5rem;
-          border-radius: var(--radius-sm);
-        }
-
-        .passport-code {
-          font-family: monospace;
-          color: #a5f3fc;
-          letter-spacing: 0.08em;
-        }
-      }
-
-      .passport-mini-body {
-        .patient-line {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          font-size: 1.05rem;
-          font-weight: 800;
-
-          .blood-dot {
-            background: #ef4444;
-            color: #fff;
-            font-size: 0.75rem;
-            padding: 0.15rem 0.45rem;
-            border-radius: var(--radius-full);
-          }
-        }
-
-        .meta-line {
-          display: flex;
-          align-items: center;
-          gap: 0.35rem;
-          font-size: 0.75rem;
-          opacity: 0.85;
-          margin-top: 0.25rem;
-
-          .verified-icon {
-            font-size: 0.95rem;
-            color: #6ee7b7;
-          }
-        }
-      }
-    }
-
-    .hero-trust-list {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-
-      .trust-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        background: rgba(0,0,0,0.15);
-        padding: 0.3rem 0.75rem;
-        border-radius: var(--radius-full);
-        font-size: 0.75rem;
-        font-weight: 700;
-
-        span.material-symbols-outlined { font-size: 0.95rem; }
-      }
-    }
-
-    .hero-panel-footer {
-      position: relative;
-      z-index: 2;
-      font-size: 0.8rem;
-      opacity: 0.75;
-    }
-
-    /* RIGHT FORM PANEL */
-    .auth-form-panel {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow-y: auto;
-      background: var(--color-bg-app);
-    }
-
-    .form-panel-header {
-      padding: 1.5rem 2.5rem 0.5rem;
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-
-      .mobile-brand {
-        display: none;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-
-        .mobile-logo-img {
-          width: 36px;
-          height: 36px;
-        }
-
-        .mobile-brand-title {
-          font-size: 1.25rem;
-          font-weight: 900;
-          color: var(--color-primary-deep);
-        }
-      }
-
-      .panel-controls {
-        display: flex;
-        align-items: center;
-        gap: 0.65rem;
-        margin-left: auto;
-
-        .control-btn {
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          border: 1px solid var(--color-border-subtle);
-          background: var(--color-surface-card);
-          color: var(--color-text-main);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s;
-
-          &:hover {
-            background: var(--color-surface-subtle);
-          }
-
-          &.lang-btn {
-            width: auto;
-            border-radius: var(--radius-full);
-            padding: 0.4rem 0.85rem;
-            display: inline-flex;
-            gap: 0.35rem;
-            font-size: 0.85rem;
-            font-weight: 700;
-
-            span.material-symbols-outlined { font-size: 1.05rem; }
-          }
-        }
-      }
     }
 
-    .auth-split-layout.rtl .form-panel-header .panel-controls {
-      margin-left: 0;
-      margin-right: auto;
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
     }
 
-    .form-scrollable-area {
+    .brand-logo-frame {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(8, 131, 149, 0.12), rgba(5, 191, 219, 0.2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(8, 131, 149, 0.2);
+    }
+
+    .brand-img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .brand-typography {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-ar {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--color-primary-dark, #0A4D68);
+    }
+
+    :host-context([data-theme="dark"]) .brand-ar,
+    :host-context(.dark-theme) .brand-ar {
+      color: #05BFDB;
+    }
+
+    .brand-en {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    .auth-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .back-home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 9999px;
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      color: var(--color-text-main, #0F172A);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .back-home-btn:hover {
+      border-color: var(--color-primary-base, #088395);
+      color: var(--color-primary-base, #088395);
+      transform: translateY(-1px);
+    }
+
+    .icon-control-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: var(--color-surface-card, #FFFFFF);
+      color: var(--color-text-main, #0F172A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .icon-control-btn:hover {
+      border-color: var(--color-primary-base, #088395);
+      color: var(--color-primary-base, #088395);
+    }
+
+    .lang-control-btn {
+      height: 38px;
+      padding: 0 0.85rem;
+      border-radius: 9999px;
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: var(--color-surface-card, #FFFFFF);
+      color: var(--color-text-main, #0F172A);
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .lang-control-btn:hover {
+      border-color: var(--color-primary-base, #088395);
+      color: var(--color-primary-base, #088395);
+    }
+
+    /* Content Area */
+    .auth-content-area {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem 2.5rem 3rem;
+      padding: 3rem 1.5rem 4rem 1.5rem;
+      position: relative;
+      z-index: 2;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 992px) {
-      .auth-split-layout {
-        grid-template-columns: 1fr;
+    .auth-card-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Footer */
+    .auth-footer {
+      position: relative;
+      z-index: 2;
+      padding: 1.5rem;
+      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      font-size: 0.85rem;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    :host-context([data-theme="dark"]) .auth-footer,
+    :host-context(.dark-theme) .auth-footer {
+      background: rgba(8, 38, 53, 0.6);
+      border-color: rgba(5, 191, 219, 0.12);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .footer-security-chips {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 640px) {
+      .auth-content-area {
+        padding: 1.5rem 1rem 3rem 1rem;
       }
 
-      .auth-hero-panel {
-        display: none;
-      }
-
-      .auth-form-panel {
-        height: auto;
-        min-height: 100vh;
-      }
-
-      .form-panel-header .mobile-brand {
-        display: flex;
-      }
-
-      .form-scrollable-area {
-        padding: 1.5rem 1.25rem 3rem;
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
       }
     }
   `]
 })
 export class AuthLayoutComponent {
-  public themeService = inject(ThemeService);
-  public langService = inject(LanguageService);
+  themeService = inject(ThemeService);
+  langService = inject(LanguageService);
 }
