@@ -10,29 +10,30 @@ import { LanguageService } from '../../core/services/language.service';
   imports: [CommonModule, RouterOutlet, RouterLink],
   template: `
     <div class="auth-viewport" [class.rtl]="langService.isRtl()">
-      <!-- Background Ambient Lighting -->
-      <div class="ambient-glow glow-top-left"></div>
-      <div class="ambient-glow glow-bottom-right"></div>
+      <!-- Ambient Lighting Backdrops -->
+      <div class="ambient-glow glow-1"></div>
+      <div class="ambient-glow glow-2"></div>
+      <div class="ambient-glow glow-3"></div>
 
       <!-- Top Header Navigation -->
       <header class="auth-header">
         <div class="header-inner">
-          <!-- Brand -->
-          <a routerLink="/" class="brand-link">
+          <!-- Official Brand -->
+          <a routerLink="/" class="brand-link" title="Sehati Homepage">
             <div class="brand-logo-frame">
               <img src="/sehati_logo.png" alt="Sehati Logo" class="brand-logo" />
             </div>
             <div class="brand-text">
               <span class="brand-ar">صِحّتي</span>
-              <span class="brand-en">SEHATI</span>
+              <span class="brand-en">SEHATI PLATFORM</span>
             </div>
           </a>
 
-          <!-- Controls: Home Link, Theme, Language -->
+          <!-- Utility Controls -->
           <div class="header-controls">
             <a routerLink="/" class="btn-return-home">
               <span class="material-symbols-outlined flip-rtl">arrow_back</span>
-              <span>{{ langService.isRtl() ? 'العودة إلى الرئيسية' : 'Back to Home' }}</span>
+              <span>{{ langService.isRtl() ? 'الرئيسية' : 'Homepage' }}</span>
             </a>
 
             <button
@@ -50,6 +51,7 @@ import { LanguageService } from '../../core/services/language.service';
               type="button"
               class="lang-pill"
               (click)="langService.toggleLanguage()"
+              title="Change Language"
             >
               <span class="material-symbols-outlined">translate</span>
               <span>{{ langService.currentLang() === 'en' ? 'العربية' : 'EN' }}</span>
@@ -58,77 +60,35 @@ import { LanguageService } from '../../core/services/language.service';
         </div>
       </header>
 
-      <!-- Main Split Layout Container -->
-      <div class="auth-layout-container">
-        <!-- Visual Presentation Side Panel (Desktop only) -->
-        <aside class="auth-visual-side">
-          <div class="visual-panel-card">
-            <!-- Holographic Badge -->
-            <div class="visual-badge">
-              <span class="flag">🇪🇬</span>
-              <span>{{ langService.isRtl() ? 'المنظومة الوطنية الموحدة للسجلات الصحية' : 'National Digital Health Infrastructure' }}</span>
-            </div>
-
-            <h2 class="visual-motto">
-              {{ langService.isRtl() ? 'مريض واحد، سجل طبي موحد، رعاية صحية أفضل.' : 'One Patient, One Record, Better Healthcare.' }}
-            </h2>
-
-            <p class="visual-desc">
-              {{ langService.isRtl()
-                ? 'منصة صحتي توحد تاريخك العلاجي، روشتاتك، وتحاليلك في مكان آمن واحد تحت تحكمك الكامل.'
-                : 'Sehati synchronizes your lifelong clinical encounters, certified e-prescriptions, and diagnostic labs under zero-trust patient governance.' }}
-            </p>
-
-            <!-- Mini Holographic Health Passport Preview -->
-            <div class="mini-passport-preview">
-              <div class="p-top">
-                <span class="p-flag">🇪🇬 EGYPT</span>
-                <span class="p-id font-mono">SH-2026-000101</span>
-              </div>
-              <div class="p-body">
-                <div class="p-name-row">
-                  <strong>Ahmed Mahmoud Hassan</strong>
-                  <span class="blood-tag">A+</span>
-                </div>
-                <div class="p-status-row">
-                  <span class="material-symbols-outlined">verified</span>
-                  <span>{{ langService.isRtl() ? 'جواز صحي موثق ونشط' : 'Verified Health Passport' }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3 Security Pillars -->
-            <div class="security-pillars-list">
-              <div class="pillar-item">
-                <span class="material-symbols-outlined">lock</span>
-                <span>{{ langService.isRtl() ? 'تشفير سريري AES-256' : 'AES-256 Clinical Encryption' }}</span>
-              </div>
-              <div class="pillar-item">
-                <span class="material-symbols-outlined">shield</span>
-                <span>{{ langService.isRtl() ? 'تحكم كامل بأذونات الأطباء' : 'Patient Zero-Trust Consent' }}</span>
-              </div>
-              <div class="pillar-item">
-                <span class="material-symbols-outlined">emergency</span>
-                <span>{{ langService.isRtl() ? 'استجابة طوارئ في < 2 ثانية' : 'Emergency Triage in < 2s' }}</span>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        <!-- Dynamic Form Outlet Area -->
-        <main class="auth-form-side">
+      <!-- Main Stage Container (Centered Focus Canvas) -->
+      <main class="auth-main-stage">
+        <div class="auth-stage-wrapper">
           <router-outlet></router-outlet>
-        </main>
-      </div>
+        </div>
+      </main>
 
-      <!-- Minimal Auth Footer -->
-      <footer class="auth-minimal-footer">
-        <div class="footer-wrap">
-          <span>© 2026 Sehati Smart Healthcare Platform • 🇪🇬 Arab Republic of Egypt</span>
-          <div class="footer-badges">
-            <span>HIPAA Compliant</span>
-            <span>•</span>
-            <span>AES-256 Encrypted</span>
+      <!-- Trust Footer -->
+      <footer class="auth-trust-footer">
+        <div class="footer-inner">
+          <div class="footer-attribution">
+            <span class="flag">🇪🇬</span>
+            <span>{{ langService.isRtl() ? 'جمهورية مصر العربية • المنظومة الوطنية الموحدة للسجلات الصحية' : 'Arab Republic of Egypt • National Unified Digital Health System' }}</span>
+          </div>
+          <div class="footer-security-chips">
+            <span class="sec-chip">
+              <span class="material-symbols-outlined">verified_user</span>
+              <span>HIPAA Compliant</span>
+            </span>
+            <span class="dot-sep">•</span>
+            <span class="sec-chip">
+              <span class="material-symbols-outlined">lock</span>
+              <span>AES-256 Encrypted</span>
+            </span>
+            <span class="dot-sep">•</span>
+            <span class="sec-chip">
+              <span class="material-symbols-outlined">shield</span>
+              <span>Zero-Trust Consent</span>
+            </span>
           </div>
         </div>
       </footer>
@@ -161,45 +121,54 @@ import { LanguageService } from '../../core/services/language.service';
       position: absolute;
       border-radius: 50%;
       pointer-events: none;
-      filter: blur(120px);
+      filter: blur(140px);
       z-index: 0;
-      opacity: 0.55;
     }
 
-    .glow-top-left {
-      top: -80px;
-      left: 10%;
+    .glow-1 {
+      top: -100px;
+      left: 15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(8, 131, 149, 0.12) 0%, transparent 70%);
+    }
+
+    .glow-2 {
+      top: 35%;
+      right: 10%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(5, 191, 219, 0.09) 0%, transparent 70%);
+    }
+
+    .glow-3 {
+      bottom: -80px;
+      left: 20%;
       width: 480px;
       height: 480px;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(10, 77, 104, 0.08) 0%, transparent 70%);
     }
 
-    .glow-bottom-right {
-      bottom: -60px;
-      right: 10%;
-      width: 520px;
-      height: 520px;
-      background: radial-gradient(circle, rgba(8, 131, 149, 0.14) 0%, transparent 70%);
-    }
-
-    /* Top Header */
+    /* Header */
     .auth-header {
       position: relative;
       z-index: 10;
-      padding: 1rem 1.5rem;
+      padding: 1.1rem 2rem;
+      background: rgba(255, 255, 255, 0.85);
       border-bottom: 1px solid var(--color-border-subtle, #E2E8F0);
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
     }
 
     :host-context([data-theme="dark"]) .auth-header,
     :host-context(.dark-theme) .auth-header {
-      background: rgba(8, 38, 53, 0.9);
-      border-bottom-color: rgba(5, 191, 219, 0.14);
+      background: rgba(8, 38, 53, 0.85);
+      border-bottom-color: rgba(5, 191, 219, 0.16);
     }
 
     .header-inner {
-      max-width: 1240px;
+      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -209,38 +178,45 @@ import { LanguageService } from '../../core/services/language.service';
     .brand-link {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
       text-decoration: none;
       color: inherit;
+      transition: transform 0.2s ease;
+    }
+
+    .brand-link:hover {
+      transform: translateY(-1px);
     }
 
     .brand-logo-frame {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
       background: linear-gradient(135deg, rgba(8, 131, 149, 0.12), rgba(5, 191, 219, 0.22));
+      border: 1px solid rgba(8, 131, 149, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(8, 131, 149, 0.2);
+      box-shadow: 0 4px 12px rgba(8, 131, 149, 0.15);
     }
 
     .brand-logo {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       object-fit: contain;
     }
 
     .brand-text {
       display: flex;
       flex-direction: column;
-      line-height: 1.15;
+      line-height: 1.2;
     }
 
     .brand-ar {
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       font-weight: 800;
       color: var(--color-primary-dark, #0A4D68);
+      letter-spacing: -0.2px;
     }
 
     :host-context([data-theme="dark"]) .brand-ar,
@@ -249,8 +225,8 @@ import { LanguageService } from '../../core/services/language.service';
     }
 
     .brand-en {
-      font-size: 0.65rem;
-      font-weight: 700;
+      font-size: 0.68rem;
+      font-weight: 800;
       letter-spacing: 2px;
       color: var(--color-text-muted, #64748B);
     }
@@ -273,13 +249,14 @@ import { LanguageService } from '../../core/services/language.service';
       text-decoration: none;
       font-size: 0.88rem;
       font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
       transition: all 0.2s ease;
     }
 
     :host-context([data-theme="dark"]) .btn-return-home,
     :host-context(.dark-theme) .btn-return-home {
       background: #082635;
-      border-color: rgba(5, 191, 219, 0.2);
+      border-color: rgba(5, 191, 219, 0.22);
     }
 
     .btn-return-home:hover {
@@ -289,8 +266,8 @@ import { LanguageService } from '../../core/services/language.service';
     }
 
     .icon-btn {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       border: 1px solid var(--color-border-subtle, #E2E8F0);
       background: var(--color-surface-card, #FFFFFF);
@@ -299,258 +276,149 @@ import { LanguageService } from '../../core/services/language.service';
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
       transition: all 0.2s ease;
     }
 
     :host-context([data-theme="dark"]) .icon-btn,
     :host-context(.dark-theme) .icon-btn {
       background: #082635;
-      border-color: rgba(5, 191, 219, 0.2);
+      border-color: rgba(5, 191, 219, 0.22);
     }
 
     .icon-btn:hover {
       border-color: var(--color-primary-base, #088395);
       color: var(--color-primary-base, #088395);
+      transform: translateY(-1px);
     }
 
     .lang-pill {
-      height: 38px;
-      padding: 0 0.85rem;
+      height: 40px;
+      padding: 0 1rem;
       border-radius: 9999px;
       border: 1px solid var(--color-border-subtle, #E2E8F0);
       background: var(--color-surface-card, #FFFFFF);
       color: var(--color-text-main, #0F172A);
-      font-size: 0.85rem;
-      font-weight: 700;
+      font-size: 0.88rem;
+      font-weight: 800;
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
       cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
       transition: all 0.2s ease;
     }
 
     :host-context([data-theme="dark"]) .lang-pill,
     :host-context(.dark-theme) .lang-pill {
       background: #082635;
-      border-color: rgba(5, 191, 219, 0.2);
+      border-color: rgba(5, 191, 219, 0.22);
     }
 
     .lang-pill:hover {
       border-color: var(--color-primary-base, #088395);
       color: var(--color-primary-base, #088395);
+      transform: translateY(-1px);
     }
 
-    /* Main Container */
-    .auth-layout-container {
+    /* Main Stage */
+    .auth-main-stage {
       flex: 1;
-      max-width: 1240px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 3rem 1.5rem 4rem 1.5rem;
-      display: grid;
-      grid-template-columns: 1fr 1.25fr;
+      display: flex;
       align-items: center;
-      gap: 3.5rem;
+      justify-content: center;
+      padding: 3rem 1.5rem 4rem 1.5rem;
       position: relative;
       z-index: 2;
     }
 
-    /* Left Visual Panel */
-    .auth-visual-side {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .visual-panel-card {
-      background: linear-gradient(145deg, #0A4D68 0%, #088395 60%, #05BFDB 100%);
-      border-radius: 32px;
-      padding: 3rem 2.5rem;
-      color: #FFFFFF;
-      box-shadow: 0 20px 45px -10px rgba(8, 131, 149, 0.35);
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .visual-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 9999px;
-      padding: 0.35rem 0.95rem;
-      font-size: 0.8rem;
-      font-weight: 700;
-      width: fit-content;
-    }
-
-    .visual-motto {
-      font-size: 2.2rem;
-      font-weight: 900;
-      line-height: 1.25;
-      margin: 0;
-      letter-spacing: -0.5px;
-    }
-
-    .visual-desc {
-      font-size: 1.05rem;
-      line-height: 1.7;
-      opacity: 0.92;
-      margin: 0;
-    }
-
-    .mini-passport-preview {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
-      padding: 1.25rem 1.5rem;
-      backdrop-filter: blur(10px);
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .p-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.78rem;
-      font-weight: 800;
-    }
-
-    .p-flag {
-      background: rgba(0, 0, 0, 0.2);
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
-    }
-
-    .p-id {
-      color: #A5F3FC;
-      letter-spacing: 0.5px;
-    }
-
-    .p-body {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .p-name-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 1.1rem;
-    }
-
-    .blood-tag {
-      background: #EF4444;
-      color: #FFFFFF;
-      font-size: 0.8rem;
-      font-weight: 900;
-      padding: 0.15rem 0.55rem;
-      border-radius: 6px;
-    }
-
-    .p-status-row {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.82rem;
-      color: #6EE7B7;
-      font-weight: 700;
-    }
-
-    .p-status-row .material-symbols-outlined {
-      font-size: 1rem;
-    }
-
-    .security-pillars-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      font-size: 0.88rem;
-    }
-
-    .pillar-item {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-    }
-
-    .pillar-item .material-symbols-outlined {
-      font-size: 1.15rem;
-      color: #A5F3FC;
-    }
-
-    /* Right Form Panel */
-    .auth-form-side {
+    .auth-stage-wrapper {
+      width: 100%;
       display: flex;
       justify-content: center;
-      width: 100%;
+      align-items: center;
     }
 
-    /* Footer */
-    .auth-minimal-footer {
+    /* Trust Footer */
+    .auth-trust-footer {
       position: relative;
       z-index: 2;
-      padding: 1.5rem;
-      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+      padding: 1.5rem 2rem;
       background: var(--color-surface-card, #FFFFFF);
-      font-size: 0.85rem;
+      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
       color: var(--color-text-muted, #64748B);
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
     }
 
-    :host-context([data-theme="dark"]) .auth-minimal-footer,
-    :host-context(.dark-theme) .auth-minimal-footer {
+    :host-context([data-theme="dark"]) .auth-trust-footer,
+    :host-context(.dark-theme) .auth-trust-footer {
       background: #031B26;
-      border-color: rgba(5, 191, 219, 0.12);
+      border-top-color: rgba(5, 191, 219, 0.12);
     }
 
-    .footer-wrap {
-      max-width: 1240px;
+    .footer-inner {
+      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
-    .footer-badges {
+    .footer-attribution {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       font-weight: 600;
+    }
+
+    .footer-security-chips {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .sec-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
       font-size: 0.8rem;
+      font-weight: 700;
     }
 
-    .font-mono {
-      font-family: monospace;
+    .sec-chip .material-symbols-outlined {
+      font-size: 1rem;
+      color: var(--color-primary-base, #088395);
     }
 
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .auth-layout-container {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-      }
-
-      .auth-visual-side {
-        display: none; /* Focus completely on the creative form card on tablet & mobile */
-      }
+    .dot-sep {
+      opacity: 0.4;
     }
 
     @media (max-width: 640px) {
-      .auth-layout-container {
-        padding: 1.5rem 1rem 3rem 1rem;
+      .auth-header {
+        padding: 0.85rem 1rem;
       }
 
-      .footer-wrap {
+      .btn-return-home span:last-child {
+        display: none;
+      }
+
+      .auth-main-stage {
+        padding: 1.75rem 1rem 3rem 1rem;
+      }
+
+      .footer-inner {
         flex-direction: column;
         text-align: center;
+        justify-content: center;
+      }
+
+      .footer-security-chips {
+        justify-content: center;
       }
     }
   `]

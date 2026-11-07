@@ -11,405 +11,506 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="auth-card-container register-container">
-      <!-- Top Navigation Switcher Tabs (Buttons to Navigate Between Login & Register) -->
-      <div class="auth-navigation-tabs">
-        <a routerLink="/auth/login" class="nav-tab-pill">
-          <span class="material-symbols-outlined tab-icon">login</span>
-          <span>{{ langService.t('signInBtn') }}</span>
-        </a>
-        <a routerLink="/auth/register" class="nav-tab-pill active">
-          <span class="material-symbols-outlined tab-icon">person_add</span>
-          <span>{{ langService.t('createAccountLink') }}</span>
-        </a>
-      </div>
+    <div class="auth-card-wrapper register-wrapper">
+      <div class="auth-luxury-card register-card">
+        <!-- Integrated Segmented Control Switcher -->
+        <div class="auth-segmented-switcher">
+          <a routerLink="/auth/login" class="switcher-tab">
+            <span class="material-symbols-outlined tab-icon">login</span>
+            <span>{{ langService.t('signInBtn') }}</span>
+          </a>
+          <a routerLink="/auth/register" class="switcher-tab active">
+            <span class="material-symbols-outlined tab-icon">person_add</span>
+            <span>{{ langService.t('createAccountLink') }}</span>
+          </a>
+        </div>
 
-      <!-- Main Register Card -->
-      <div class="auth-glass-card">
-        <!-- Card Titles -->
-        <div class="card-header-block">
-          <span class="header-mini-badge">
-            <span class="badge-dot"></span>
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="header-badge">
+            <span class="badge-pulse"></span>
             <span>{{ langService.isRtl() ? 'إصدار الجواز الصحي الموحد' : 'Claim Your Lifetime Unified ID' }}</span>
-          </span>
-          <h1 class="card-main-title">{{ langService.t('registerTitle') }}</h1>
-          <p class="card-subtitle">{{ langService.t('registerSubtitle') }}</p>
-        </div>
-
-        <!-- Role Selector Cards -->
-        <div class="role-selector-block">
-          <label class="role-selection-prompt">
-            {{ langService.isRtl() ? 'اختر فئة الحساب في المنظومة:' : 'Select Account Persona:' }}
-          </label>
-          <div class="roles-cards-row">
-            <button
-              type="button"
-              class="role-badge-btn"
-              [class.active]="selectedRole === 'Patient'"
-              (click)="selectRole('Patient')"
-            >
-              <div class="role-icon-box teal">
-                <span class="material-symbols-outlined">person</span>
-              </div>
-              <div class="role-meta">
-                <span class="role-name">{{ langService.t('rolePatient') }}</span>
-                <span class="role-caption">{{ langService.isRtl() ? 'جواز صحي موحد' : 'Health Passport' }}</span>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              class="role-badge-btn"
-              [class.active]="selectedRole === 'Doctor'"
-              (click)="selectRole('Doctor')"
-            >
-              <div class="role-icon-box emerald">
-                <span class="material-symbols-outlined">stethoscope</span>
-              </div>
-              <div class="role-meta">
-                <span class="role-name">{{ langService.t('roleDoctor') }}</span>
-                <span class="role-caption">{{ langService.isRtl() ? 'عيادة وروشتات' : 'Clinical Practice' }}</span>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              class="role-badge-btn"
-              [class.active]="selectedRole === 'Receptionist'"
-              (click)="selectRole('Receptionist')"
-            >
-              <div class="role-icon-box indigo">
-                <span class="material-symbols-outlined">desk</span>
-              </div>
-              <div class="role-meta">
-                <span class="role-name">{{ langService.t('roleReceptionist') }}</span>
-                <span class="role-caption">{{ langService.isRtl() ? 'إدارة الدخول' : 'Desk & Queue' }}</span>
-              </div>
-            </button>
           </div>
+          <h1 class="card-title">{{ langService.t('registerTitle') }}</h1>
+          <p class="card-caption">{{ langService.t('registerSubtitle') }}</p>
         </div>
 
-        <!-- Error Alert -->
-        <div class="auth-error-banner" *ngIf="errorMessage">
+        <!-- Two-Step Stepper Progress Header -->
+        <div class="stepper-track">
+          <button
+            type="button"
+            class="step-node"
+            [class.active]="currentStep === 1"
+            [class.completed]="currentStep > 1"
+            (click)="goToStep(1)"
+          >
+            <div class="node-circle">
+              <span class="material-symbols-outlined node-icon" *ngIf="currentStep > 1">check</span>
+              <span *ngIf="currentStep <= 1">1</span>
+            </div>
+            <span class="node-label">{{ langService.t('stepIdentity') }}</span>
+          </button>
+
+          <div class="track-divider" [class.filled]="currentStep > 1"></div>
+
+          <button
+            type="button"
+            class="step-node"
+            [class.active]="currentStep === 2"
+            (click)="goToStep(2)"
+          >
+            <div class="node-circle">2</div>
+            <span class="node-label">{{ langService.t('stepContactSecurity') }}</span>
+          </button>
+        </div>
+
+        <!-- Error Alert Banner -->
+        <div class="alert-banner error" *ngIf="errorMessage">
           <span class="material-symbols-outlined">error</span>
           <span>{{ errorMessage }}</span>
         </div>
 
-        <!-- Register Form -->
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
-          <!-- Row 1: Full Name & National ID -->
-          <div class="form-grid-2">
-            <!-- Full Name -->
-            <div class="form-field-group">
-              <label class="field-label" for="fullName">
-                <span>{{ langService.t('fullNameLabel') }}</span>
-                <span class="required-star">*</span>
+        <!-- Unified Form with Step Panels -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <!-- ==================== STEP 1: ROLE & BASIC IDENTITY ==================== -->
+          <div class="step-panel" *ngIf="currentStep === 1">
+            <!-- Persona Selection Section -->
+            <div class="section-block">
+              <label class="section-prompt">
+                {{ langService.isRtl() ? 'اختر فئة الحساب لتهيئة بيئة العمل:' : 'Select Account Persona:' }}
               </label>
-              <div class="field-input-box">
-                <span class="material-symbols-outlined field-icon">badge</span>
-                <input
-                  id="fullName"
-                  type="text"
-                  formControlName="fullName"
-                  class="form-input"
-                  [class.invalid]="isFieldInvalid('fullName')"
-                  [placeholder]="langService.isRtl() ? 'مثال: أحمد محمود حسن' : 'e.g. Ahmed Mahmoud Hassan'"
-                  autocomplete="name"
-                />
-              </div>
-              <div class="field-error-text" *ngIf="isFieldInvalid('fullName')">
-                {{ langService.isRtl() ? 'الاسم بالكامل مطلوب (3 أحرف على الأقل).' : 'Full name is required (min 3 chars).' }}
-              </div>
-            </div>
 
-            <!-- National ID -->
-            <div class="form-field-group">
-              <label class="field-label" for="nationalId">
-                <span>{{ langService.t('nationalIdLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <span class="material-symbols-outlined field-icon">pin</span>
-                <input
-                  id="nationalId"
-                  type="text"
-                  formControlName="nationalId"
-                  class="form-input font-mono"
-                  [class.invalid]="isFieldInvalid('nationalId')"
-                  placeholder="29805121601234"
-                  maxlength="14"
-                />
-              </div>
-              <div class="field-error-text" *ngIf="isFieldInvalid('nationalId')">
-                {{ langService.isRtl() ? 'الرقم القومي يجب أن يتكون من 14 رقماً بالضبط.' : 'National ID must be exactly 14 digits.' }}
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 2: Email & Phone Number -->
-          <div class="form-grid-2">
-            <!-- Email -->
-            <div class="form-field-group">
-              <label class="field-label" for="email">
-                <span>{{ langService.t('emailLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <span class="material-symbols-outlined field-icon">mail</span>
-                <input
-                  id="email"
-                  type="email"
-                  formControlName="email"
-                  class="form-input"
-                  [class.invalid]="isFieldInvalid('email')"
-                  placeholder="patient@sehati.gov.eg"
-                  autocomplete="email"
-                />
-              </div>
-              <div class="field-error-text" *ngIf="isFieldInvalid('email')">
-                {{ langService.isRtl() ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.' }}
-              </div>
-            </div>
-
-            <!-- Phone Number -->
-            <div class="form-field-group">
-              <label class="field-label" for="phoneNumber">
-                <span>{{ langService.t('phoneNumberLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <span class="material-symbols-outlined field-icon">call</span>
-                <input
-                  id="phoneNumber"
-                  type="tel"
-                  formControlName="phoneNumber"
-                  class="form-input font-mono"
-                  [class.invalid]="isFieldInvalid('phoneNumber')"
-                  placeholder="01012345678"
-                  autocomplete="tel"
-                />
-              </div>
-              <div class="field-error-text" *ngIf="isFieldInvalid('phoneNumber')">
-                {{ langService.isRtl() ? 'رقم هاتف مصري صحيح (مثال: 01012345678).' : 'Valid Egyptian phone (e.g., 01012345678).' }}
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 3: Medical Essentials (Date of Birth, Gender, Blood Type) -->
-          <div class="form-grid-3">
-            <!-- Date of Birth -->
-            <div class="form-field-group">
-              <label class="field-label" for="dateOfBirth">
-                <span>{{ langService.t('dateOfBirthLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <input
-                  id="dateOfBirth"
-                  type="date"
-                  formControlName="dateOfBirth"
-                  class="form-input plain-input"
-                  [class.invalid]="isFieldInvalid('dateOfBirth')"
-                />
-              </div>
-            </div>
-
-            <!-- Gender -->
-            <div class="form-field-group">
-              <label class="field-label" for="gender">
-                <span>{{ langService.t('genderLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <select id="gender" formControlName="gender" class="form-input plain-input">
-                  <option value="Male">{{ langService.t('genderMale') }}</option>
-                  <option value="Female">{{ langService.t('genderFemale') }}</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Blood Type -->
-            <div class="form-field-group">
-              <label class="field-label" for="bloodType">
-                <span>{{ langService.t('bloodTypeLabel') }}</span>
-              </label>
-              <div class="field-input-box">
-                <select id="bloodType" formControlName="bloodType" class="form-input plain-input">
-                  <option value="A+">A+</option>
-                  <option value="A-">A-</option>
-                  <option value="B+">B+</option>
-                  <option value="B-">B-</option>
-                  <option value="AB+">AB+</option>
-                  <option value="AB-">AB-</option>
-                  <option value="O+">O+</option>
-                  <option value="O-">O-</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Doctor Specific Fields -->
-          <div class="form-grid-2 doctor-extra-box" *ngIf="selectedRole === 'Doctor'">
-            <div class="form-field-group">
-              <label class="field-label" for="specialty">
-                <span>{{ langService.t('specialtyLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <span class="material-symbols-outlined field-icon">medical_services</span>
-                <input
-                  id="specialty"
-                  type="text"
-                  formControlName="specialty"
-                  class="form-input"
-                  [placeholder]="langService.isRtl() ? 'مثال: باطنة وقلب' : 'e.g. Cardiology'"
-                />
-              </div>
-            </div>
-
-            <div class="form-field-group">
-              <label class="field-label" for="licenseNumber">
-                <span>{{ langService.t('licenseNumberLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <span class="material-symbols-outlined field-icon">verified_user</span>
-                <input
-                  id="licenseNumber"
-                  type="text"
-                  formControlName="licenseNumber"
-                  class="form-input font-mono"
-                  placeholder="MD-89102-EG"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 4: Password & Confirm Password -->
-          <div class="form-grid-2">
-            <!-- Password -->
-            <div class="form-field-group">
-              <label class="field-label" for="password">
-                <span>{{ langService.t('passwordLabel') }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <span class="material-symbols-outlined field-icon">lock</span>
-                <input
-                  id="password"
-                  [type]="showPassword ? 'text' : 'password'"
-                  formControlName="password"
-                  class="form-input"
-                  [class.invalid]="isFieldInvalid('password')"
-                  placeholder="••••••••"
-                  autocomplete="new-password"
-                />
+              <div class="persona-cards-grid">
+                <!-- Patient Card -->
                 <button
                   type="button"
-                  class="eye-toggle-btn"
-                  (click)="showPassword = !showPassword"
-                  [title]="showPassword ? 'Hide password' : 'Show password'"
+                  class="persona-card"
+                  [class.selected]="selectedRole === 'Patient'"
+                  (click)="selectRole('Patient')"
                 >
-                  <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                  <div class="persona-icon-frame teal">
+                    <span class="material-symbols-outlined">person</span>
+                  </div>
+                  <div class="persona-text">
+                    <div class="persona-title-row">
+                      <span class="persona-name">{{ langService.t('rolePatient') }}</span>
+                      <span class="persona-chip">{{ langService.isRtl() ? 'مواطن' : 'Citizen' }}</span>
+                    </div>
+                    <p class="persona-desc">
+                      {{ langService.isRtl()
+                        ? 'جواز صحي موحد مدى الحياة، كارت طوارئ ذكي QR، وتحكم بمشاركة بياناتك.'
+                        : 'Lifelong health passport, instant emergency QR, and zero-trust data consent.' }}
+                    </p>
+                  </div>
+                  <div class="check-aura" *ngIf="selectedRole === 'Patient'">
+                    <span class="material-symbols-outlined">check_circle</span>
+                  </div>
+                </button>
+
+                <!-- Doctor Card -->
+                <button
+                  type="button"
+                  class="persona-card"
+                  [class.selected]="selectedRole === 'Doctor'"
+                  (click)="selectRole('Doctor')"
+                >
+                  <div class="persona-icon-frame emerald">
+                    <span class="material-symbols-outlined">stethoscope</span>
+                  </div>
+                  <div class="persona-text">
+                    <div class="persona-title-row">
+                      <span class="persona-name">{{ langService.t('roleDoctor') }}</span>
+                      <span class="persona-chip emerald">{{ langService.isRtl() ? 'استشاري' : 'Physician' }}</span>
+                    </div>
+                    <p class="persona-desc">
+                      {{ langService.isRtl()
+                        ? 'إدارة العيادة الخاصة، تحرير الروشتات الرقمية، والاطلاع على السجلات بإذن المريض.'
+                        : 'Private clinic practice, verified e-prescriptions, and consent-gated records.' }}
+                    </p>
+                  </div>
+                  <div class="check-aura" *ngIf="selectedRole === 'Doctor'">
+                    <span class="material-symbols-outlined">check_circle</span>
+                  </div>
+                </button>
+
+                <!-- Receptionist Card -->
+                <button
+                  type="button"
+                  class="persona-card"
+                  [class.selected]="selectedRole === 'Receptionist'"
+                  (click)="selectRole('Receptionist')"
+                >
+                  <div class="persona-icon-frame indigo">
+                    <span class="material-symbols-outlined">desk</span>
+                  </div>
+                  <div class="persona-text">
+                    <div class="persona-title-row">
+                      <span class="persona-name">{{ langService.t('roleReceptionist') }}</span>
+                      <span class="persona-chip indigo">{{ langService.isRtl() ? 'استقبال' : 'Reception' }}</span>
+                    </div>
+                    <p class="persona-desc">
+                      {{ langService.isRtl()
+                        ? 'تنظيم طوابير الانتظار، تسجيل المرضى، وتنسيق حجوزات العيادات اليومية.'
+                        : 'Patient queue management, clinic check-in, and appointment scheduling.' }}
+                    </p>
+                  </div>
+                  <div class="check-aura" *ngIf="selectedRole === 'Receptionist'">
+                    <span class="material-symbols-outlined">check_circle</span>
+                  </div>
                 </button>
               </div>
-              <div class="field-error-text" *ngIf="isFieldInvalid('password')">
-                {{ langService.isRtl() ? 'كلمة المرور يجب ألا تقل عن 8 أحرف.' : 'Password must be at least 8 characters.' }}
+            </div>
+
+            <!-- Identity Inputs -->
+            <div class="fields-grid-2">
+              <!-- Full Name -->
+              <div class="form-group">
+                <label class="form-label" for="fullName">
+                  <span>{{ langService.t('fullNameLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('fullName')">
+                  <span class="material-symbols-outlined input-icon">badge</span>
+                  <input
+                    id="fullName"
+                    type="text"
+                    formControlName="fullName"
+                    class="native-input"
+                    [placeholder]="langService.isRtl() ? 'مثال: أحمد محمود حسن' : 'e.g. Ahmed Mahmoud Hassan'"
+                    autocomplete="name"
+                  />
+                </div>
+                <div class="field-error-hint" *ngIf="isFieldInvalid('fullName')">
+                  {{ langService.isRtl() ? 'الاسم بالكامل مطلوب (3 أحرف على الأقل).' : 'Full name is required (min 3 chars).' }}
+                </div>
+              </div>
+
+              <!-- National ID -->
+              <div class="form-group">
+                <label class="form-label" for="nationalId">
+                  <span>{{ langService.t('nationalIdLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('nationalId')">
+                  <span class="material-symbols-outlined input-icon">pin</span>
+                  <input
+                    id="nationalId"
+                    type="text"
+                    formControlName="nationalId"
+                    class="native-input font-mono"
+                    placeholder="29805121601234"
+                    maxlength="14"
+                  />
+                </div>
+                <div class="field-error-hint" *ngIf="isFieldInvalid('nationalId')">
+                  {{ langService.isRtl() ? 'الرقم القومي يجب أن يتكون من 14 رقماً بالضبط.' : 'National ID must be exactly 14 digits.' }}
+                </div>
               </div>
             </div>
 
-            <!-- Confirm Password -->
-            <div class="form-field-group">
-              <label class="field-label" for="confirmPassword">
-                <span>{{ langService.isRtl() ? 'تأكيد كلمة المرور' : 'Confirm Password' }}</span>
-                <span class="required-star">*</span>
-              </label>
-              <div class="field-input-box">
-                <span class="material-symbols-outlined field-icon">lock_reset</span>
-                <input
-                  id="confirmPassword"
-                  [type]="showPassword ? 'text' : 'password'"
-                  formControlName="confirmPassword"
-                  class="form-input"
-                  [class.invalid]="isFieldInvalid('confirmPassword') || isPasswordMismatch()"
-                  placeholder="••••••••"
-                  autocomplete="new-password"
-                />
+            <!-- Doctor Specific Fields -->
+            <div class="fields-grid-2 doctor-extra-box" *ngIf="selectedRole === 'Doctor'">
+              <div class="form-group">
+                <label class="form-label" for="medicalLicenseNumber">
+                  <span>{{ langService.t('licenseNumberLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('medicalLicenseNumber')">
+                  <span class="material-symbols-outlined input-icon">verified</span>
+                  <input
+                    id="medicalLicenseNumber"
+                    type="text"
+                    formControlName="medicalLicenseNumber"
+                    class="native-input font-mono"
+                    placeholder="EGY-DOC-2026-99"
+                  />
+                </div>
+                <div class="field-error-hint" *ngIf="isFieldInvalid('medicalLicenseNumber')">
+                  {{ langService.isRtl() ? 'رقم ترخيص النقابة مطلوب لتأكيد الهوية المهنية.' : 'License number is required for medical practitioners.' }}
+                </div>
               </div>
-              <div class="field-error-text" *ngIf="isPasswordMismatch()">
-                {{ langService.isRtl() ? 'كلمتا المرور غير متطابقتين.' : 'Passwords do not match.' }}
+
+              <div class="form-group">
+                <label class="form-label" for="specialty">
+                  <span>{{ langService.t('specialtyLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('specialty')">
+                  <span class="material-symbols-outlined input-icon">medical_information</span>
+                  <input
+                    id="specialty"
+                    type="text"
+                    formControlName="specialty"
+                    class="native-input"
+                    [placeholder]="langService.isRtl() ? 'مثال: باطنة، أطفال، قلب' : 'e.g. Cardiology, Pediatrics'"
+                  />
+                </div>
+                <div class="field-error-hint" *ngIf="isFieldInvalid('specialty')">
+                  {{ langService.isRtl() ? 'التخصص الطبي مطلوب.' : 'Specialty is required.' }}
+                </div>
               </div>
             </div>
+
+            <!-- Step 1 Next Button -->
+            <button
+              type="button"
+              class="btn-primary-auth"
+              (click)="nextStep()"
+            >
+              <span>{{ langService.t('nextStepBtn') }}</span>
+              <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+            </button>
           </div>
 
-          <!-- Submit Button -->
-          <button
-            type="submit"
-            class="btn-submit-register"
-            [disabled]="registerForm.invalid || isLoading || isPasswordMismatch()"
-          >
-            <span class="spinner-dot" *ngIf="isLoading"></span>
-            <span *ngIf="!isLoading">{{ langService.t('createAccountBtn') }}</span>
-            <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">arrow_forward</span>
-          </button>
+          <!-- ==================== STEP 2: CONTACT, HEALTH & SECURITY ==================== -->
+          <div class="step-panel" *ngIf="currentStep === 2">
+            <!-- Row: Email & Phone -->
+            <div class="fields-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="email">
+                  <span>{{ langService.t('emailLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('email')">
+                  <span class="material-symbols-outlined input-icon">mail</span>
+                  <input
+                    id="email"
+                    type="email"
+                    formControlName="email"
+                    class="native-input"
+                    placeholder="patient@sehati.gov.eg"
+                    autocomplete="email"
+                  />
+                </div>
+                <div class="field-error-hint" *ngIf="isFieldInvalid('email')">
+                  {{ langService.isRtl() ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.' }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="phoneNumber">
+                  <span>{{ langService.t('phoneNumberLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('phoneNumber')">
+                  <span class="material-symbols-outlined input-icon">call</span>
+                  <input
+                    id="phoneNumber"
+                    type="tel"
+                    formControlName="phoneNumber"
+                    class="native-input font-mono"
+                    placeholder="01012345678"
+                    autocomplete="tel"
+                  />
+                </div>
+                <div class="field-error-hint" *ngIf="isFieldInvalid('phoneNumber')">
+                  {{ langService.isRtl() ? 'رقم هاتف مصري صحيح (مثال: 01012345678).' : 'Valid Egyptian phone (e.g., 01012345678).' }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Row: Date of Birth, Gender, Blood Type -->
+            <div class="fields-grid-3">
+              <div class="form-group">
+                <label class="form-label" for="dateOfBirth">
+                  <span>{{ langService.t('dateOfBirthLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('dateOfBirth')">
+                  <input
+                    id="dateOfBirth"
+                    type="date"
+                    formControlName="dateOfBirth"
+                    class="native-input select-clean"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="gender">
+                  <span>{{ langService.t('genderLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell">
+                  <select id="gender" formControlName="gender" class="native-input select-clean">
+                    <option value="Male">{{ langService.t('genderMale') }}</option>
+                    <option value="Female">{{ langService.t('genderFemale') }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="bloodType">
+                  <span>{{ langService.t('bloodTypeLabel') }}</span>
+                </label>
+                <div class="input-shell">
+                  <select id="bloodType" formControlName="bloodType" class="native-input select-clean font-mono">
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Password Fields -->
+            <div class="fields-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="password">
+                  <span>{{ langService.t('passwordLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('password')">
+                  <span class="material-symbols-outlined input-icon">lock</span>
+                  <input
+                    id="password"
+                    [type]="showPassword ? 'text' : 'password'"
+                    formControlName="password"
+                    class="native-input"
+                    [placeholder]="langService.t('passwordPlaceholder')"
+                    autocomplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    class="eye-btn"
+                    (click)="showPassword = !showPassword"
+                  >
+                    <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="confirmPassword">
+                  <span>{{ langService.t('confirmPasswordLabel') }}</span>
+                  <span class="req">*</span>
+                </label>
+                <div class="input-shell" [class.has-error]="isConfirmPasswordInvalid()">
+                  <span class="material-symbols-outlined input-icon">lock_clock</span>
+                  <input
+                    id="confirmPassword"
+                    [type]="showConfirmPassword ? 'text' : 'password'"
+                    formControlName="confirmPassword"
+                    class="native-input"
+                    [placeholder]="langService.t('confirmPasswordPlaceholder')"
+                    autocomplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    class="eye-btn"
+                    (click)="showConfirmPassword = !showConfirmPassword"
+                  >
+                    <span class="material-symbols-outlined">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+                <div class="field-error-hint" *ngIf="isConfirmPasswordInvalid()">
+                  {{ langService.isRtl() ? 'كلمتا المرور غير متطابقتين.' : 'Passwords do not match.' }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Password Strength Meter -->
+            <div class="password-meter-box" *ngIf="registerForm.get('password')?.value">
+              <div class="meter-bars">
+                <div class="meter-bar" [class.active]="passwordStrength >= 1" [class.weak]="passwordStrength === 1" [class.medium]="passwordStrength === 2" [class.strong]="passwordStrength >= 3"></div>
+                <div class="meter-bar" [class.active]="passwordStrength >= 2" [class.medium]="passwordStrength === 2" [class.strong]="passwordStrength >= 3"></div>
+                <div class="meter-bar" [class.active]="passwordStrength >= 3" [class.strong]="passwordStrength >= 3"></div>
+                <div class="meter-bar" [class.active]="passwordStrength >= 4" [class.strong]="passwordStrength >= 4"></div>
+              </div>
+              <span class="meter-caption">{{ getStrengthCaption() }}</span>
+            </div>
+
+            <!-- Terms & Consent Agreement -->
+            <div class="terms-group">
+              <label class="terms-label">
+                <input type="checkbox" formControlName="termsAccepted" class="styled-checkbox" />
+                <span>{{ langService.t('termsAgreement') }}</span>
+              </label>
+            </div>
+
+            <!-- Dual Action Row -->
+            <div class="dual-actions-row">
+              <button
+                type="button"
+                class="btn-secondary-back"
+                (click)="prevStep()"
+              >
+                <span class="material-symbols-outlined flip-rtl">arrow_back</span>
+                <span>{{ langService.t('prevStepBtn') }}</span>
+              </button>
+
+              <button
+                type="submit"
+                class="btn-primary-auth flex-1"
+                [disabled]="registerForm.invalid || isConfirmPasswordInvalid() || isLoading"
+              >
+                <span class="spinner" *ngIf="isLoading"></span>
+                <span *ngIf="!isLoading">{{ langService.t('claimPassportBtn') }}</span>
+                <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">verified</span>
+              </button>
+            </div>
+          </div>
         </form>
 
-        <!-- Reciprocal Navigation Helper to Login Page -->
-        <div class="card-bottom-navigation">
-          <div class="login-prompt">
-            <span>{{ langService.t('alreadyHaveAccount') }}</span>
-            <a routerLink="/auth/login" class="btn-goto-login">
-              <span>{{ langService.t('signInBtn') }}</span>
-              <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
-            </a>
-          </div>
-
-          <div class="quick-assist-links">
-            <a routerLink="/" class="assist-link">
-              <span class="material-symbols-outlined">home</span>
-              <span>{{ langService.isRtl() ? 'الرئيسية' : 'Homepage' }}</span>
-            </a>
-            <span>•</span>
-            <a routerLink="/preview" class="assist-link">
-              <span class="material-symbols-outlined">architecture</span>
-              <span>{{ langService.t('architectureShowcase') }}</span>
-            </a>
-            <span>•</span>
-            <a routerLink="/emergency" class="assist-link text-red">
-              <span class="material-symbols-outlined">emergency</span>
-              <span>{{ langService.isRtl() ? 'طوارئ QR' : 'Emergency QR' }}</span>
-            </a>
-          </div>
+        <!-- Bottom Switch Prompt -->
+        <div class="card-footer-switch">
+          <span>{{ langService.t('alreadyHaveAccount') }}</span>
+          <a routerLink="/auth/login" class="switch-link">
+            <span>{{ langService.t('signInBtn') }}</span>
+            <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+          </a>
         </div>
       </div>
     </div>
   `,
   styles: [`
-    .auth-card-container {
+    .auth-card-wrapper.register-wrapper {
       width: 100%;
-      max-width: 660px;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
+      max-width: 720px;
+      margin: 0 auto;
     }
 
-    /* Top Navigation Tabs */
-    .auth-navigation-tabs {
-      display: flex;
+    .auth-luxury-card.register-card {
       background: var(--color-surface-card, #FFFFFF);
       border: 1px solid var(--color-border-subtle, #E2E8F0);
-      border-radius: 9999px;
-      padding: 0.35rem;
-      box-shadow: 0 4px 14px rgba(8, 131, 149, 0.05);
+      border-radius: 28px;
+      padding: 2.5rem 2.5rem;
+      box-shadow: 0 20px 50px -15px rgba(10, 77, 104, 0.12), 0 0 0 1px rgba(8, 131, 149, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 1.65rem;
+      transition: all 0.3s ease;
     }
 
-    :host-context([data-theme="dark"]) .auth-navigation-tabs,
-    :host-context(.dark-theme) .auth-navigation-tabs {
+    :host-context([data-theme="dark"]) .auth-luxury-card.register-card,
+    :host-context(.dark-theme) .auth-luxury-card.register-card {
       background: #082635;
+      border-color: rgba(5, 191, 219, 0.22);
+      box-shadow: 0 25px 55px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(5, 191, 219, 0.1);
+    }
+
+    /* Switcher Tabs */
+    .auth-segmented-switcher {
+      display: flex;
+      background: rgba(8, 131, 149, 0.06);
+      border: 1px solid rgba(8, 131, 149, 0.14);
+      border-radius: 9999px;
+      padding: 0.35rem;
+      gap: 0.25rem;
+    }
+
+    :host-context([data-theme="dark"]) .auth-segmented-switcher,
+    :host-context(.dark-theme) .auth-segmented-switcher {
+      background: rgba(5, 191, 219, 0.08);
       border-color: rgba(5, 191, 219, 0.2);
     }
 
-    .nav-tab-pill {
+    .switcher-tab {
       flex: 1;
       display: flex;
       align-items: center;
@@ -424,47 +525,35 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       transition: all 0.25s ease;
     }
 
-    .nav-tab-pill:hover {
+    .switcher-tab:hover {
       color: var(--color-primary-base, #088395);
     }
 
-    .nav-tab-pill.active {
-      background: var(--color-primary-base, #088395);
-      color: #FFFFFF;
-      box-shadow: 0 4px 14px rgba(8, 131, 149, 0.3);
+    .switcher-tab.active {
+      background: var(--color-surface-card, #FFFFFF);
+      color: var(--color-primary-dark, #0A4D68);
+      box-shadow: 0 4px 12px rgba(8, 131, 149, 0.12);
+    }
+
+    :host-context([data-theme="dark"]) .switcher-tab.active,
+    :host-context(.dark-theme) .switcher-tab.active {
+      background: #0D3E56;
+      color: #05BFDB;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
 
     .tab-icon {
       font-size: 1.15rem;
     }
 
-    /* Main Glass Card */
-    .auth-glass-card {
-      background: var(--color-surface-card, #FFFFFF);
-      border: 1px solid var(--color-border-subtle, #E2E8F0);
-      border-radius: 28px;
-      padding: 2.25rem;
-      box-shadow: 0 16px 36px -8px rgba(8, 131, 149, 0.1), 0 4px 12px rgba(0, 0, 0, 0.03);
+    /* Card Header */
+    .card-header {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      transition: all 0.3s ease;
+      gap: 0.5rem;
     }
 
-    :host-context([data-theme="dark"]) .auth-glass-card,
-    :host-context(.dark-theme) .auth-glass-card {
-      background: #082635;
-      border-color: rgba(5, 191, 219, 0.22);
-      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
-    }
-
-    .card-header-block {
-      display: flex;
-      flex-direction: column;
-      gap: 0.45rem;
-    }
-
-    .header-mini-badge {
+    .header-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
@@ -472,158 +561,330 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       font-weight: 800;
       color: #059669;
       background: rgba(16, 185, 129, 0.1);
-      padding: 0.25rem 0.75rem;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      padding: 0.3rem 0.85rem;
       border-radius: 9999px;
       width: fit-content;
-      margin-bottom: 0.25rem;
     }
 
-    .badge-dot {
-      width: 6px;
-      height: 6px;
+    .badge-pulse {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: #10B981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+      animation: pulse-ring 2s infinite;
     }
 
-    .card-main-title {
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .card-title {
       font-size: 1.85rem;
       font-weight: 900;
       color: var(--color-text-main, #0F172A);
       letter-spacing: -0.5px;
+      line-height: 1.25;
       margin: 0;
     }
 
-    .card-subtitle {
-      font-size: 0.95rem;
-      line-height: 1.6;
+    .card-caption {
+      font-size: 0.94rem;
+      line-height: 1.55;
       color: var(--color-text-muted, #64748B);
       margin: 0;
     }
 
-    /* Role Selector Cards */
-    .role-selector-block {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-    }
-
-    .role-selection-prompt {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--color-text-main, #0F172A);
-    }
-
-    .roles-cards-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-    }
-
-    .role-badge-btn {
+    /* Stepper Track */
+    .stepper-track {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      padding: 0.75rem 0.85rem;
-      border-radius: 16px;
-      border: 1.5px solid var(--color-border-subtle, #E2E8F0);
-      background: var(--color-bg-app, #F8FAFC);
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.5rem 0.25rem 0.75rem 0.25rem;
+    }
+
+    .step-node {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      background: transparent;
+      border: none;
       cursor: pointer;
-      text-align: right;
-      transition: all 0.25s ease;
+      color: var(--color-text-muted, #64748B);
+      font-size: 0.88rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      padding: 0;
     }
 
-    :host-context(:not(.rtl)) .role-badge-btn {
-      text-align: left;
-    }
-
-    :host-context([data-theme="dark"]) .role-badge-btn,
-    :host-context(.dark-theme) .role-badge-btn {
-      background: #031B26;
-      border-color: rgba(5, 191, 219, 0.18);
-    }
-
-    .role-badge-btn:hover {
-      border-color: var(--color-primary-base, #088395);
-      transform: translateY(-2px);
-    }
-
-    .role-badge-btn.active {
-      border-color: var(--color-primary-base, #088395);
-      background: rgba(8, 131, 149, 0.08);
-      box-shadow: 0 4px 14px rgba(8, 131, 149, 0.15);
-    }
-
-    .role-icon-box {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+    .node-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--color-bg-app, #F8FAFC);
+      border: 2px solid var(--color-border-subtle, #E2E8F0);
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      font-weight: 800;
+      font-size: 0.88rem;
+      transition: all 0.25s ease;
     }
 
-    .role-icon-box.teal { background: rgba(8, 131, 149, 0.12); color: #088395; }
-    .role-icon-box.emerald { background: rgba(16, 185, 129, 0.12); color: #10B981; }
-    .role-icon-box.indigo { background: rgba(139, 92, 246, 0.12); color: #8B5CF6; }
+    .step-node.active .node-circle {
+      border-color: var(--color-primary-base, #088395);
+      background: var(--color-primary-base, #088395);
+      color: #FFFFFF;
+      box-shadow: 0 4px 10px rgba(8, 131, 149, 0.3);
+    }
 
-    .role-meta {
+    .step-node.active .node-label {
+      color: var(--color-primary-dark, #0A4D68);
+      font-weight: 800;
+    }
+
+    :host-context([data-theme="dark"]) .step-node.active .node-label,
+    :host-context(.dark-theme) .step-node.active .node-label {
+      color: #05BFDB;
+    }
+
+    .step-node.completed .node-circle {
+      border-color: #10B981;
+      background: #10B981;
+      color: #FFFFFF;
+    }
+
+    .node-icon {
+      font-size: 1.1rem;
+    }
+
+    .track-divider {
+      flex: 1;
+      height: 2px;
+      background: var(--color-border-subtle, #E2E8F0);
+      transition: background 0.3s ease;
+    }
+
+    .track-divider.filled {
+      background: #10B981;
+    }
+
+    /* Alerts */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.85rem 1.1rem;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .alert-banner.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.28);
+      color: #DC2626;
+    }
+
+    /* Form & Steps */
+    .auth-form {
       display: flex;
       flex-direction: column;
-      line-height: 1.2;
+      gap: 1.5rem;
     }
 
-    .role-name {
-      font-size: 0.88rem;
+    .step-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Persona Cards */
+    .section-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .section-prompt {
+      font-size: 0.9rem;
       font-weight: 800;
       color: var(--color-text-main, #0F172A);
     }
 
-    .role-caption {
-      font-size: 0.72rem;
-      color: var(--color-text-muted, #64748B);
+    .persona-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
     }
 
-    /* Error Alert */
-    .auth-error-banner {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #DC2626;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-size: 0.88rem;
-      font-weight: 600;
-    }
-
-    /* Form Fields */
-    .register-form {
+    .persona-card {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 1.25rem 1rem;
+      border-radius: 20px;
+      border: 1.5px solid var(--color-border-subtle, #E2E8F0);
+      background: var(--color-bg-app, #F8FAFC);
+      cursor: pointer;
+      text-align: start;
+      transition: all 0.25s ease;
     }
 
-    .form-grid-2 {
+    :host-context([data-theme="dark"]) .persona-card,
+    :host-context(.dark-theme) .persona-card {
+      background: #0B3347;
+      border-color: rgba(5, 191, 219, 0.18);
+    }
+
+    .persona-card:hover {
+      border-color: var(--color-primary-base, #088395);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(8, 131, 149, 0.1);
+    }
+
+    .persona-card.selected {
+      border-color: var(--color-primary-base, #088395);
+      background: var(--color-surface-card, #FFFFFF);
+      box-shadow: 0 10px 24px -5px rgba(8, 131, 149, 0.2), 0 0 0 2px var(--color-primary-base, #088395);
+    }
+
+    :host-context([data-theme="dark"]) .persona-card.selected,
+    :host-context(.dark-theme) .persona-card.selected {
+      background: #0E3E56;
+      border-color: #05BFDB;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 0 2px #05BFDB;
+    }
+
+    .persona-icon-frame {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .persona-icon-frame.teal {
+      background: rgba(8, 131, 149, 0.12);
+      color: #088395;
+    }
+
+    .persona-icon-frame.emerald {
+      background: rgba(16, 185, 129, 0.14);
+      color: #059669;
+    }
+
+    .persona-icon-frame.indigo {
+      background: rgba(99, 102, 241, 0.14);
+      color: #4F46E5;
+    }
+
+    .persona-icon-frame .material-symbols-outlined {
+      font-size: 1.4rem;
+    }
+
+    .persona-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .persona-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .persona-name {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--color-text-main, #0F172A);
+    }
+
+    .persona-chip {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+      background: rgba(8, 131, 149, 0.12);
+      color: #088395;
+    }
+
+    .persona-chip.emerald {
+      background: rgba(16, 185, 129, 0.14);
+      color: #059669;
+    }
+
+    .persona-chip.indigo {
+      background: rgba(99, 102, 241, 0.14);
+      color: #4F46E5;
+    }
+
+    .persona-desc {
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--color-text-muted, #64748B);
+      margin: 0;
+    }
+
+    .check-aura {
+      position: absolute;
+      top: 10px;
+      inset-inline-end: 10px;
+      color: var(--color-primary-base, #088395);
+    }
+
+    :host-context([data-theme="dark"]) .check-aura,
+    :host-context(.dark-theme) .check-aura {
+      color: #05BFDB;
+    }
+
+    .check-aura .material-symbols-outlined {
+      font-size: 1.25rem;
+    }
+
+    /* Grids */
+    .fields-grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
 
-    .form-grid-3 {
+    .fields-grid-3 {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1.3fr 1fr 1fr;
       gap: 1rem;
     }
 
-    .form-field-group {
+    .doctor-extra-box {
+      padding: 1.15rem;
+      border-radius: 18px;
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px dashed rgba(16, 185, 129, 0.3);
+    }
+
+    /* Form Fields */
+    .form-group {
       display: flex;
       flex-direction: column;
       gap: 0.45rem;
     }
 
-    .field-label {
+    .form-label {
       display: flex;
       align-items: center;
       gap: 0.25rem;
@@ -632,232 +893,282 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       color: var(--color-text-main, #0F172A);
     }
 
-    .required-star {
+    .req {
       color: #EF4444;
     }
 
-    .field-input-box {
+    .input-shell {
       position: relative;
       display: flex;
       align-items: center;
-    }
-
-    .field-icon {
-      position: absolute;
-      left: 1rem;
-      color: var(--color-text-muted, #64748B);
-      font-size: 1.25rem;
-      pointer-events: none;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 0.8rem 1rem 0.8rem 2.85rem;
-      border-radius: 14px;
-      border: 1px solid var(--color-border-subtle, #E2E8F0);
       background: var(--color-bg-app, #F8FAFC);
-      color: var(--color-text-main, #0F172A);
-      font-size: 0.92rem;
-      transition: all 0.2s ease;
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 14px;
+      padding: 0 0.95rem;
+      transition: all 0.25s ease;
     }
 
-    .form-input.plain-input {
-      padding: 0.8rem 1rem;
-    }
-
-    :host-context([data-theme="dark"]) .form-input,
-    :host-context(.dark-theme) .form-input {
-      background: #031B26;
+    :host-context([data-theme="dark"]) .input-shell,
+    :host-context(.dark-theme) .input-shell {
+      background: #0B3347;
       border-color: rgba(5, 191, 219, 0.2);
     }
 
-    .form-input:focus {
-      outline: none;
+    .input-shell:focus-within {
       border-color: var(--color-primary-base, #088395);
-      background: var(--color-surface-card, #FFFFFF);
       box-shadow: 0 0 0 3px rgba(8, 131, 149, 0.15);
+      background: var(--color-surface-card, #FFFFFF);
     }
 
-    .form-input.invalid {
+    .input-shell.has-error {
       border-color: #EF4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+
+    .input-icon {
+      font-size: 1.25rem;
+      color: var(--color-text-muted, #64748B);
+      margin-inline-end: 0.65rem;
+    }
+
+    .native-input {
+      flex: 1;
+      height: 48px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-main, #0F172A);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .native-input.select-clean {
+      cursor: pointer;
+    }
+
+    .native-input::placeholder {
+      color: var(--color-text-muted, #64748B);
+      opacity: 0.7;
     }
 
     .font-mono {
       font-family: monospace;
-      letter-spacing: 0.5px;
     }
 
-    .eye-toggle-btn {
-      position: absolute;
-      right: 0.85rem;
+    .eye-btn {
       background: transparent;
       border: none;
       color: var(--color-text-muted, #64748B);
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
       padding: 0.25rem;
+      transition: color 0.2s ease;
     }
 
-    .eye-toggle-btn:hover {
+    .eye-btn:hover {
       color: var(--color-primary-base, #088395);
     }
 
-    .field-error-text {
+    .field-error-hint {
       font-size: 0.78rem;
-      color: #EF4444;
       font-weight: 600;
+      color: #DC2626;
+      margin-top: 0.15rem;
     }
 
-    /* RTL specific input alignment */
-    :host-context(.rtl) .field-input-box,
-    :host-context([dir="rtl"]) .field-input-box {
-      .field-icon {
-        left: auto;
-        right: 1rem;
-      }
-      .form-input:not(.plain-input) {
-        padding: 0.8rem 2.85rem 0.8rem 1rem;
-      }
-      .eye-toggle-btn {
-        right: auto;
-        left: 0.85rem;
-      }
+    /* Password Strength Meter */
+    .password-meter-box {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.45rem 0.25rem;
     }
 
-    .doctor-extra-box {
-      background: rgba(16, 185, 129, 0.05);
-      border: 1px dashed rgba(16, 185, 129, 0.3);
-      padding: 1rem;
-      border-radius: 16px;
+    .meter-bars {
+      display: flex;
+      gap: 4px;
+      flex: 1;
     }
 
-    /* Submit Button */
-    .btn-submit-register {
-      width: 100%;
-      padding: 0.95rem 1.5rem;
+    .meter-bar {
+      flex: 1;
+      height: 4px;
       border-radius: 9999px;
-      border: none;
-      background: var(--color-primary-base, #088395);
-      color: #FFFFFF;
-      font-size: 1.05rem;
-      font-weight: 800;
-      display: inline-flex;
+      background: var(--color-border-subtle, #E2E8F0);
+      transition: background 0.3s ease;
+    }
+
+    .meter-bar.active.weak { background: #EF4444; }
+    .meter-bar.active.medium { background: #F59E0B; }
+    .meter-bar.active.strong { background: #10B981; }
+
+    .meter-caption {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    /* Terms */
+    .terms-group {
+      padding: 0.25rem 0;
+    }
+
+    .terms-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--color-text-muted, #64748B);
+      cursor: pointer;
+    }
+
+    .styled-checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--color-primary-base, #088395);
+      border-radius: 4px;
+      margin-top: 0.15rem;
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn-primary-auth {
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.65rem;
+      height: 52px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #0A4D68 0%, #088395 100%);
+      color: #FFFFFF;
+      font-size: 1rem;
+      font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(8, 131, 149, 0.3);
+      box-shadow: 0 10px 24px -6px rgba(8, 131, 149, 0.4);
       transition: all 0.25s ease;
+    }
+
+    .btn-primary-auth:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px -6px rgba(8, 131, 149, 0.55);
+    }
+
+    .btn-primary-auth:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .dual-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
       margin-top: 0.5rem;
     }
 
-    .btn-submit-register:hover:not(:disabled) {
-      background: var(--color-primary-dark, #0A4D68);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(8, 131, 149, 0.4);
+    .flex-1 {
+      flex: 1;
     }
 
-    .btn-submit-register:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .btn-secondary-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      height: 52px;
+      padding: 0 1.25rem;
+      border-radius: 14px;
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: var(--color-surface-card, #FFFFFF);
+      color: var(--color-text-main, #0F172A);
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .spinner-dot {
+    :host-context([data-theme="dark"]) .btn-secondary-back,
+    :host-context(.dark-theme) .btn-secondary-back {
+      background: #0B3347;
+      border-color: rgba(5, 191, 219, 0.22);
+    }
+
+    .btn-secondary-back:hover {
+      border-color: var(--color-primary-base, #088395);
+      color: var(--color-primary-base, #088395);
+      transform: translateY(-1px);
+    }
+
+    .spinner {
       width: 20px;
       height: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      border: 2.5px solid rgba(255, 255, 255, 0.3);
       border-top-color: #FFFFFF;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.75s linear infinite;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    /* Bottom Navigation to Login */
-    .card-bottom-navigation {
+    /* Card Footer Switch */
+    .card-footer-switch {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 1.25rem;
+      justify-content: center;
+      gap: 0.45rem;
+      padding-top: 0.75rem;
       border-top: 1px solid var(--color-border-subtle, #E2E8F0);
-      padding-top: 1.5rem;
-    }
-
-    .login-prompt {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       color: var(--color-text-muted, #64748B);
-      flex-wrap: wrap;
-      justify-content: center;
+      font-weight: 600;
     }
 
-    .btn-goto-login {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.45rem 1.1rem;
-      border-radius: 9999px;
-      background: rgba(8, 131, 149, 0.08);
-      border: 1px solid rgba(8, 131, 149, 0.2);
-      color: var(--color-primary-base, #088395);
-      font-weight: 800;
-      font-size: 0.9rem;
-      text-decoration: none;
-      transition: all 0.2s ease;
+    :host-context([data-theme="dark"]) .card-footer-switch,
+    :host-context(.dark-theme) .card-footer-switch {
+      border-top-color: rgba(5, 191, 219, 0.14);
     }
 
-    .btn-goto-login:hover {
-      background: rgba(8, 131, 149, 0.16);
-      transform: translateY(-1px);
-    }
-
-    .quick-assist-links {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.82rem;
-      color: var(--color-text-muted, #64748B);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .assist-link {
+    .switch-link {
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
-      color: var(--color-text-muted, #64748B);
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.2s ease;
-    }
-
-    .assist-link:hover {
       color: var(--color-primary-base, #088395);
+      font-weight: 800;
+      text-decoration: none;
+      transition: gap 0.2s ease;
     }
 
-    .assist-link.text-red {
-      color: #EF4444;
+    .switch-link:hover {
+      text-decoration: underline;
+      gap: 0.45rem;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
-      .roles-cards-row {
+      .auth-luxury-card.register-card {
+        padding: 1.75rem 1.25rem;
+        border-radius: 22px;
+      }
+
+      .persona-cards-grid {
         grid-template-columns: 1fr;
       }
 
-      .form-grid-2,
-      .form-grid-3 {
+      .fields-grid-2,
+      .fields-grid-3 {
         grid-template-columns: 1fr;
       }
 
-      .auth-glass-card {
-        padding: 1.5rem 1.25rem;
+      .dual-actions-row {
+        flex-direction: column-reverse;
+      }
+
+      .btn-secondary-back,
+      .btn-primary-auth {
+        width: 100%;
       }
     }
   `]
@@ -866,38 +1177,44 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  public langService = inject(LanguageService);
+  langService = inject(LanguageService);
 
-  public selectedRole: UserRole = 'Patient';
-  public isLoading = false;
-  public errorMessage: string | null = null;
-  public showPassword = false;
+  currentStep = 1;
+  selectedRole: 'Patient' | 'Doctor' | 'Receptionist' = 'Patient';
+  showPassword = false;
+  showConfirmPassword = false;
+  isLoading = false;
+  errorMessage = '';
 
-  public registerForm = this.fb.group({
+  registerForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
-    nationalId: ['', [Validators.required, Validators.pattern(/^[0-9]{14}$/)]],
+    nationalId: ['', [Validators.required, Validators.pattern(/^\d{14}$/)]],
     email: ['', [Validators.required, Validators.email]],
-    phoneNumber: ['', [Validators.required, Validators.pattern(/^01[0125][0-9]{8}$/)]],
-    dateOfBirth: ['1992-04-18', [Validators.required]],
+    phoneNumber: ['', [Validators.required, Validators.pattern(/^(010|011|012|015)\d{8}$/)]],
+    dateOfBirth: ['1995-01-01', [Validators.required]],
     gender: ['Male', [Validators.required]],
     bloodType: ['A+'],
+    medicalLicenseNumber: [''],
     specialty: [''],
-    licenseNumber: [''],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    confirmPassword: ['', [Validators.required]]
+    confirmPassword: ['', [Validators.required]],
+    termsAccepted: [true, [Validators.requiredTrue]]
   });
 
-  selectRole(role: UserRole): void {
+  selectRole(role: 'Patient' | 'Doctor' | 'Receptionist'): void {
     this.selectedRole = role;
+    const licenseCtrl = this.registerForm.get('medicalLicenseNumber');
+    const specialtyCtrl = this.registerForm.get('specialty');
+
     if (role === 'Doctor') {
-      this.registerForm.get('specialty')?.setValidators([Validators.required]);
-      this.registerForm.get('licenseNumber')?.setValidators([Validators.required]);
+      licenseCtrl?.setValidators([Validators.required]);
+      specialtyCtrl?.setValidators([Validators.required]);
     } else {
-      this.registerForm.get('specialty')?.clearValidators();
-      this.registerForm.get('licenseNumber')?.clearValidators();
+      licenseCtrl?.clearValidators();
+      specialtyCtrl?.clearValidators();
     }
-    this.registerForm.get('specialty')?.updateValueAndValidity();
-    this.registerForm.get('licenseNumber')?.updateValueAndValidity();
+    licenseCtrl?.updateValueAndValidity();
+    specialtyCtrl?.updateValueAndValidity();
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -905,49 +1222,111 @@ export class RegisterComponent {
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
-  isPasswordMismatch(): boolean {
+  isConfirmPasswordInvalid(): boolean {
     const pass = this.registerForm.get('password')?.value;
-    const confirm = this.registerForm.get('confirmPassword')?.value;
-    return !!(confirm && pass !== confirm);
+    const confirm = this.registerForm.get('confirmPassword');
+    return !!(confirm && confirm.dirty && confirm.value !== pass);
+  }
+
+  get passwordStrength(): number {
+    const pass = this.registerForm.get('password')?.value || '';
+    if (!pass) return 0;
+    let score = 0;
+    if (pass.length >= 8) score++;
+    if (/[A-Z]/.test(pass)) score++;
+    if (/[0-9]/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass)) score++;
+    return score;
+  }
+
+  getStrengthCaption(): string {
+    const score = this.passwordStrength;
+    if (score <= 1) return this.langService.t('passwordStrengthWeak');
+    if (score === 2) return this.langService.t('passwordStrengthMedium');
+    return this.langService.t('passwordStrengthStrong');
+  }
+
+  nextStep(): void {
+    const fullNameValid = !this.registerForm.get('fullName')?.invalid;
+    const nationalIdValid = !this.registerForm.get('nationalId')?.invalid;
+    const doctorValid = this.selectedRole !== 'Doctor' ||
+      (!this.registerForm.get('medicalLicenseNumber')?.invalid && !this.registerForm.get('specialty')?.invalid);
+
+    if (fullNameValid && nationalIdValid && doctorValid) {
+      this.currentStep = 2;
+      this.errorMessage = '';
+    } else {
+      this.registerForm.get('fullName')?.markAsTouched();
+      this.registerForm.get('nationalId')?.markAsTouched();
+      if (this.selectedRole === 'Doctor') {
+        this.registerForm.get('medicalLicenseNumber')?.markAsTouched();
+        this.registerForm.get('specialty')?.markAsTouched();
+      }
+    }
+  }
+
+  prevStep(): void {
+    this.currentStep = 1;
+    this.errorMessage = '';
+  }
+
+  goToStep(step: number): void {
+    if (step === 2) {
+      this.nextStep();
+    } else {
+      this.currentStep = 1;
+    }
   }
 
   onSubmit(): void {
-    if (this.registerForm.invalid || this.isPasswordMismatch()) {
+    if (this.registerForm.invalid || this.isConfirmPasswordInvalid()) {
       this.registerForm.markAllAsTouched();
       return;
     }
 
     this.isLoading = true;
-    this.errorMessage = null;
+    this.errorMessage = '';
 
-    const val = this.registerForm.value;
+    const formVal = this.registerForm.value;
 
-    const dto: RegisterRequestDto = {
-      fullName: val.fullName!,
-      email: val.email!,
-      phone: val.phoneNumber!,
-      password: val.password!,
-      roleName: this.selectedRole,
-      dateOfBirth: val.dateOfBirth,
-      gender: val.gender === 'Female' ? 2 : 1,
-      specialty: this.selectedRole === 'Doctor' ? val.specialty : undefined,
-      licenseNumber: this.selectedRole === 'Doctor' ? val.licenseNumber : undefined
+    const roleEnumMap: Record<string, UserRole> = {
+      Patient: UserRole.Patient,
+      Doctor: UserRole.Doctor,
+      Receptionist: UserRole.Receptionist
     };
 
-    this.authService.register(dto).subscribe({
-      next: () => {
+    const genderNumber = formVal.gender === 'Female' ? 2 : 1;
+
+    const registerDto: RegisterRequestDto = {
+      fullName: formVal.fullName!.trim(),
+      email: formVal.email!.trim(),
+      phone: formVal.phoneNumber!.trim(),
+      password: formVal.password!,
+      roleName: roleEnumMap[this.selectedRole] || UserRole.Patient,
+      dateOfBirth: formVal.dateOfBirth || null,
+      gender: genderNumber,
+      specialty: this.selectedRole === 'Doctor' ? formVal.specialty?.trim() : null,
+      licenseNumber: this.selectedRole === 'Doctor' ? formVal.medicalLicenseNumber?.trim() : null
+    };
+
+    this.authService.register(registerDto).subscribe({
+      next: (res) => {
         this.isLoading = false;
-        alert(
-          this.langService.isRtl()
-            ? 'تم إنشاء حسابك بنجاح! جاري تحويلك إلى لوحة التحكم...'
-            : 'Account registered successfully! Redirecting to dashboard...'
-        );
-        this.router.navigateByUrl('/dashboard');
+        this.router.navigate(['/auth/login'], {
+          queryParams: { registered: 'true', role: this.selectedRole }
+        });
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err?.error?.message ||
-          (this.langService.isRtl() ? 'تعذر إنشاء الحساب، يرجى التحقق من البيانات والمحاولة مجدداً.' : 'Registration failed. Please verify your details.');
+        if (err.status === 409) {
+          this.errorMessage = this.langService.isRtl()
+            ? 'الرقم القومي أو البريد الإلكتروني مسجل بالفعل في المنظومة.'
+            : 'National ID or Email is already registered in Sehati.';
+        } else {
+          this.errorMessage = err.error?.message || (this.langService.isRtl()
+            ? 'حدث خطأ أثناء إنشاء الحساب. يرجى التحقق من صحة البيانات.'
+            : 'An error occurred during account creation. Please verify your data.');
+        }
       }
     });
   }
