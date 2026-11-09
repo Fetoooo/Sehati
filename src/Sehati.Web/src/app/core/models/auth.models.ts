@@ -1,29 +1,27 @@
-export type UserRole = 'Patient' | 'Doctor' | 'Receptionist' | 'ClinicAdmin' | 'SystemAdmin';
-
-export const UserRole = {
-  Patient: 'Patient' as UserRole,
-  Doctor: 'Doctor' as UserRole,
-  Receptionist: 'Receptionist' as UserRole,
-  ClinicAdmin: 'ClinicAdmin' as UserRole,
-  SystemAdmin: 'SystemAdmin' as UserRole
-} as const;
+export enum UserRole {
+  Patient = 'Patient',
+  Doctor = 'Doctor',
+  Receptionist = 'Receptionist',
+  ClinicAdmin = 'ClinicAdmin',
+  SystemAdmin = 'SystemAdmin'
+}
 
 export interface UserDto {
   userId?: number;
-  id?: string;
-  nationalId?: string;
-  email: string;
-  phone?: string;
-  phoneNumber?: string;
+  id: string; // GUID string representation
+  nationalId?: string | null;
   fullName: string;
-  roleId?: number;
+  email: string;
+  phone?: string | null;
+  phoneNumber?: string | null;
+  roleId: number;
   roleName: UserRole;
   isActive: boolean;
   unifiedPatientId?: string | null;
   specialty?: string | null;
   clinicId?: number | null;
-  createdAt?: string;
   lastLoginAt?: string | null;
+  createdAt: string;
 }
 
 export interface TokenResponseDto {
@@ -35,7 +33,8 @@ export interface TokenResponseDto {
 }
 
 export interface LoginRequestDto {
-  identifier: string; // Email or Phone
+  identifier?: string;
+  emailOrPhone?: string;
   password: string;
 }
 

@@ -53,7 +53,13 @@ export class AuthService {
   }
 
   public login(dto: LoginRequestDto): Observable<TokenResponseDto> {
-    return this.http.post<TokenResponseDto>(`${this.baseUrl}/login`, dto).pipe(
+    const emailOrPhoneVal = (dto.emailOrPhone || dto.identifier || '').trim();
+    const payload = {
+      emailOrPhone: emailOrPhoneVal,
+      identifier: emailOrPhoneVal,
+      password: dto.password
+    };
+    return this.http.post<TokenResponseDto>(`${this.baseUrl}/login`, payload).pipe(
       tap((res) => this.handleAuthSuccess(res))
     );
   }
@@ -91,26 +97,27 @@ export class AuthService {
     this.storage.removeItem(ACCESS_TOKEN_KEY);
     this.storage.removeItem(REFRESH_TOKEN_KEY);
     this.storage.removeItem(USER_KEY);
-
-    this.tokenSignal.set(null);
     this.currentUserSignal.set(null);
-
+    this.tokenSignal.set(null);
     this.router.navigate(['/auth/login']);
   }
 
-  public hasRole(...roles: UserRole[]): boolean {
-    const current = this.userRole();
-    if (!current) return false;
-    return roles.includes(current);
+  private handleAuthSuccess(response: TokenResponseDto): void {
+    if (response.accessToken) {
+      this.storage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
+      this.tokenSignal.set(response.accessToken);
+    }
+    if (response.refreshToken) {
+      this.storage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+    }
+    if (response.user) {
+      this.storage.setItem(USER_KEY, JSON.stringify(response.user));
+      this.currentUserSignal.set(response.user);
+    }
   }
 
-  private handleAuthSuccess(res: TokenResponseDto): void {
-    this.storage.setItem(ACCESS_TOKEN_KEY, res.accessToken);
-    this.storage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
-    this.storage.setItem(USER_KEY, JSON.stringify(res.user));
-
-    this.tokenSignal.set(res.accessToken);
-    this.currentUserSignal.set(res.user);
+  public hasRole(role: UserRole | string): boolean {
+    const current = this.currentUserSignal();
+    return !!current && current.roleName === role;
   }
 }
-
