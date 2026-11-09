@@ -394,19 +394,12 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
                   <span class="material-symbols-outlined input-icon">lock_clock</span>
                   <input
                     id="confirmPassword"
-                    [type]="showConfirmPassword ? 'text' : 'password'"
+                    [type]="showPassword ? 'text' : 'password'"
                     formControlName="confirmPassword"
                     class="native-input"
                     [placeholder]="langService.t('confirmPasswordPlaceholder')"
                     autocomplete="new-password"
                   />
-                  <button
-                    type="button"
-                    class="eye-btn"
-                    (click)="showConfirmPassword = !showConfirmPassword"
-                  >
-                    <span class="material-symbols-outlined">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
-                  </button>
                 </div>
                 <div class="field-error-hint" *ngIf="isConfirmPasswordInvalid()">
                   {{ langService.isRtl() ? 'كلمتا المرور غير متطابقتين.' : 'Passwords do not match.' }}
@@ -427,10 +420,24 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
 
             <!-- Terms & Consent Agreement -->
             <div class="terms-group">
-              <label class="terms-label">
-                <input type="checkbox" formControlName="termsAccepted" class="styled-checkbox" />
-                <span>{{ langService.t('termsAgreement') }}</span>
-              </label>
+              <div class="terms-label-row">
+                <label class="terms-label" for="termsAccepted">
+                  <input id="termsAccepted" type="checkbox" formControlName="termsAccepted" class="styled-checkbox" />
+                  <span class="terms-text-inline">
+                    {{ langService.isRtl() ? 'أوافق على ' : 'I agree to the ' }}
+                    <strong>{{ langService.isRtl() ? 'شروط الخدمة والسياسة الوطنية الموحدة لحماية البيانات الصحية' : 'Terms of Service & National Health Data Protection Policy' }}</strong>.
+                  </span>
+                </label>
+                <button
+                  type="button"
+                  class="terms-reader-btn"
+                  (click)="openTermsModal()"
+                  [title]="langService.isRtl() ? 'قراءة بنود الخدمة وسياسة حماية البيانات' : 'Read Terms & Policy'"
+                >
+                  <span class="material-symbols-outlined">menu_book</span>
+                  <span>{{ langService.isRtl() ? 'قراءة البنود والسياسة' : 'Read Terms & Policy' }}</span>
+                </button>
+              </div>
             </div>
 
             <!-- Dual Action Row -->
@@ -464,6 +471,92 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
             <span>{{ langService.t('signInBtn') }}</span>
             <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
           </a>
+        </div>
+      </div>
+
+      <!-- TERMS & HEALTH DATA PROTECTION MODAL -->
+      <div class="terms-modal-overlay" *ngIf="showTermsModal" (click)="closeTermsModal()">
+        <div class="terms-modal-card" (click)="$event.stopPropagation()">
+          <div class="terms-modal-header">
+            <div class="modal-badge">
+              <span class="material-symbols-outlined">verified_user</span>
+              <span>{{ langService.isRtl() ? 'السياسة الوطنية الموحدة لحماية البيانات الصحية 2026' : 'Unified National Health Data Protection Policy 2026' }}</span>
+            </div>
+            <button type="button" class="modal-close-btn" (click)="closeTermsModal()">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div class="terms-modal-body">
+            <h2 class="policy-heading">
+              {{ langService.isRtl() ? 'ميثاق سيادة البيانات وحماية السجلات الطبية (صِحّتي)' : 'Data Sovereignty & Health Data Governance Charter (Sehati)' }}
+            </h2>
+            <p class="policy-intro">
+              {{ langService.isRtl()
+                ? 'بموجب قانون حماية البيانات الشخصية المصري رقم 151 لسنة 2020 ومعايير التحول الرقمي للتأمين الصحي، تلتزم منظومة صِحّتي بتوفير أعلى درجات السيادة والأمان لبياناتك الصحية:'
+                : 'Under Egyptian Personal Data Protection Law No. 151/2020 and sovereign digital health standards, Sehati guarantees absolute citizen privacy and security:' }}
+            </p>
+
+            <div class="policy-grid">
+              <div class="policy-card">
+                <div class="policy-icon-wrap teal">
+                  <span class="material-symbols-outlined">shield</span>
+                </div>
+                <div class="policy-card-content">
+                  <h4>{{ langService.isRtl() ? '1. سيادة المريض ومبدأ عدم الثقة (Zero-Trust)' : '1. Patient Sovereignty & Zero-Trust Consent' }}</h4>
+                  <p>{{ langService.isRtl()
+                    ? 'أنت المالك الوحيد لسجلك الطبي. لا يمكن لأي عيادة، مستشفى، أو ممارس صحي الاطلاع على فحوصاتك أو تاريخك الطبي إلا بعد موافقتك اللحظية عبر كود التحقق OTP أو مسح تصريح الاستشارة.'
+                    : 'You own your medical data. No clinic, hospital, or clinician can view your consultation records or diagnostic labs without your explicit OTP verification or active QR consent.' }}</p>
+                </div>
+              </div>
+
+              <div class="policy-card">
+                <div class="policy-icon-wrap emerald">
+                  <span class="material-symbols-outlined">lock</span>
+                </div>
+                <div class="policy-card-content">
+                  <h4>{{ langService.isRtl() ? '2. تشفير سيبراني عسكري (AES-256)' : '2. End-to-End Cryptographic Encryption' }}</h4>
+                  <p>{{ langService.isRtl()
+                    ? 'كافة السجلات الطبية، الروشتات، والتحاليل مشفرة بالكامل أثناء الحفظ (At-Rest) وأثناء النقل (In-Transit) عبر بنية تحتية سحابية حكومية مؤمنة 100%.'
+                    : 'All electronic medical records, e-prescriptions, and telemetry are encrypted with AES-256 at rest and TLS 1.3 in transit, hosted securely on sovereign infrastructure.' }}</p>
+                </div>
+              </div>
+
+              <div class="policy-card">
+                <div class="policy-icon-wrap amber">
+                  <span class="material-symbols-outlined">emergency</span>
+                </div>
+                <div class="policy-card-content">
+                  <h4>{{ langService.isRtl() ? '3. بروتوكول طوارئ الإنقاذ السريع (Rescue QR)' : '3. Emergency Rescue QR Protocol' }}</h4>
+                  <p>{{ langService.isRtl()
+                    ? 'في حالات الحوادث الطارئة أو الغيبوبة، يُتاح للمسعفين المعتمدين حصراً قراءة المؤشرات الحيوية المنقذة للحياة فقط (فصيلة الدم، الحساسيات الحرجة، الأمراض المزمنة، جهة اتصال الطوارئ).'
+                    : 'In acute medical emergencies, accredited EMTs and paramedics access ONLY life-saving vitals (blood group, critical allergies, chronic illnesses, and emergency contacts).' }}</p>
+                </div>
+              </div>
+
+              <div class="policy-card">
+                <div class="policy-icon-wrap indigo">
+                  <span class="material-symbols-outlined">history</span>
+                </div>
+                <div class="policy-card-content">
+                  <h4>{{ langService.isRtl() ? '4. سجل تدقيق غير قابل للتلاعب وحق الإلغاء الفوري' : '4. Immutable Audit Trail & Immediate Revocation' }}</h4>
+                  <p>{{ langService.isRtl()
+                    ? 'يتم تسجيل كل محاولة وصول لملفك الطبي بتوقيت دقيق وهوية الطبيب في سجل التدقيق الأمني. ويحق لك إلغاء تصريح أي عيادة أو طبيب بنقرة واحدة وفي أي لحظة.'
+                    : 'Every single view of your passport is permanently recorded in your tamper-proof security audit log. You hold the legal right to revoke any provider’s consent in real time.' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="terms-modal-footer">
+            <button type="button" class="btn-modal-close" (click)="closeTermsModal()">
+              <span>{{ langService.isRtl() ? 'إغلاق' : 'Close' }}</span>
+            </button>
+            <button type="button" class="btn-modal-agree" (click)="acceptTermsAndClose()">
+              <span class="material-symbols-outlined">check_circle</span>
+              <span>{{ langService.isRtl() ? 'أوافق على الشروط والسياسة' : 'I Accept & Agree' }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1009,19 +1102,71 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       color: var(--color-text-muted, #64748B);
     }
 
-    /* Terms */
+    /* Terms & Policy Reader */
     .terms-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
       padding: 0.25rem 0;
     }
 
-    .terms-label {
+    .terms-label-row {
       display: flex;
-      align-items: flex-start;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .terms-label {
+      display: inline-flex;
+      align-items: center;
       gap: 0.65rem;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       line-height: 1.5;
       color: var(--color-text-muted, #64748B);
       cursor: pointer;
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .terms-text-inline strong {
+      color: var(--color-primary-dark, #0A4D68);
+    }
+
+    :host-context([data-theme="dark"]) .terms-text-inline strong,
+    :host-context(.dark-theme) .terms-text-inline strong {
+      color: #05BFDB;
+    }
+
+    .terms-reader-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(8, 131, 149, 0.25);
+      background: rgba(8, 131, 149, 0.08);
+      color: var(--color-primary-base, #088395);
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .terms-reader-btn:hover {
+      background: var(--color-primary-base, #088395);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(8, 131, 149, 0.2);
+    }
+
+    :host-context([data-theme="dark"]) .terms-reader-btn,
+    :host-context(.dark-theme) .terms-reader-btn {
+      background: rgba(5, 191, 219, 0.12);
+      border-color: rgba(5, 191, 219, 0.35);
+      color: #05BFDB;
     }
 
     .styled-checkbox {
@@ -1031,6 +1176,227 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
       border-radius: 4px;
       margin-top: 0.15rem;
       cursor: pointer;
+    }
+
+    /* Modal Overlay & Card */
+    .terms-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 22, 34, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      animation: modalFadeIn 0.25s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .terms-modal-card {
+      width: 100%;
+      max-width: 680px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 24px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      animation: modalScaleUp 0.25s ease;
+    }
+
+    :host-context([data-theme="dark"]) .terms-modal-card,
+    :host-context(.dark-theme) .terms-modal-card {
+      background: #082635;
+      border-color: rgba(5, 191, 219, 0.25);
+    }
+
+    @keyframes modalScaleUp {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .terms-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: rgba(8, 131, 149, 0.04);
+    }
+
+    :host-context([data-theme="dark"]) .terms-modal-header,
+    :host-context(.dark-theme) .terms-modal-header {
+      border-bottom-color: rgba(5, 191, 219, 0.15);
+      background: rgba(5, 191, 219, 0.06);
+    }
+
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--color-primary-base, #088395);
+    }
+
+    :host-context([data-theme="dark"]) .modal-badge,
+    :host-context(.dark-theme) .modal-badge {
+      color: #05BFDB;
+    }
+
+    .modal-close-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: var(--color-surface-card, #FFFFFF);
+      color: var(--color-text-muted, #64748B);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+      background: #EF4444;
+      border-color: #EF4444;
+      color: #FFFFFF;
+    }
+
+    .terms-modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    .policy-heading {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--color-text-main, #0F172A);
+      margin: 0;
+    }
+
+    .policy-intro {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--color-text-muted, #64748B);
+      margin: 0;
+    }
+
+    .policy-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .policy-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      padding: 1rem 1.15rem;
+      border-radius: 16px;
+      background: var(--color-bg-app, #F8FAFC);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+    }
+
+    :host-context([data-theme="dark"]) .policy-card,
+    :host-context(.dark-theme) .policy-card {
+      background: #0B3347;
+      border-color: rgba(5, 191, 219, 0.16);
+    }
+
+    .policy-icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .policy-icon-wrap.teal { background: rgba(8, 131, 149, 0.15); color: #088395; }
+    .policy-icon-wrap.emerald { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+    .policy-icon-wrap.amber { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+    .policy-icon-wrap.indigo { background: rgba(99, 102, 241, 0.15); color: #6366F1; }
+
+    .policy-card-content h4 {
+      margin: 0 0 0.3rem 0;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--color-text-main, #0F172A);
+    }
+
+    .policy-card-content p {
+      margin: 0;
+      font-size: 0.84rem;
+      line-height: 1.55;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    .terms-modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1.15rem 1.5rem;
+      border-top: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: rgba(8, 131, 149, 0.03);
+    }
+
+    :host-context([data-theme="dark"]) .terms-modal-footer,
+    :host-context(.dark-theme) .terms-modal-footer {
+      border-top-color: rgba(5, 191, 219, 0.15);
+      background: rgba(5, 191, 219, 0.05);
+    }
+
+    .btn-modal-agree {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #0A4D68 0%, #088395 100%);
+      color: #FFFFFF;
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-modal-agree:hover {
+      box-shadow: 0 6px 18px rgba(8, 131, 149, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-modal-close {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.65rem 1.15rem;
+      border-radius: 12px;
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      background: transparent;
+      color: var(--color-text-muted, #64748B);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-modal-close:hover {
+      color: var(--color-text-main, #0F172A);
+      border-color: var(--color-text-muted, #64748B);
     }
 
     /* Buttons */
@@ -1182,9 +1548,22 @@ export class RegisterComponent {
   currentStep = 1;
   selectedRole: 'Patient' | 'Doctor' | 'Receptionist' = 'Patient';
   showPassword = false;
-  showConfirmPassword = false;
+  showTermsModal = false;
   isLoading = false;
   errorMessage = '';
+
+  openTermsModal(): void {
+    this.showTermsModal = true;
+  }
+
+  closeTermsModal(): void {
+    this.showTermsModal = false;
+  }
+
+  acceptTermsAndClose(): void {
+    this.registerForm.get('termsAccepted')?.setValue(true);
+    this.showTermsModal = false;
+  }
 
   registerForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -1313,7 +1692,11 @@ export class RegisterComponent {
       next: (res) => {
         this.isLoading = false;
         this.router.navigate(['/auth/login'], {
-          queryParams: { registered: 'true', role: this.selectedRole }
+          queryParams: {
+            registered: 'true',
+            role: this.selectedRole,
+            email: formVal.email?.trim() || ''
+          }
         });
       },
       error: (err) => {

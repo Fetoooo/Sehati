@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -34,6 +34,15 @@ import { LanguageService } from '../../../core/services/language.service';
             </div>
             <h1 class="card-title">{{ langService.isRtl() ? 'أهلاً بك مجدداً في صِحّتي' : 'Welcome Back to Sehati' }}</h1>
             <p class="card-caption">{{ langService.t('loginSubtitle') }}</p>
+          </div>
+
+          <!-- Registration Success Celebration Alert Banner -->
+          <div class="alert-banner success" *ngIf="registeredSuccess && !errorMessage">
+            <span class="material-symbols-outlined">verified</span>
+            <div class="alert-content-block">
+              <strong class="alert-block-title">{{ langService.isRtl() ? 'تم إصدار جوازك الصحي الموحد بنجاح! 🎉' : 'Unified Health Passport Issued! 🎉' }}</strong>
+              <span class="alert-block-desc">{{ langService.isRtl() ? 'حسابك مفعل وجاهز. يرجى إدخال كلمة المرور لتسجيل الدخول.' : 'Your account is active. Enter your password to sign in.' }}</span>
+            </div>
           </div>
 
           <!-- Error Alert Banner -->
@@ -386,6 +395,23 @@ import { LanguageService } from '../../../core/services/language.service';
       line-height: 1.5;
     }
 
+    .alert-content-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .alert-block-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .alert-block-desc {
+      font-size: 0.82rem;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
     /* Form */
     .auth-form {
       display: flex;
@@ -707,13 +733,14 @@ import { LanguageService } from '../../../core/services/language.service';
     }
   `]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   langService = inject(LanguageService);
 
+  registeredSuccess = false;
   showPassword = false;
   isLoading = false;
   errorMessage = '';
@@ -722,6 +749,16 @@ export class LoginComponent {
   recoveryInput = '';
   isRecoveryLoading = false;
   resetSuccessMessage = '';
+
+  ngOnInit(): void {
+    const params = this.route.snapshot.queryParams;
+    if (params['registered'] === 'true') {
+      this.registeredSuccess = true;
+      if (params['email']) {
+        this.loginForm.patchValue({ identifier: params['email'] });
+      }
+    }
+  }
 
   loginForm = this.fb.group({
     identifier: ['', [Validators.required]],
@@ -762,9 +799,10 @@ export class LoginComponent {
     this.errorMessage = '';
 
     const { identifier, password } = this.loginForm.value;
+    const cleanIdentifier = (identifier || '').trim();
 
     this.authService.login({
-      identifier: identifier!.trim(),
+      identifier: cleanIdentifier,
       password: password!
     }).subscribe({
       next: (response) => {
@@ -782,6 +820,15 @@ export class LoginComponent {
           this.errorMessage = this.langService.isRtl()
             ? 'تم تجاوز عدد المحاولات المسموح بها. يرجى الانتظار دقيقة واحدة.'
             : 'Too many attempts. Please wait 1 minute before trying again.';
+        } else if (err.status === 400) {
+          if (err.error?.errors) {
+            const errList = Object.values(err.error.errors).flat() as string[];
+            this.errorMessage = errList.join(' | ');
+          } else {
+            this.errorMessage = err.error?.message || err.error?.title || (this.langService.isRtl()
+              ? 'البيانات المدخلة غير صحيحة. يرجى مراجعة الحقول.'
+              : 'Invalid input data. Please verify fields.');
+          }
         } else {
           this.errorMessage = err.error?.message || (this.langService.isRtl()
             ? 'تعذر الاتصال بالخادم. يرجى المحاولة مرة أخرى.'
