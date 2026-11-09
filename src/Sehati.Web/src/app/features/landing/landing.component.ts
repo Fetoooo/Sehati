@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
@@ -53,17 +53,67 @@ interface PersonaRole {
             </div>
           </a>
 
-          <!-- Navigation Links (Centered) -->
+          <!-- Navigation Links (Streamlined with Dropdown) -->
           <nav class="nav-menu">
             <a href="#hero" class="nav-link">{{ langService.isRtl() ? 'نظرة عامة' : 'Overview' }}</a>
             <a href="#capabilities" class="nav-link">{{ langService.isRtl() ? 'المميزات' : 'Capabilities' }}</a>
-            <a href="#personas" class="nav-link">{{ langService.isRtl() ? 'الفئات والخدمات' : 'Roles' }}</a>
-            <a href="#how-it-works" class="nav-link">{{ langService.isRtl() ? 'كيف تعمل؟' : 'How It Works' }}</a>
-            <a href="#faq" class="nav-link">{{ langService.isRtl() ? 'الأسئلة الشائعة' : 'FAQ' }}</a>
-            <a routerLink="/preview" class="nav-link showcase-pill">
-              <span class="material-symbols-outlined">architecture</span>
-              <span>{{ langService.isRtl() ? 'استعراض الهيكلية' : 'Showcase' }}</span>
-            </a>
+
+            <!-- Combined Explore Dropdown -->
+            <div class="nav-dropdown-wrapper" [class.open]="isExploreMenuOpen">
+              <button
+                type="button"
+                class="nav-dropdown-trigger"
+                (click)="toggleExploreMenu($event)"
+                [attr.aria-expanded]="isExploreMenuOpen"
+              >
+                <span>{{ langService.isRtl() ? 'استكشف' : 'Explore' }}</span>
+                <span class="material-symbols-outlined dropdown-chevron">expand_more</span>
+              </button>
+
+              <div class="nav-dropdown-menu" [class.show]="isExploreMenuOpen">
+                <a href="#personas" class="dropdown-item" (click)="closeExploreMenu()">
+                  <div class="dropdown-item-icon teal">
+                    <span class="material-symbols-outlined">badge</span>
+                  </div>
+                  <div class="dropdown-item-text">
+                    <strong class="item-title">{{ langService.isRtl() ? 'الفئات والخدمات' : 'Healthcare Roles' }}</strong>
+                    <span class="item-desc">{{ langService.isRtl() ? 'بوابات الأطباء، المرضى، وموظفي الاستقبال' : 'Physician, Patient & Reception Portals' }}</span>
+                  </div>
+                </a>
+
+                <a href="#how-it-works" class="dropdown-item" (click)="closeExploreMenu()">
+                  <div class="dropdown-item-icon blue">
+                    <span class="material-symbols-outlined">route</span>
+                  </div>
+                  <div class="dropdown-item-text">
+                    <strong class="item-title">{{ langService.isRtl() ? 'كيف تعمل المنظومة' : 'How It Works' }}</strong>
+                    <span class="item-desc">{{ langService.isRtl() ? 'مسار رعاية موحد من 3 خطوات سهلة' : '3-step unified clinical pathway' }}</span>
+                  </div>
+                </a>
+
+                <a href="#faq" class="dropdown-item" (click)="closeExploreMenu()">
+                  <div class="dropdown-item-icon amber">
+                    <span class="material-symbols-outlined">help</span>
+                  </div>
+                  <div class="dropdown-item-text">
+                    <strong class="item-title">{{ langService.isRtl() ? 'الأسئلة الشائعة' : 'FAQ & Support' }}</strong>
+                    <span class="item-desc">{{ langService.isRtl() ? 'إجابات حول الخصوصية وأمان السجلات' : 'Answers on privacy and security' }}</span>
+                  </div>
+                </a>
+
+                <div class="dropdown-divider"></div>
+
+                <a routerLink="/preview" class="dropdown-item highlight" (click)="closeExploreMenu()">
+                  <div class="dropdown-item-icon accent">
+                    <span class="material-symbols-outlined">architecture</span>
+                  </div>
+                  <div class="dropdown-item-text">
+                    <strong class="item-title">{{ langService.isRtl() ? 'استعراض الهيكلية والأنظمة' : 'Architecture Showcase' }}</strong>
+                    <span class="item-desc">{{ langService.isRtl() ? 'استعراض كامل لقواعد البيانات والواجهات' : 'Full architecture and API overview' }}</span>
+                  </div>
+                </a>
+              </div>
+            </div>
           </nav>
 
           <!-- Navigation Actions -->
@@ -939,30 +989,194 @@ interface PersonaRole {
     .nav-menu {
       display: flex;
       align-items: center;
-      gap: 1.75rem;
+      gap: 1.5rem;
     }
 
     .nav-link {
       text-decoration: none;
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--color-text-muted, #64748B);
       transition: color 0.2s ease;
+      padding: 0.35rem 0.5rem;
+      border-radius: 8px;
     }
 
     .nav-link:hover {
       color: var(--color-primary-base, #088395);
     }
 
-    .nav-link.showcase-pill {
+    /* Streamlined Dropdown Navigation */
+    .nav-dropdown-wrapper {
+      position: relative;
+    }
+
+    .nav-dropdown-trigger {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      background: rgba(8, 131, 149, 0.08);
-      color: var(--color-primary-base, #088395);
-      padding: 0.35rem 0.85rem;
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-text-muted, #64748B);
+      cursor: pointer;
+      padding: 0.35rem 0.65rem;
       border-radius: 9999px;
-      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-dropdown-trigger:hover,
+    .nav-dropdown-wrapper.open .nav-dropdown-trigger {
+      color: var(--color-primary-base, #088395);
+      background: rgba(8, 131, 149, 0.08);
+    }
+
+    .dropdown-chevron {
+      font-size: 1.2rem;
+      transition: transform 0.25s ease;
+    }
+
+    .nav-dropdown-wrapper.open .dropdown-chevron {
+      transform: rotate(180deg);
+    }
+
+    .nav-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 0.65rem);
+      inset-inline-start: 50%;
+      transform: translateX(-50%) translateY(8px);
+      width: 320px;
+      background: var(--color-surface-card, #FFFFFF);
+      border: 1px solid var(--color-border-subtle, #E2E8F0);
+      border-radius: 18px;
+      padding: 0.65rem;
+      box-shadow: 0 16px 40px -10px rgba(10, 77, 104, 0.18), 0 4px 12px rgba(0, 0, 0, 0.04);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .landing-page.rtl .nav-dropdown-menu {
+      transform: translateX(50%) translateY(8px);
+    }
+
+    .nav-dropdown-wrapper:hover .nav-dropdown-menu,
+    .nav-dropdown-menu.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .landing-page.rtl .nav-dropdown-wrapper:hover .nav-dropdown-menu,
+    .landing-page.rtl .nav-dropdown-menu.show {
+      transform: translateX(50%) translateY(0);
+    }
+
+    :host-context([data-theme="dark"]) .nav-dropdown-menu,
+    :host-context(.dark-theme) .nav-dropdown-menu {
+      background: rgba(8, 38, 53, 0.98);
+      border-color: rgba(5, 191, 219, 0.25);
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7);
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(8, 131, 149, 0.08);
+      transform: translateX(-2px);
+    }
+
+    .landing-page.rtl .dropdown-item:hover {
+      transform: translateX(2px);
+    }
+
+    :host-context([data-theme="dark"]) .dropdown-item:hover,
+    :host-context(.dark-theme) .dropdown-item:hover {
+      background: rgba(5, 191, 219, 0.12);
+    }
+
+    .dropdown-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .dropdown-item-icon.teal {
+      background: rgba(8, 131, 149, 0.12);
+      color: #088395;
+    }
+
+    .dropdown-item-icon.blue {
+      background: rgba(2, 132, 199, 0.12);
+      color: #0284C7;
+    }
+
+    .dropdown-item-icon.amber {
+      background: rgba(217, 119, 6, 0.12);
+      color: #D97706;
+    }
+
+    .dropdown-item-icon.accent {
+      background: linear-gradient(135deg, rgba(8, 131, 149, 0.2), rgba(5, 191, 219, 0.3));
+      color: #088395;
+    }
+
+    :host-context([data-theme="dark"]) .dropdown-item-icon.accent,
+    :host-context(.dark-theme) .dropdown-item-icon.accent {
+      color: #05BFDB;
+    }
+
+    .dropdown-item-icon .material-symbols-outlined {
+      font-size: 1.25rem;
+    }
+
+    .dropdown-item-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      line-height: 1.2;
+    }
+
+    .item-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--color-text-main, #0F172A);
+    }
+
+    .item-desc {
+      font-size: 0.74rem;
+      color: var(--color-text-muted, #64748B);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--color-border-subtle, #E2E8F0);
+      margin: 0.35rem 0.5rem;
+    }
+
+    :host-context([data-theme="dark"]) .dropdown-divider,
+    :host-context(.dark-theme) .dropdown-divider {
+      background: rgba(5, 191, 219, 0.15);
     }
 
     .nav-actions {
@@ -1515,8 +1729,8 @@ interface PersonaRole {
     }
 
     .qr-visual-box {
-      width: 100px;
-      height: 100px;
+      width: 108px;
+      height: 108px;
       background: #FFFFFF;
       border: 2px solid #EF4444;
       border-radius: 14px;
@@ -1526,18 +1740,27 @@ interface PersonaRole {
       justify-content: center;
       flex-shrink: 0;
       color: #0F172A;
+      padding: 0.35rem 0.25rem;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .qr-big-icon {
-      font-size: 4.5rem;
+      font-size: 3.25rem;
       line-height: 1;
+      margin-bottom: 2px;
     }
 
     .qr-scan-label {
-      font-size: 0.65rem;
+      font-size: 0.58rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       color: #DC2626;
+      text-transform: uppercase;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.1;
+      display: block;
     }
 
     .er-critical-details {
@@ -2562,8 +2785,28 @@ export class LandingComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
 
   isMobileMenuOpen = false;
+  isExploreMenuOpen = false;
   activePassportTab = 0;
   private tabInterval: any;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.nav-dropdown-wrapper')) {
+      this.isExploreMenuOpen = false;
+    }
+  }
+
+  toggleExploreMenu(event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.isExploreMenuOpen = !this.isExploreMenuOpen;
+  }
+
+  closeExploreMenu(): void {
+    this.isExploreMenuOpen = false;
+  }
 
   rolesList: PersonaRole[] = [
     {
