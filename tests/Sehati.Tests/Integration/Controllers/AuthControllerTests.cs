@@ -26,7 +26,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 { "UseInMemoryDatabase", "true" },
-                { "InMemoryDbName", "SehatiIntegrationSharedDb" }
+                { "InMemoryDbName", "SehatiIntegrationSharedDb" },
+                { "JwtSettings:Secret", "SehatiIntegrationTestOnlySecretKeyForSigningTokens123456" }
             });
         });
     }

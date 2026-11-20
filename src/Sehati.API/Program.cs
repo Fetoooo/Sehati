@@ -25,6 +25,7 @@ builder.Services.AddApplicationServices();
 
 // Register Infrastructure (DbContext & Persistence, Services)
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddHostedService<JwtSecretValidationHostedService>();
 
 // Add Controllers
 builder.Services.AddControllers()
@@ -48,11 +49,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure JWT Authentication
-var jwtSecret = builder.Configuration["JwtSettings:Secret"] 
-    ?? "Sehati_Centralized_Digital_Health_Platform_Secure_JWT_Key_2026_Minimum_32_Chars";
-var key = Encoding.UTF8.GetBytes(jwtSecret);
-
+// Configure JWT Authentication. Secret validation runs when the host starts.
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -60,12 +57,14 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+        JwtSecretValidationHostedService.GetRequiredSecret(builder.Configuration)));
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
+        IssuerSigningKey = key,
         ValidateIssuer = true,
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "SehatiAPI",
         ValidateAudience = true,

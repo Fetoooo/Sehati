@@ -21,8 +21,12 @@ public class TokenService : ITokenService
     public TokenService(IConfiguration configuration)
     {
         _configuration = configuration;
-        var secret = _configuration["JwtSettings:Secret"]
-            ?? "Sehati_Centralized_Digital_Health_Platform_Secure_JWT_Key_2026_Minimum_32_Chars";
+        var secret = _configuration["JwtSettings:Secret"];
+        if (string.IsNullOrWhiteSpace(secret) || Encoding.UTF8.GetByteCount(secret) < 32)
+        {
+            throw new InvalidOperationException("JwtSettings:Secret must be configured with a secret of at least 32 bytes.");
+        }
+
         _secretKey = Encoding.UTF8.GetBytes(secret);
         _issuer = _configuration["JwtSettings:Issuer"] ?? "SehatiAPI";
         _audience = _configuration["JwtSettings:Audience"] ?? "SehatiClient";

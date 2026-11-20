@@ -227,9 +227,9 @@ cd src/Sehati.API
 dotnet restore
 dotnet build
 
-# 3. Configure connection string
-# Copy appsettings.json and create appsettings.Development.json
-# Update the SQL Server connection string
+# 3. Configure local secrets (connection string and JWT signing key)
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;Database=SehatiDb;Trusted_Connection=True;TrustServerCertificate=True;"
+dotnet user-secrets set "JwtSettings:Secret" "<generate-a-random-secret-of-at-least-32-bytes>"
 
 # 4. Apply database migrations
 dotnet ef database update --project ../Sehati.Infrastructure

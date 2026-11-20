@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Sehati.Tests.Integration.Controllers;
 
-public class HealthControllerTests : IClassFixture<WebApplicationFactory<Program>>
+public class HealthControllerTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
-    public HealthControllerTests(WebApplicationFactory<Program> factory)
+    public HealthControllerTests(CustomWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
     }
