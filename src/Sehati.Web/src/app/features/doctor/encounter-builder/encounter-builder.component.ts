@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClinicalService } from '../../../core/services/clinical.service';
@@ -15,7 +15,7 @@ interface ICD10Option {
 @Component({
   selector: 'app-encounter-builder',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule],
   template: `
     <div class="encounter-page" [class.rtl]="langService.isRtl()">
       <!-- Page Header -->
@@ -42,9 +42,9 @@ interface ICD10Option {
           </button>
           <button class="btn btn-primary sign-btn" (click)="submitEncounter()" [disabled]="isSubmitting()">
             <span class="material-symbols-outlined">assignment_turned_in</span>
-            <span>{{ isSubmitting() 
-              ? (langService.isRtl() ? 'جاري الحفظ والاعتماد...' : 'Signing Encounter...') 
-              : (langService.isRtl() ? 'اعتماد الكشف وإصدار الروشتة' : 'Sign & Issue Prescription') }}</span>
+            <span>{{ isSubmitting()
+              ? (langService.isRtl() ? 'جاري الحفظ والاعتماد...' : 'Signing Encounter...')
+            : (langService.isRtl() ? 'اعتماد الكشف وإصدار الروشتة' : 'Sign & Issue Prescription') }}</span>
           </button>
         </div>
       </div>
@@ -89,7 +89,7 @@ interface ICD10Option {
       <div class="encounter-grid">
         <!-- Left Column: Encounter Notes, Vitals & Diagnoses -->
         <div class="clinical-inputs-column">
-          
+
           <!-- Section 1: Chief Complaint & Clinical Notes -->
           <div class="form-section-card">
             <div class="section-header">
@@ -104,268 +104,286 @@ interface ICD10Option {
                 class="form-control"
                 [(ngModel)]="chiefComplaint"
                 [placeholder]="langService.isRtl() ? 'مثال: صداع متكرر مع زغللة في الرؤية منذ 3 أيام...' : 'e.g. Throbbing frontal headache, fatigue, mild dizziness for 3 days...'"
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">{{ langService.isRtl() ? 'الفحص السريري والتاريخ المرضي (Clinical Examination & Notes)' : 'Clinical History & Physical Exam Findings' }}</label>
-              <textarea
-                class="form-control"
-                rows="3"
-                [(ngModel)]="clinicalNotes"
-                [placeholder]="langService.isRtl() ? 'ملاحظات الطبيب التفصيلية، فحص قاع العين، الأصوات الصدرية...' : 'Detailed clinical observations, system findings, chest sounds...'"
-              ></textarea>
-            </div>
-          </div>
-
-          <!-- Section 2: Vitals Recording -->
-          <div class="form-section-card">
-            <div class="section-header">
-              <span class="material-symbols-outlined sec-icon">vital_signs</span>
-              <h3 class="sec-title">{{ langService.isRtl() ? 'العلامات الحيوية (Vital Signs)' : 'Vital Signs Tracker' }}</h3>
-              <span class="bmi-badge" *ngIf="calculatedBmi()">
-                BMI: {{ calculatedBmi() }} ({{ getBmiCategory() }})
-              </span>
-            </div>
-
-            <div class="vitals-grid">
-              <div class="vital-item" [class.abnormal]="systolicBp > 140 || diastolicBp > 90">
-                <label>{{ langService.isRtl() ? 'ضغط الدم (mmHg)' : 'Blood Pressure' }}</label>
-                <div class="bp-inputs">
-                  <input type="number" [(ngModel)]="systolicBp" placeholder="120" />
-                  <span>/</span>
-                  <input type="number" [(ngModel)]="diastolicBp" placeholder="80" />
-                </div>
-                <span class="vital-unit">mmHg</span>
-              </div>
-
-              <div class="vital-item" [class.abnormal]="heartRate > 100 || heartRate < 55">
-                <label>{{ langService.isRtl() ? 'نبض القلب' : 'Heart Rate' }}</label>
-                <input type="number" [(ngModel)]="heartRate" placeholder="72" />
-                <span class="vital-unit">bpm</span>
-              </div>
-
-              <div class="vital-item" [class.abnormal]="temperature > 37.8">
-                <label>{{ langService.isRtl() ? 'درجة الحرارة' : 'Temperature' }}</label>
-                <input type="number" step="0.1" [(ngModel)]="temperature" placeholder="37.0" />
-                <span class="vital-unit">°C</span>
-              </div>
-
-              <div class="vital-item">
-                <label>{{ langService.isRtl() ? 'معدل التنفس' : 'Resp. Rate' }}</label>
-                <input type="number" [(ngModel)]="respiratoryRate" placeholder="16" />
-                <span class="vital-unit">/min</span>
-              </div>
-
-              <div class="vital-item">
-                <label>{{ langService.isRtl() ? 'الوزن' : 'Weight' }}</label>
-                <input type="number" step="0.5" [(ngModel)]="weight" placeholder="75" />
-                <span class="vital-unit">kg</span>
-              </div>
-
-              <div class="vital-item">
-                <label>{{ langService.isRtl() ? 'الطول' : 'Height' }}</label>
-                <input type="number" [(ngModel)]="height" placeholder="175" />
-                <span class="vital-unit">cm</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 3: ICD-10 Diagnoses -->
-          <div class="form-section-card">
-            <div class="section-header">
-              <span class="material-symbols-outlined sec-icon">stethoscope_check</span>
-              <h3 class="sec-title">{{ langService.isRtl() ? 'التشخيص الطبي (ICD-10 Coding)' : 'Diagnoses & ICD-10 Coding' }}</h3>
-            </div>
-
-            <!-- Diagnosis Input Bar -->
-            <div class="diag-inputs-row">
-              <div class="diag-search-col">
-                <select class="form-control" [(ngModel)]="selectedIcd10" (change)="onIcdSelected()">
-                  <option value="">{{ langService.isRtl() ? '-- اختر من أشهر تصنيفات ICD-10 --' : '-- Common ICD-10 Diagnoses --' }}</option>
-                  <option *ngFor="let option of commonIcd10" [value]="option.code">
-                    {{ option.code }} - {{ option.name }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="diag-type-col">
-                <select class="form-control" [(ngModel)]="newDiagType">
-                  <option value="Primary">{{ langService.isRtl() ? 'رئيسي (Primary)' : 'Primary' }}</option>
-                  <option value="Secondary">{{ langService.isRtl() ? 'ثانوي (Secondary)' : 'Secondary' }}</option>
-                  <option value="Differential">{{ langService.isRtl() ? 'فارِق (Differential)' : 'Differential' }}</option>
-                </select>
-              </div>
-
-              <button class="btn btn-secondary add-diag-btn" (click)="addDiagnosis()">
-                <span class="material-symbols-outlined">add</span>
-                <span>{{ langService.isRtl() ? 'إضافة' : 'Add' }}</span>
-              </button>
-            </div>
-
-            <div class="form-group custom-diag-input">
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="newDiagDescription"
-                [placeholder]="langService.isRtl() ? 'أو اكتب تشخيص مخصص بالتفصيل...' : 'Or enter custom clinical diagnosis description...'"
-              />
-            </div>
-
-            <!-- List of Added Diagnoses -->
-            <div class="diagnoses-chips-list" *ngIf="diagnosesList.length > 0">
-              <div *ngFor="let diag of diagnosesList; let i = index" class="diag-chip">
-                <span class="diag-type-pill" [class.primary]="diag.type === 'Primary'">{{ diag.type }}</span>
-                <span class="diag-code" *ngIf="diag.code">{{ diag.code }}</span>
-                <span class="diag-desc">{{ diag.description }}</span>
-                <button class="remove-chip-btn" (click)="removeDiagnosis(i)">
-                  <span class="material-symbols-outlined">close</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Column: Digital Prescription Builder & Live Preview Pad -->
-        <div class="rx-builder-column">
-          <div class="form-section-card rx-card">
-            <div class="section-header">
-              <span class="material-symbols-outlined sec-icon">prescriptions</span>
-              <h3 class="sec-title">{{ langService.isRtl() ? 'الروشتة الإلكترونية الرقمية (E-Rx)' : 'Digital Prescription Builder' }}</h3>
-            </div>
-
-            <!-- Add Medication Form -->
-            <div class="add-med-form">
-              <div class="form-group">
-                <label class="form-label required">{{ langService.isRtl() ? 'اسم الدواء والتركيز' : 'Medication & Strength' }}</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="newMedName"
-                  [placeholder]="langService.isRtl() ? 'مثال: Augmentin 1g, Concor 5mg...' : 'e.g. Amoxicillin/Clavulanate 1g, Panadol Extra...'"
                 />
               </div>
 
-              <div class="med-form-row">
-                <div class="form-group">
-                  <label class="form-label">{{ langService.isRtl() ? 'الجرعة' : 'Dosage' }}</label>
-                  <input type="text" class="form-control" [(ngModel)]="newMedDosage" placeholder="1 tablet" />
+              <div class="form-group">
+                <label class="form-label">{{ langService.isRtl() ? 'الفحص السريري والتاريخ المرضي (Clinical Examination & Notes)' : 'Clinical History & Physical Exam Findings' }}</label>
+                <textarea
+                  class="form-control"
+                  rows="3"
+                  [(ngModel)]="clinicalNotes"
+                  [placeholder]="langService.isRtl() ? 'ملاحظات الطبيب التفصيلية، فحص قاع العين، الأصوات الصدرية...' : 'Detailed clinical observations, system findings, chest sounds...'"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Section 2: Vitals Recording -->
+            <div class="form-section-card">
+              <div class="section-header">
+                <span class="material-symbols-outlined sec-icon">vital_signs</span>
+                <h3 class="sec-title">{{ langService.isRtl() ? 'العلامات الحيوية (Vital Signs)' : 'Vital Signs Tracker' }}</h3>
+                @if (calculatedBmi()) {
+                  <span class="bmi-badge">
+                    BMI: {{ calculatedBmi() }} ({{ getBmiCategory() }})
+                  </span>
+                }
+              </div>
+
+              <div class="vitals-grid">
+                <div class="vital-item" [class.abnormal]="systolicBp > 140 || diastolicBp > 90">
+                  <label>{{ langService.isRtl() ? 'ضغط الدم (mmHg)' : 'Blood Pressure' }}</label>
+                  <div class="bp-inputs">
+                    <input type="number" [(ngModel)]="systolicBp" placeholder="120" />
+                    <span>/</span>
+                    <input type="number" [(ngModel)]="diastolicBp" placeholder="80" />
+                  </div>
+                  <span class="vital-unit">mmHg</span>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">{{ langService.isRtl() ? 'التكرار' : 'Frequency' }}</label>
-                  <select class="form-control" [(ngModel)]="newMedFrequency">
-                    <option value="Once daily">Once daily (مرة يومياً)</option>
-                    <option value="Twice daily">Twice daily / BID (مرتين يومياً)</option>
-                    <option value="Three times daily">Three times daily / TID (3 مرات)</option>
-                    <option value="Every 8 hours">Every 8 hours (كل 8 ساعات)</option>
-                    <option value="PRN (As needed)">PRN (عند اللزوم فقط)</option>
+
+                <div class="vital-item" [class.abnormal]="heartRate > 100 || heartRate < 55">
+                  <label>{{ langService.isRtl() ? 'نبض القلب' : 'Heart Rate' }}</label>
+                  <input type="number" [(ngModel)]="heartRate" placeholder="72" />
+                  <span class="vital-unit">bpm</span>
+                </div>
+
+                <div class="vital-item" [class.abnormal]="temperature > 37.8">
+                  <label>{{ langService.isRtl() ? 'درجة الحرارة' : 'Temperature' }}</label>
+                  <input type="number" step="0.1" [(ngModel)]="temperature" placeholder="37.0" />
+                  <span class="vital-unit">°C</span>
+                </div>
+
+                <div class="vital-item">
+                  <label>{{ langService.isRtl() ? 'معدل التنفس' : 'Resp. Rate' }}</label>
+                  <input type="number" [(ngModel)]="respiratoryRate" placeholder="16" />
+                  <span class="vital-unit">/min</span>
+                </div>
+
+                <div class="vital-item">
+                  <label>{{ langService.isRtl() ? 'الوزن' : 'Weight' }}</label>
+                  <input type="number" step="0.5" [(ngModel)]="weight" placeholder="75" />
+                  <span class="vital-unit">kg</span>
+                </div>
+
+                <div class="vital-item">
+                  <label>{{ langService.isRtl() ? 'الطول' : 'Height' }}</label>
+                  <input type="number" [(ngModel)]="height" placeholder="175" />
+                  <span class="vital-unit">cm</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: ICD-10 Diagnoses -->
+            <div class="form-section-card">
+              <div class="section-header">
+                <span class="material-symbols-outlined sec-icon">stethoscope_check</span>
+                <h3 class="sec-title">{{ langService.isRtl() ? 'التشخيص الطبي (ICD-10 Coding)' : 'Diagnoses & ICD-10 Coding' }}</h3>
+              </div>
+
+              <!-- Diagnosis Input Bar -->
+              <div class="diag-inputs-row">
+                <div class="diag-search-col">
+                  <select class="form-control" [(ngModel)]="selectedIcd10" (change)="onIcdSelected()">
+                    <option value="">{{ langService.isRtl() ? '-- اختر من أشهر تصنيفات ICD-10 --' : '-- Common ICD-10 Diagnoses --' }}</option>
+                    @for (option of commonIcd10; track option) {
+                      <option [value]="option.code">
+                        {{ option.code }} - {{ option.name }}
+                      </option>
+                    }
                   </select>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">{{ langService.isRtl() ? 'المدة' : 'Duration' }}</label>
-                  <input type="text" class="form-control" [(ngModel)]="newMedDuration" placeholder="7 days" />
+
+                <div class="diag-type-col">
+                  <select class="form-control" [(ngModel)]="newDiagType">
+                    <option value="Primary">{{ langService.isRtl() ? 'رئيسي (Primary)' : 'Primary' }}</option>
+                    <option value="Secondary">{{ langService.isRtl() ? 'ثانوي (Secondary)' : 'Secondary' }}</option>
+                    <option value="Differential">{{ langService.isRtl() ? 'فارِق (Differential)' : 'Differential' }}</option>
+                  </select>
                 </div>
+
+                <button class="btn btn-secondary add-diag-btn" (click)="addDiagnosis()">
+                  <span class="material-symbols-outlined">add</span>
+                  <span>{{ langService.isRtl() ? 'إضافة' : 'Add' }}</span>
+                </button>
               </div>
 
-              <div class="form-group">
-                <label class="form-label">{{ langService.isRtl() ? 'تعليمات الاستخدام (Instructions)' : 'Usage Instructions' }}</label>
+              <div class="form-group custom-diag-input">
                 <input
                   type="text"
                   class="form-control"
-                  [(ngModel)]="newMedInstructions"
-                  [placeholder]="langService.isRtl() ? 'مثال: يؤخذ بعد الأكل بساعة مع كوب ماء وفير...' : 'Take after meals with plenty of water...'"
-                />
-              </div>
-
-              <button class="btn btn-secondary add-med-btn" (click)="addMedication()">
-                <span class="material-symbols-outlined">add_circle</span>
-                <span>{{ langService.isRtl() ? 'إدراج الدواء في الروشتة' : 'Add Medication to Rx' }}</span>
-              </button>
-            </div>
-
-            <!-- Digital Prescription Preview Pad Simulation -->
-            <div class="rx-pad-preview">
-              <div class="pad-header">
-                <div class="clinic-info">
-                  <span class="clinic-name">SEHATI MEDICAL CLINIC</span>
-                  <span class="clinic-sub">Cairo, Egypt • License #EG-58492</span>
-                </div>
-                <div class="rx-symbol">℞</div>
-              </div>
-
-              <div class="pad-patient-info">
-                <span><strong>Pt:</strong> {{ patientName }}</span>
-                <span><strong>ID:</strong> {{ unifiedId }}</span>
-                <span><strong>Date:</strong> {{ todayDate }}</span>
-              </div>
-
-              <div class="pad-meds-list" *ngIf="prescriptionItems.length > 0; else noMeds">
-                <div *ngFor="let item of prescriptionItems; let idx = index" class="pad-med-item">
-                  <div class="med-num">{{ idx + 1 }}.</div>
-                  <div class="med-text">
-                    <strong class="med-title">{{ item.medicationName }}</strong>
-                    <div class="med-regimen">
-                      <span>{{ item.dosage }}</span> •
-                      <span>{{ item.frequency }}</span> •
-                      <span>for {{ item.duration }}</span>
-                    </div>
-                    <div class="med-note" *ngIf="item.instructions">
-                      <em>Sig: {{ item.instructions }}</em>
-                    </div>
-                  </div>
-                  <button class="remove-med-btn" (click)="removeMedication(idx)">
-                    <span class="material-symbols-outlined">delete</span>
-                  </button>
-                </div>
-              </div>
-
-              <ng-template #noMeds>
-                <div class="no-meds-note">
-                  {{ langService.isRtl() ? 'لم يتم إضافة أدوية حتى الآن' : 'No medications added yet to this prescription.' }}
-                </div>
-              </ng-template>
-
-              <div class="pad-footer">
-                <div class="doctor-signature-box">
-                  <span class="dr-title">Attending Physician:</span>
-                  <span class="dr-name">{{ currentDoctorName }}</span>
-                  <span class="dr-license">Lic: MD-89102-EG</span>
-                  <span class="verified-stamp">✓ DIGITAL SIGNED</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Optional Follow-Up Reminder Box -->
-            <div class="followup-box">
-              <label class="checkbox-container">
-                <input type="checkbox" [(ngModel)]="hasFollowUp" />
-                <span class="checkbox-label">
-                  <strong>{{ langService.isRtl() ? 'تحديد موعد استشارة وإعادة كشف (Follow-Up)' : 'Schedule Follow-Up Appointment' }}</strong>
-                </span>
-              </label>
-
-              <div class="followup-details" *ngIf="hasFollowUp">
-                <div class="form-group">
-                  <label class="form-label">{{ langService.isRtl() ? 'تاريخ الاستشارة الموصى به' : 'Recommended Date' }}</label>
-                  <input type="date" class="form-control" [(ngModel)]="followUpDate" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label">{{ langService.isRtl() ? 'سبب الاستشارة وملاحظات المتابعة' : 'Follow-up Reason' }}</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    [(ngModel)]="followUpReason"
-                    [placeholder]="langService.isRtl() ? 'إعادة قياس الضغط بعد انتهاء كورس العلاج' : 'Re-assess BP and review laboratory tests'"
+                  [(ngModel)]="newDiagDescription"
+                  [placeholder]="langService.isRtl() ? 'أو اكتب تشخيص مخصص بالتفصيل...' : 'Or enter custom clinical diagnosis description...'"
                   />
                 </div>
+
+                <!-- List of Added Diagnoses -->
+                @if (diagnosesList.length > 0) {
+                  <div class="diagnoses-chips-list">
+                    @for (diag of diagnosesList; track diag; let i = $index) {
+                      <div class="diag-chip">
+                        <span class="diag-type-pill" [class.primary]="diag.type === 'Primary'">{{ diag.type }}</span>
+                        @if (diag.code) {
+                          <span class="diag-code">{{ diag.code }}</span>
+                        }
+                        <span class="diag-desc">{{ diag.description }}</span>
+                        <button class="remove-chip-btn" (click)="removeDiagnosis(i)">
+                          <span class="material-symbols-outlined">close</span>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                }
               </div>
             </div>
 
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
+            <!-- Right Column: Digital Prescription Builder & Live Preview Pad -->
+            <div class="rx-builder-column">
+              <div class="form-section-card rx-card">
+                <div class="section-header">
+                  <span class="material-symbols-outlined sec-icon">prescriptions</span>
+                  <h3 class="sec-title">{{ langService.isRtl() ? 'الروشتة الإلكترونية الرقمية (E-Rx)' : 'Digital Prescription Builder' }}</h3>
+                </div>
+
+                <!-- Add Medication Form -->
+                <div class="add-med-form">
+                  <div class="form-group">
+                    <label class="form-label required">{{ langService.isRtl() ? 'اسم الدواء والتركيز' : 'Medication & Strength' }}</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [(ngModel)]="newMedName"
+                      [placeholder]="langService.isRtl() ? 'مثال: Augmentin 1g, Concor 5mg...' : 'e.g. Amoxicillin/Clavulanate 1g, Panadol Extra...'"
+                      />
+                    </div>
+
+                    <div class="med-form-row">
+                      <div class="form-group">
+                        <label class="form-label">{{ langService.isRtl() ? 'الجرعة' : 'Dosage' }}</label>
+                        <input type="text" class="form-control" [(ngModel)]="newMedDosage" placeholder="1 tablet" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">{{ langService.isRtl() ? 'التكرار' : 'Frequency' }}</label>
+                        <select class="form-control" [(ngModel)]="newMedFrequency">
+                          <option value="Once daily">Once daily (مرة يومياً)</option>
+                          <option value="Twice daily">Twice daily / BID (مرتين يومياً)</option>
+                          <option value="Three times daily">Three times daily / TID (3 مرات)</option>
+                          <option value="Every 8 hours">Every 8 hours (كل 8 ساعات)</option>
+                          <option value="PRN (As needed)">PRN (عند اللزوم فقط)</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">{{ langService.isRtl() ? 'المدة' : 'Duration' }}</label>
+                        <input type="text" class="form-control" [(ngModel)]="newMedDuration" placeholder="7 days" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">{{ langService.isRtl() ? 'تعليمات الاستخدام (Instructions)' : 'Usage Instructions' }}</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="newMedInstructions"
+                        [placeholder]="langService.isRtl() ? 'مثال: يؤخذ بعد الأكل بساعة مع كوب ماء وفير...' : 'Take after meals with plenty of water...'"
+                        />
+                      </div>
+
+                      <button class="btn btn-secondary add-med-btn" (click)="addMedication()">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        <span>{{ langService.isRtl() ? 'إدراج الدواء في الروشتة' : 'Add Medication to Rx' }}</span>
+                      </button>
+                    </div>
+
+                    <!-- Digital Prescription Preview Pad Simulation -->
+                    <div class="rx-pad-preview">
+                      <div class="pad-header">
+                        <div class="clinic-info">
+                          <span class="clinic-name">SEHATI MEDICAL CLINIC</span>
+                          <span class="clinic-sub">Cairo, Egypt • License #EG-58492</span>
+                        </div>
+                        <div class="rx-symbol">℞</div>
+                      </div>
+
+                      <div class="pad-patient-info">
+                        <span><strong>Pt:</strong> {{ patientName }}</span>
+                        <span><strong>ID:</strong> {{ unifiedId }}</span>
+                        <span><strong>Date:</strong> {{ todayDate }}</span>
+                      </div>
+
+                      @if (prescriptionItems.length > 0) {
+                        <div class="pad-meds-list">
+                          @for (item of prescriptionItems; track item; let idx = $index) {
+                            <div class="pad-med-item">
+                              <div class="med-num">{{ idx + 1 }}.</div>
+                              <div class="med-text">
+                                <strong class="med-title">{{ item.medicationName }}</strong>
+                                <div class="med-regimen">
+                                  <span>{{ item.dosage }}</span> •
+                                  <span>{{ item.frequency }}</span> •
+                                  <span>for {{ item.duration }}</span>
+                                </div>
+                                @if (item.instructions) {
+                                  <div class="med-note">
+                                    <em>Sig: {{ item.instructions }}</em>
+                                  </div>
+                                }
+                              </div>
+                              <button class="remove-med-btn" (click)="removeMedication(idx)">
+                                <span class="material-symbols-outlined">delete</span>
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      } @else {
+                        <div class="no-meds-note">
+                          {{ langService.isRtl() ? 'لم يتم إضافة أدوية حتى الآن' : 'No medications added yet to this prescription.' }}
+                        </div>
+                      }
+
+
+                      <div class="pad-footer">
+                        <div class="doctor-signature-box">
+                          <span class="dr-title">Attending Physician:</span>
+                          <span class="dr-name">{{ currentDoctorName }}</span>
+                          <span class="dr-license">Lic: MD-89102-EG</span>
+                          <span class="verified-stamp">✓ DIGITAL SIGNED</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Optional Follow-Up Reminder Box -->
+                    <div class="followup-box">
+                      <label class="checkbox-container">
+                        <input type="checkbox" [(ngModel)]="hasFollowUp" />
+                        <span class="checkbox-label">
+                          <strong>{{ langService.isRtl() ? 'تحديد موعد استشارة وإعادة كشف (Follow-Up)' : 'Schedule Follow-Up Appointment' }}</strong>
+                        </span>
+                      </label>
+
+                      @if (hasFollowUp) {
+                        <div class="followup-details">
+                          <div class="form-group">
+                            <label class="form-label">{{ langService.isRtl() ? 'تاريخ الاستشارة الموصى به' : 'Recommended Date' }}</label>
+                            <input type="date" class="form-control" [(ngModel)]="followUpDate" />
+                          </div>
+                          <div class="form-group">
+                            <label class="form-label">{{ langService.isRtl() ? 'سبب الاستشارة وملاحظات المتابعة' : 'Follow-up Reason' }}</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              [(ngModel)]="followUpReason"
+                              [placeholder]="langService.isRtl() ? 'إعادة قياس الضغط بعد انتهاء كورس العلاج' : 'Re-assess BP and review laboratory tests'"
+                              />
+                            </div>
+                          </div>
+                        }
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .encounter-page {
       display: flex;

@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -9,7 +9,7 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink],
   template: `
     <div class="auth-card-wrapper register-wrapper">
       <div class="auth-luxury-card register-card">
@@ -43,10 +43,14 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
             [class.active]="currentStep === 1"
             [class.completed]="currentStep > 1"
             (click)="goToStep(1)"
-          >
+            >
             <div class="node-circle">
-              <span class="material-symbols-outlined node-icon" *ngIf="currentStep > 1">check</span>
-              <span *ngIf="currentStep <= 1">1</span>
+              @if (currentStep > 1) {
+                <span class="material-symbols-outlined node-icon">check</span>
+              }
+              @if (currentStep <= 1) {
+                <span>1</span>
+              }
             </div>
             <span class="node-label">{{ langService.t('stepIdentity') }}</span>
           </button>
@@ -58,509 +62,524 @@ import { RegisterRequestDto, UserRole } from '../../../core/models/auth.models';
             class="step-node"
             [class.active]="currentStep === 2"
             (click)="goToStep(2)"
-          >
+            >
             <div class="node-circle">2</div>
             <span class="node-label">{{ langService.t('stepContactSecurity') }}</span>
           </button>
         </div>
 
         <!-- Error Alert Banner -->
-        <div class="alert-banner error" *ngIf="errorMessage">
-          <span class="material-symbols-outlined">error</span>
-          <span>{{ errorMessage }}</span>
-        </div>
+        @if (errorMessage) {
+          <div class="alert-banner error">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
 
         <!-- Unified Form with Step Panels -->
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
           <!-- ==================== STEP 1: ROLE & BASIC IDENTITY ==================== -->
-          <div class="step-panel" *ngIf="currentStep === 1">
-            <!-- Persona Selection Section -->
-            <div class="section-block">
-              <label class="section-prompt">
-                {{ langService.isRtl() ? 'اختر فئة الحساب لتهيئة بيئة العمل:' : 'Select Account Persona:' }}
-              </label>
-
-              <div class="persona-cards-grid">
-                <!-- Patient Card -->
-                <button
-                  type="button"
-                  class="persona-card"
-                  [class.selected]="selectedRole === 'Patient'"
-                  (click)="selectRole('Patient')"
-                >
-                  <div class="persona-icon-frame teal">
-                    <span class="material-symbols-outlined">person</span>
-                  </div>
-                  <div class="persona-text">
-                    <div class="persona-title-row">
-                      <span class="persona-name">{{ langService.t('rolePatient') }}</span>
-                      <span class="persona-chip">{{ langService.isRtl() ? 'مواطن' : 'Citizen' }}</span>
-                    </div>
-                    <p class="persona-desc">
-                      {{ langService.isRtl()
-                        ? 'جواز صحي موحد مدى الحياة، كارت طوارئ ذكي QR، وتحكم بمشاركة بياناتك.'
-                        : 'Lifelong health passport, instant emergency QR, and zero-trust data consent.' }}
-                    </p>
-                  </div>
-                  <div class="check-aura" *ngIf="selectedRole === 'Patient'">
-                    <span class="material-symbols-outlined">check_circle</span>
-                  </div>
-                </button>
-
-                <!-- Doctor Card -->
-                <button
-                  type="button"
-                  class="persona-card"
-                  [class.selected]="selectedRole === 'Doctor'"
-                  (click)="selectRole('Doctor')"
-                >
-                  <div class="persona-icon-frame emerald">
-                    <span class="material-symbols-outlined">stethoscope</span>
-                  </div>
-                  <div class="persona-text">
-                    <div class="persona-title-row">
-                      <span class="persona-name">{{ langService.t('roleDoctor') }}</span>
-                      <span class="persona-chip emerald">{{ langService.isRtl() ? 'استشاري' : 'Physician' }}</span>
-                    </div>
-                    <p class="persona-desc">
-                      {{ langService.isRtl()
-                        ? 'إدارة العيادة الخاصة، تحرير الروشتات الرقمية، والاطلاع على السجلات بإذن المريض.'
-                        : 'Private clinic practice, verified e-prescriptions, and consent-gated records.' }}
-                    </p>
-                  </div>
-                  <div class="check-aura" *ngIf="selectedRole === 'Doctor'">
-                    <span class="material-symbols-outlined">check_circle</span>
-                  </div>
-                </button>
-
-                <!-- Receptionist Card -->
-                <button
-                  type="button"
-                  class="persona-card"
-                  [class.selected]="selectedRole === 'Receptionist'"
-                  (click)="selectRole('Receptionist')"
-                >
-                  <div class="persona-icon-frame indigo">
-                    <span class="material-symbols-outlined">desk</span>
-                  </div>
-                  <div class="persona-text">
-                    <div class="persona-title-row">
-                      <span class="persona-name">{{ langService.t('roleReceptionist') }}</span>
-                      <span class="persona-chip indigo">{{ langService.isRtl() ? 'استقبال' : 'Reception' }}</span>
-                    </div>
-                    <p class="persona-desc">
-                      {{ langService.isRtl()
-                        ? 'تنظيم طوابير الانتظار، تسجيل المرضى، وتنسيق حجوزات العيادات اليومية.'
-                        : 'Patient queue management, clinic check-in, and appointment scheduling.' }}
-                    </p>
-                  </div>
-                  <div class="check-aura" *ngIf="selectedRole === 'Receptionist'">
-                    <span class="material-symbols-outlined">check_circle</span>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            <!-- Identity Inputs -->
-            <div class="fields-grid-2">
-              <!-- Full Name -->
-              <div class="form-group">
-                <label class="form-label" for="fullName">
-                  <span>{{ langService.t('fullNameLabel') }}</span>
-                  <span class="req">*</span>
+          @if (currentStep === 1) {
+            <div class="step-panel">
+              <!-- Persona Selection Section -->
+              <div class="section-block">
+                <label class="section-prompt">
+                  {{ langService.isRtl() ? 'اختر فئة الحساب لتهيئة بيئة العمل:' : 'Select Account Persona:' }}
                 </label>
-                <div class="input-shell" [class.has-error]="isFieldInvalid('fullName')">
-                  <span class="material-symbols-outlined input-icon">badge</span>
-                  <input
-                    id="fullName"
-                    type="text"
-                    formControlName="fullName"
-                    class="native-input"
-                    [placeholder]="langService.isRtl() ? 'مثال: أحمد محمود حسن' : 'e.g. Ahmed Mahmoud Hassan'"
-                    autocomplete="name"
-                  />
-                </div>
-                <div class="field-error-hint" *ngIf="isFieldInvalid('fullName')">
-                  {{ langService.isRtl() ? 'الاسم بالكامل مطلوب (3 أحرف على الأقل).' : 'Full name is required (min 3 chars).' }}
-                </div>
-              </div>
-
-              <!-- National ID -->
-              <div class="form-group">
-                <label class="form-label" for="nationalId">
-                  <span>{{ langService.t('nationalIdLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell" [class.has-error]="isFieldInvalid('nationalId')">
-                  <span class="material-symbols-outlined input-icon">pin</span>
-                  <input
-                    id="nationalId"
-                    type="text"
-                    formControlName="nationalId"
-                    class="native-input font-mono"
-                    placeholder="29805121601234"
-                    maxlength="14"
-                  />
-                </div>
-                <div class="field-error-hint" *ngIf="isFieldInvalid('nationalId')">
-                  {{ langService.isRtl() ? 'الرقم القومي يجب أن يتكون من 14 رقماً بالضبط.' : 'National ID must be exactly 14 digits.' }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Doctor Specific Fields -->
-            <div class="fields-grid-2 doctor-extra-box" *ngIf="selectedRole === 'Doctor'">
-              <div class="form-group">
-                <label class="form-label" for="medicalLicenseNumber">
-                  <span>{{ langService.t('licenseNumberLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell" [class.has-error]="isFieldInvalid('medicalLicenseNumber')">
-                  <span class="material-symbols-outlined input-icon">verified</span>
-                  <input
-                    id="medicalLicenseNumber"
-                    type="text"
-                    formControlName="medicalLicenseNumber"
-                    class="native-input font-mono"
-                    placeholder="EGY-DOC-2026-99"
-                  />
-                </div>
-                <div class="field-error-hint" *ngIf="isFieldInvalid('medicalLicenseNumber')">
-                  {{ langService.isRtl() ? 'رقم ترخيص النقابة مطلوب لتأكيد الهوية المهنية.' : 'License number is required for medical practitioners.' }}
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="specialty">
-                  <span>{{ langService.t('specialtyLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell" [class.has-error]="isFieldInvalid('specialty')">
-                  <span class="material-symbols-outlined input-icon">medical_information</span>
-                  <input
-                    id="specialty"
-                    type="text"
-                    formControlName="specialty"
-                    class="native-input"
-                    [placeholder]="langService.isRtl() ? 'مثال: باطنة، أطفال، قلب' : 'e.g. Cardiology, Pediatrics'"
-                  />
-                </div>
-                <div class="field-error-hint" *ngIf="isFieldInvalid('specialty')">
-                  {{ langService.isRtl() ? 'التخصص الطبي مطلوب.' : 'Specialty is required.' }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Step 1 Next Button -->
-            <button
-              type="button"
-              class="btn-primary-auth"
-              (click)="nextStep()"
-            >
-              <span>{{ langService.t('nextStepBtn') }}</span>
-              <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
-            </button>
-          </div>
-
-          <!-- ==================== STEP 2: CONTACT, HEALTH & SECURITY ==================== -->
-          <div class="step-panel" *ngIf="currentStep === 2">
-            <!-- Row: Email & Phone -->
-            <div class="fields-grid-2">
-              <div class="form-group">
-                <label class="form-label" for="email">
-                  <span>{{ langService.t('emailLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell" [class.has-error]="isFieldInvalid('email')">
-                  <span class="material-symbols-outlined input-icon">mail</span>
-                  <input
-                    id="email"
-                    type="email"
-                    formControlName="email"
-                    class="native-input"
-                    placeholder="patient@sehati.gov.eg"
-                    autocomplete="email"
-                  />
-                </div>
-                <div class="field-error-hint" *ngIf="isFieldInvalid('email')">
-                  {{ langService.isRtl() ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.' }}
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="phoneNumber">
-                  <span>{{ langService.t('phoneNumberLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell" [class.has-error]="isFieldInvalid('phoneNumber')">
-                  <span class="material-symbols-outlined input-icon">call</span>
-                  <input
-                    id="phoneNumber"
-                    type="tel"
-                    formControlName="phoneNumber"
-                    class="native-input font-mono"
-                    placeholder="01012345678"
-                    autocomplete="tel"
-                  />
-                </div>
-                <div class="field-error-hint" *ngIf="isFieldInvalid('phoneNumber')">
-                  {{ langService.isRtl() ? 'رقم هاتف مصري صحيح (مثال: 01012345678).' : 'Valid Egyptian phone (e.g., 01012345678).' }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Row: Date of Birth, Gender, Blood Type -->
-            <div class="fields-grid-3">
-              <div class="form-group">
-                <label class="form-label" for="dateOfBirth">
-                  <span>{{ langService.t('dateOfBirthLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell" [class.has-error]="isFieldInvalid('dateOfBirth')">
-                  <input
-                    id="dateOfBirth"
-                    type="date"
-                    formControlName="dateOfBirth"
-                    class="native-input select-clean"
-                  />
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="gender">
-                  <span>{{ langService.t('genderLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell">
-                  <select id="gender" formControlName="gender" class="native-input select-clean">
-                    <option value="Male">{{ langService.t('genderMale') }}</option>
-                    <option value="Female">{{ langService.t('genderFemale') }}</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="bloodType">
-                  <span>{{ langService.t('bloodTypeLabel') }}</span>
-                </label>
-                <div class="input-shell">
-                  <select id="bloodType" formControlName="bloodType" class="native-input select-clean font-mono">
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <!-- Password Fields -->
-            <div class="fields-grid-2">
-              <div class="form-group">
-                <label class="form-label" for="password">
-                  <span>{{ langService.t('passwordLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell" [class.has-error]="isFieldInvalid('password')">
-                  <span class="material-symbols-outlined input-icon">lock</span>
-                  <input
-                    id="password"
-                    [type]="showPassword ? 'text' : 'password'"
-                    formControlName="password"
-                    class="native-input"
-                    [placeholder]="langService.t('passwordPlaceholder')"
-                    autocomplete="new-password"
-                  />
+                <div class="persona-cards-grid">
+                  <!-- Patient Card -->
                   <button
                     type="button"
-                    class="eye-btn"
-                    (click)="showPassword = !showPassword"
-                  >
-                    <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                    class="persona-card"
+                    [class.selected]="selectedRole === 'Patient'"
+                    (click)="selectRole('Patient')"
+                    >
+                    <div class="persona-icon-frame teal">
+                      <span class="material-symbols-outlined">person</span>
+                    </div>
+                    <div class="persona-text">
+                      <div class="persona-title-row">
+                        <span class="persona-name">{{ langService.t('rolePatient') }}</span>
+                        <span class="persona-chip">{{ langService.isRtl() ? 'مواطن' : 'Citizen' }}</span>
+                      </div>
+                      <p class="persona-desc">
+                        {{ langService.isRtl()
+                        ? 'جواز صحي موحد مدى الحياة، كارت طوارئ ذكي QR، وتحكم بمشاركة بياناتك.'
+                        : 'Lifelong health passport, instant emergency QR, and zero-trust data consent.' }}
+                      </p>
+                    </div>
+                    @if (selectedRole === 'Patient') {
+                      <div class="check-aura">
+                        <span class="material-symbols-outlined">check_circle</span>
+                      </div>
+                    }
+                  </button>
+                  <!-- Doctor Card -->
+                  <button
+                    type="button"
+                    class="persona-card"
+                    [class.selected]="selectedRole === 'Doctor'"
+                    (click)="selectRole('Doctor')"
+                    >
+                    <div class="persona-icon-frame emerald">
+                      <span class="material-symbols-outlined">stethoscope</span>
+                    </div>
+                    <div class="persona-text">
+                      <div class="persona-title-row">
+                        <span class="persona-name">{{ langService.t('roleDoctor') }}</span>
+                        <span class="persona-chip emerald">{{ langService.isRtl() ? 'استشاري' : 'Physician' }}</span>
+                      </div>
+                      <p class="persona-desc">
+                        {{ langService.isRtl()
+                        ? 'إدارة العيادة الخاصة، تحرير الروشتات الرقمية، والاطلاع على السجلات بإذن المريض.'
+                        : 'Private clinic practice, verified e-prescriptions, and consent-gated records.' }}
+                      </p>
+                    </div>
+                    @if (selectedRole === 'Doctor') {
+                      <div class="check-aura">
+                        <span class="material-symbols-outlined">check_circle</span>
+                      </div>
+                    }
+                  </button>
+                  <!-- Receptionist Card -->
+                  <button
+                    type="button"
+                    class="persona-card"
+                    [class.selected]="selectedRole === 'Receptionist'"
+                    (click)="selectRole('Receptionist')"
+                    >
+                    <div class="persona-icon-frame indigo">
+                      <span class="material-symbols-outlined">desk</span>
+                    </div>
+                    <div class="persona-text">
+                      <div class="persona-title-row">
+                        <span class="persona-name">{{ langService.t('roleReceptionist') }}</span>
+                        <span class="persona-chip indigo">{{ langService.isRtl() ? 'استقبال' : 'Reception' }}</span>
+                      </div>
+                      <p class="persona-desc">
+                        {{ langService.isRtl()
+                        ? 'تنظيم طوابير الانتظار، تسجيل المرضى، وتنسيق حجوزات العيادات اليومية.'
+                        : 'Patient queue management, clinic check-in, and appointment scheduling.' }}
+                      </p>
+                    </div>
+                    @if (selectedRole === 'Receptionist') {
+                      <div class="check-aura">
+                        <span class="material-symbols-outlined">check_circle</span>
+                      </div>
+                    }
                   </button>
                 </div>
               </div>
+              <!-- Identity Inputs -->
+              <div class="fields-grid-2">
+                <!-- Full Name -->
+                <div class="form-group">
+                  <label class="form-label" for="fullName">
+                    <span>{{ langService.t('fullNameLabel') }}</span>
+                    <span class="req">*</span>
+                  </label>
+                  <div class="input-shell" [class.has-error]="isFieldInvalid('fullName')">
+                    <span class="material-symbols-outlined input-icon">badge</span>
+                    <input
+                      id="fullName"
+                      type="text"
+                      formControlName="fullName"
+                      class="native-input"
+                      [placeholder]="langService.isRtl() ? 'مثال: أحمد محمود حسن' : 'e.g. Ahmed Mahmoud Hassan'"
+                      autocomplete="name"
+                      />
+                    </div>
+                    @if (isFieldInvalid('fullName')) {
+                      <div class="field-error-hint">
+                        {{ langService.isRtl() ? 'الاسم بالكامل مطلوب (3 أحرف على الأقل).' : 'Full name is required (min 3 chars).' }}
+                      </div>
+                    }
+                  </div>
+                  <!-- National ID -->
+                  <div class="form-group">
+                    <label class="form-label" for="nationalId">
+                      <span>{{ langService.t('nationalIdLabel') }}</span>
+                      <span class="req">*</span>
+                    </label>
+                    <div class="input-shell" [class.has-error]="isFieldInvalid('nationalId')">
+                      <span class="material-symbols-outlined input-icon">pin</span>
+                      <input
+                        id="nationalId"
+                        type="text"
+                        formControlName="nationalId"
+                        class="native-input font-mono"
+                        placeholder="29805121601234"
+                        maxlength="14"
+                        />
+                      </div>
+                      @if (isFieldInvalid('nationalId')) {
+                        <div class="field-error-hint">
+                          {{ langService.isRtl() ? 'الرقم القومي يجب أن يتكون من 14 رقماً بالضبط.' : 'National ID must be exactly 14 digits.' }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  <!-- Doctor Specific Fields -->
+                  @if (selectedRole === 'Doctor') {
+                    <div class="fields-grid-2 doctor-extra-box">
+                      <div class="form-group">
+                        <label class="form-label" for="medicalLicenseNumber">
+                          <span>{{ langService.t('licenseNumberLabel') }}</span>
+                          <span class="req">*</span>
+                        </label>
+                        <div class="input-shell" [class.has-error]="isFieldInvalid('medicalLicenseNumber')">
+                          <span class="material-symbols-outlined input-icon">verified</span>
+                          <input
+                            id="medicalLicenseNumber"
+                            type="text"
+                            formControlName="medicalLicenseNumber"
+                            class="native-input font-mono"
+                            placeholder="EGY-DOC-2026-99"
+                            />
+                          </div>
+                          @if (isFieldInvalid('medicalLicenseNumber')) {
+                            <div class="field-error-hint">
+                              {{ langService.isRtl() ? 'رقم ترخيص النقابة مطلوب لتأكيد الهوية المهنية.' : 'License number is required for medical practitioners.' }}
+                            </div>
+                          }
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label" for="specialty">
+                            <span>{{ langService.t('specialtyLabel') }}</span>
+                            <span class="req">*</span>
+                          </label>
+                          <div class="input-shell" [class.has-error]="isFieldInvalid('specialty')">
+                            <span class="material-symbols-outlined input-icon">medical_information</span>
+                            <input
+                              id="specialty"
+                              type="text"
+                              formControlName="specialty"
+                              class="native-input"
+                              [placeholder]="langService.isRtl() ? 'مثال: باطنة، أطفال، قلب' : 'e.g. Cardiology, Pediatrics'"
+                              />
+                            </div>
+                            @if (isFieldInvalid('specialty')) {
+                              <div class="field-error-hint">
+                                {{ langService.isRtl() ? 'التخصص الطبي مطلوب.' : 'Specialty is required.' }}
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
+                      <!-- Step 1 Next Button -->
+                      <button
+                        type="button"
+                        class="btn-primary-auth"
+                        (click)="nextStep()"
+                        >
+                        <span>{{ langService.t('nextStepBtn') }}</span>
+                        <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+                      </button>
+                    </div>
+                  }
 
-              <div class="form-group">
-                <label class="form-label" for="confirmPassword">
-                  <span>{{ langService.t('confirmPasswordLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
-                <div class="input-shell" [class.has-error]="isConfirmPasswordInvalid()">
-                  <span class="material-symbols-outlined input-icon">lock_clock</span>
-                  <input
-                    id="confirmPassword"
-                    [type]="showPassword ? 'text' : 'password'"
-                    formControlName="confirmPassword"
-                    class="native-input"
-                    [placeholder]="langService.t('confirmPasswordPlaceholder')"
-                    autocomplete="new-password"
-                  />
-                </div>
-                <div class="field-error-hint" *ngIf="isConfirmPasswordInvalid()">
-                  {{ langService.isRtl() ? 'كلمتا المرور غير متطابقتين.' : 'Passwords do not match.' }}
-                </div>
-              </div>
-            </div>
+                  <!-- ==================== STEP 2: CONTACT, HEALTH & SECURITY ==================== -->
+                  @if (currentStep === 2) {
+                    <div class="step-panel">
+                      <!-- Row: Email & Phone -->
+                      <div class="fields-grid-2">
+                        <div class="form-group">
+                          <label class="form-label" for="email">
+                            <span>{{ langService.t('emailLabel') }}</span>
+                            <span class="req">*</span>
+                          </label>
+                          <div class="input-shell" [class.has-error]="isFieldInvalid('email')">
+                            <span class="material-symbols-outlined input-icon">mail</span>
+                            <input
+                              id="email"
+                              type="email"
+                              formControlName="email"
+                              class="native-input"
+                              placeholder="patient@sehati.gov.eg"
+                              autocomplete="email"
+                              />
+                            </div>
+                            @if (isFieldInvalid('email')) {
+                              <div class="field-error-hint">
+                                {{ langService.isRtl() ? 'يرجى إدخال بريد إلكتروني صحيح.' : 'Please enter a valid email address.' }}
+                              </div>
+                            }
+                          </div>
+                          <div class="form-group">
+                            <label class="form-label" for="phoneNumber">
+                              <span>{{ langService.t('phoneNumberLabel') }}</span>
+                              <span class="req">*</span>
+                            </label>
+                            <div class="input-shell" [class.has-error]="isFieldInvalid('phoneNumber')">
+                              <span class="material-symbols-outlined input-icon">call</span>
+                              <input
+                                id="phoneNumber"
+                                type="tel"
+                                formControlName="phoneNumber"
+                                class="native-input font-mono"
+                                placeholder="01012345678"
+                                autocomplete="tel"
+                                />
+                              </div>
+                              @if (isFieldInvalid('phoneNumber')) {
+                                <div class="field-error-hint">
+                                  {{ langService.isRtl() ? 'رقم هاتف مصري صحيح (مثال: 01012345678).' : 'Valid Egyptian phone (e.g., 01012345678).' }}
+                                </div>
+                              }
+                            </div>
+                          </div>
+                          <!-- Row: Date of Birth, Gender, Blood Type -->
+                          <div class="fields-grid-3">
+                            <div class="form-group">
+                              <label class="form-label" for="dateOfBirth">
+                                <span>{{ langService.t('dateOfBirthLabel') }}</span>
+                                <span class="req">*</span>
+                              </label>
+                              <div class="input-shell" [class.has-error]="isFieldInvalid('dateOfBirth')">
+                                <input
+                                  id="dateOfBirth"
+                                  type="date"
+                                  formControlName="dateOfBirth"
+                                  class="native-input select-clean"
+                                  />
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label" for="gender">
+                                  <span>{{ langService.t('genderLabel') }}</span>
+                                  <span class="req">*</span>
+                                </label>
+                                <div class="input-shell">
+                                  <select id="gender" formControlName="gender" class="native-input select-clean">
+                                    <option value="Male">{{ langService.t('genderMale') }}</option>
+                                    <option value="Female">{{ langService.t('genderFemale') }}</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label" for="bloodType">
+                                  <span>{{ langService.t('bloodTypeLabel') }}</span>
+                                </label>
+                                <div class="input-shell">
+                                  <select id="bloodType" formControlName="bloodType" class="native-input select-clean font-mono">
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- Password Fields -->
+                            <div class="fields-grid-2">
+                              <div class="form-group">
+                                <label class="form-label" for="password">
+                                  <span>{{ langService.t('passwordLabel') }}</span>
+                                  <span class="req">*</span>
+                                </label>
+                                <div class="input-shell" [class.has-error]="isFieldInvalid('password')">
+                                  <span class="material-symbols-outlined input-icon">lock</span>
+                                  <input
+                                    id="password"
+                                    [type]="showPassword ? 'text' : 'password'"
+                                    formControlName="password"
+                                    class="native-input"
+                                    [placeholder]="langService.t('passwordPlaceholder')"
+                                    autocomplete="new-password"
+                                    />
+                                    <button
+                                      type="button"
+                                      class="eye-btn"
+                                      (click)="showPassword = !showPassword"
+                                      >
+                                      <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="form-label" for="confirmPassword">
+                                    <span>{{ langService.t('confirmPasswordLabel') }}</span>
+                                    <span class="req">*</span>
+                                  </label>
+                                  <div class="input-shell" [class.has-error]="isConfirmPasswordInvalid()">
+                                    <span class="material-symbols-outlined input-icon">lock_clock</span>
+                                    <input
+                                      id="confirmPassword"
+                                      [type]="showPassword ? 'text' : 'password'"
+                                      formControlName="confirmPassword"
+                                      class="native-input"
+                                      [placeholder]="langService.t('confirmPasswordPlaceholder')"
+                                      autocomplete="new-password"
+                                      />
+                                    </div>
+                                    @if (isConfirmPasswordInvalid()) {
+                                      <div class="field-error-hint">
+                                        {{ langService.isRtl() ? 'كلمتا المرور غير متطابقتين.' : 'Passwords do not match.' }}
+                                      </div>
+                                    }
+                                  </div>
+                                </div>
+                                <!-- Live Password Strength Meter -->
+                                @if (registerForm.get('password')?.value) {
+                                  <div class="password-meter-box">
+                                    <div class="meter-bars">
+                                      <div class="meter-bar" [class.active]="passwordStrength >= 1" [class.weak]="passwordStrength === 1" [class.medium]="passwordStrength === 2" [class.strong]="passwordStrength >= 3"></div>
+                                      <div class="meter-bar" [class.active]="passwordStrength >= 2" [class.medium]="passwordStrength === 2" [class.strong]="passwordStrength >= 3"></div>
+                                      <div class="meter-bar" [class.active]="passwordStrength >= 3" [class.strong]="passwordStrength >= 3"></div>
+                                      <div class="meter-bar" [class.active]="passwordStrength >= 4" [class.strong]="passwordStrength >= 4"></div>
+                                    </div>
+                                    <span class="meter-caption">{{ getStrengthCaption() }}</span>
+                                  </div>
+                                }
+                                <!-- Terms & Consent Agreement -->
+                                <div class="terms-group">
+                                  <div class="terms-label-row">
+                                    <label class="terms-label" for="termsAccepted">
+                                      <input id="termsAccepted" type="checkbox" formControlName="termsAccepted" class="styled-checkbox" />
+                                      <span class="terms-text-inline">
+                                        {{ langService.isRtl() ? 'أوافق على ' : 'I agree to the ' }}
+                                        <strong>{{ langService.isRtl() ? 'شروط الخدمة والسياسة الوطنية الموحدة لحماية البيانات الصحية' : 'Terms of Service & National Health Data Protection Policy' }}</strong>.
+                                      </span>
+                                    </label>
+                                    <button
+                                      type="button"
+                                      class="terms-reader-btn"
+                                      (click)="openTermsModal()"
+                                      [title]="langService.isRtl() ? 'قراءة بنود الخدمة وسياسة حماية البيانات' : 'Read Terms & Policy'"
+                                      >
+                                      <span class="material-symbols-outlined">menu_book</span>
+                                      <span>{{ langService.isRtl() ? 'قراءة البنود والسياسة' : 'Read Terms & Policy' }}</span>
+                                    </button>
+                                  </div>
+                                </div>
+                                <!-- Dual Action Row -->
+                                <div class="dual-actions-row">
+                                  <button
+                                    type="button"
+                                    class="btn-secondary-back"
+                                    (click)="prevStep()"
+                                    >
+                                    <span class="material-symbols-outlined flip-rtl">arrow_back</span>
+                                    <span>{{ langService.t('prevStepBtn') }}</span>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    class="btn-primary-auth flex-1"
+                                    [disabled]="registerForm.invalid || isConfirmPasswordInvalid() || isLoading"
+                                    >
+                                    @if (isLoading) {
+                                      <span class="spinner"></span>
+                                    }
+                                    @if (!isLoading) {
+                                      <span>{{ langService.t('claimPassportBtn') }}</span>
+                                    }
+                                    @if (!isLoading) {
+                                      <span class="material-symbols-outlined flip-rtl">verified</span>
+                                    }
+                                  </button>
+                                </div>
+                              </div>
+                            }
+                          </form>
 
-            <!-- Live Password Strength Meter -->
-            <div class="password-meter-box" *ngIf="registerForm.get('password')?.value">
-              <div class="meter-bars">
-                <div class="meter-bar" [class.active]="passwordStrength >= 1" [class.weak]="passwordStrength === 1" [class.medium]="passwordStrength === 2" [class.strong]="passwordStrength >= 3"></div>
-                <div class="meter-bar" [class.active]="passwordStrength >= 2" [class.medium]="passwordStrength === 2" [class.strong]="passwordStrength >= 3"></div>
-                <div class="meter-bar" [class.active]="passwordStrength >= 3" [class.strong]="passwordStrength >= 3"></div>
-                <div class="meter-bar" [class.active]="passwordStrength >= 4" [class.strong]="passwordStrength >= 4"></div>
-              </div>
-              <span class="meter-caption">{{ getStrengthCaption() }}</span>
-            </div>
+                          <!-- Bottom Switch Prompt -->
+                          <div class="card-footer-switch">
+                            <span>{{ langService.t('alreadyHaveAccount') }}</span>
+                            <a routerLink="/auth/login" class="switch-link">
+                              <span>{{ langService.t('signInBtn') }}</span>
+                              <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+                            </a>
+                          </div>
+                        </div>
 
-            <!-- Terms & Consent Agreement -->
-            <div class="terms-group">
-              <div class="terms-label-row">
-                <label class="terms-label" for="termsAccepted">
-                  <input id="termsAccepted" type="checkbox" formControlName="termsAccepted" class="styled-checkbox" />
-                  <span class="terms-text-inline">
-                    {{ langService.isRtl() ? 'أوافق على ' : 'I agree to the ' }}
-                    <strong>{{ langService.isRtl() ? 'شروط الخدمة والسياسة الوطنية الموحدة لحماية البيانات الصحية' : 'Terms of Service & National Health Data Protection Policy' }}</strong>.
-                  </span>
-                </label>
-                <button
-                  type="button"
-                  class="terms-reader-btn"
-                  (click)="openTermsModal()"
-                  [title]="langService.isRtl() ? 'قراءة بنود الخدمة وسياسة حماية البيانات' : 'Read Terms & Policy'"
-                >
-                  <span class="material-symbols-outlined">menu_book</span>
-                  <span>{{ langService.isRtl() ? 'قراءة البنود والسياسة' : 'Read Terms & Policy' }}</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Dual Action Row -->
-            <div class="dual-actions-row">
-              <button
-                type="button"
-                class="btn-secondary-back"
-                (click)="prevStep()"
-              >
-                <span class="material-symbols-outlined flip-rtl">arrow_back</span>
-                <span>{{ langService.t('prevStepBtn') }}</span>
-              </button>
-
-              <button
-                type="submit"
-                class="btn-primary-auth flex-1"
-                [disabled]="registerForm.invalid || isConfirmPasswordInvalid() || isLoading"
-              >
-                <span class="spinner" *ngIf="isLoading"></span>
-                <span *ngIf="!isLoading">{{ langService.t('claimPassportBtn') }}</span>
-                <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">verified</span>
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <!-- Bottom Switch Prompt -->
-        <div class="card-footer-switch">
-          <span>{{ langService.t('alreadyHaveAccount') }}</span>
-          <a routerLink="/auth/login" class="switch-link">
-            <span>{{ langService.t('signInBtn') }}</span>
-            <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TERMS & HEALTH DATA PROTECTION MODAL -->
-      <div class="terms-modal-overlay" *ngIf="showTermsModal" (click)="closeTermsModal()">
-        <div class="terms-modal-card" (click)="$event.stopPropagation()">
-          <div class="terms-modal-header">
-            <div class="modal-badge">
-              <span class="material-symbols-outlined">verified_user</span>
-              <span>{{ langService.isRtl() ? 'السياسة الوطنية الموحدة لحماية البيانات الصحية 2026' : 'Unified National Health Data Protection Policy 2026' }}</span>
-            </div>
-            <button type="button" class="modal-close-btn" (click)="closeTermsModal()">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
-          <div class="terms-modal-body">
-            <h2 class="policy-heading">
-              {{ langService.isRtl() ? 'ميثاق سيادة البيانات وحماية السجلات الطبية (صِحّتي)' : 'Data Sovereignty & Health Data Governance Charter (Sehati)' }}
-            </h2>
-            <p class="policy-intro">
-              {{ langService.isRtl()
-                ? 'بموجب قانون حماية البيانات الشخصية المصري رقم 151 لسنة 2020 ومعايير التحول الرقمي للتأمين الصحي، تلتزم منظومة صِحّتي بتوفير أعلى درجات السيادة والأمان لبياناتك الصحية:'
-                : 'Under Egyptian Personal Data Protection Law No. 151/2020 and sovereign digital health standards, Sehati guarantees absolute citizen privacy and security:' }}
-            </p>
-
-            <div class="policy-grid">
-              <div class="policy-card">
-                <div class="policy-icon-wrap teal">
-                  <span class="material-symbols-outlined">shield</span>
-                </div>
-                <div class="policy-card-content">
-                  <h4>{{ langService.isRtl() ? '1. سيادة المريض ومبدأ عدم الثقة (Zero-Trust)' : '1. Patient Sovereignty & Zero-Trust Consent' }}</h4>
-                  <p>{{ langService.isRtl()
-                    ? 'أنت المالك الوحيد لسجلك الطبي. لا يمكن لأي عيادة، مستشفى، أو ممارس صحي الاطلاع على فحوصاتك أو تاريخك الطبي إلا بعد موافقتك اللحظية عبر كود التحقق OTP أو مسح تصريح الاستشارة.'
-                    : 'You own your medical data. No clinic, hospital, or clinician can view your consultation records or diagnostic labs without your explicit OTP verification or active QR consent.' }}</p>
-                </div>
-              </div>
-
-              <div class="policy-card">
-                <div class="policy-icon-wrap emerald">
-                  <span class="material-symbols-outlined">lock</span>
-                </div>
-                <div class="policy-card-content">
-                  <h4>{{ langService.isRtl() ? '2. تشفير سيبراني عسكري (AES-256)' : '2. End-to-End Cryptographic Encryption' }}</h4>
-                  <p>{{ langService.isRtl()
-                    ? 'كافة السجلات الطبية، الروشتات، والتحاليل مشفرة بالكامل أثناء الحفظ (At-Rest) وأثناء النقل (In-Transit) عبر بنية تحتية سحابية حكومية مؤمنة 100%.'
-                    : 'All electronic medical records, e-prescriptions, and telemetry are encrypted with AES-256 at rest and TLS 1.3 in transit, hosted securely on sovereign infrastructure.' }}</p>
-                </div>
-              </div>
-
-              <div class="policy-card">
-                <div class="policy-icon-wrap amber">
-                  <span class="material-symbols-outlined">emergency</span>
-                </div>
-                <div class="policy-card-content">
-                  <h4>{{ langService.isRtl() ? '3. بروتوكول طوارئ الإنقاذ السريع (Rescue QR)' : '3. Emergency Rescue QR Protocol' }}</h4>
-                  <p>{{ langService.isRtl()
-                    ? 'في حالات الحوادث الطارئة أو الغيبوبة، يُتاح للمسعفين المعتمدين حصراً قراءة المؤشرات الحيوية المنقذة للحياة فقط (فصيلة الدم، الحساسيات الحرجة، الأمراض المزمنة، جهة اتصال الطوارئ).'
-                    : 'In acute medical emergencies, accredited EMTs and paramedics access ONLY life-saving vitals (blood group, critical allergies, chronic illnesses, and emergency contacts).' }}</p>
-                </div>
-              </div>
-
-              <div class="policy-card">
-                <div class="policy-icon-wrap indigo">
-                  <span class="material-symbols-outlined">history</span>
-                </div>
-                <div class="policy-card-content">
-                  <h4>{{ langService.isRtl() ? '4. سجل تدقيق غير قابل للتلاعب وحق الإلغاء الفوري' : '4. Immutable Audit Trail & Immediate Revocation' }}</h4>
-                  <p>{{ langService.isRtl()
-                    ? 'يتم تسجيل كل محاولة وصول لملفك الطبي بتوقيت دقيق وهوية الطبيب في سجل التدقيق الأمني. ويحق لك إلغاء تصريح أي عيادة أو طبيب بنقرة واحدة وفي أي لحظة.'
-                    : 'Every single view of your passport is permanently recorded in your tamper-proof security audit log. You hold the legal right to revoke any provider’s consent in real time.' }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="terms-modal-footer">
-            <button type="button" class="btn-modal-close" (click)="closeTermsModal()">
-              <span>{{ langService.isRtl() ? 'إغلاق' : 'Close' }}</span>
-            </button>
-            <button type="button" class="btn-modal-agree" (click)="acceptTermsAndClose()">
-              <span class="material-symbols-outlined">check_circle</span>
-              <span>{{ langService.isRtl() ? 'أوافق على الشروط والسياسة' : 'I Accept & Agree' }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
+                        <!-- TERMS & HEALTH DATA PROTECTION MODAL -->
+                        @if (showTermsModal) {
+                          <div class="terms-modal-overlay" (click)="closeTermsModal()">
+                            <div class="terms-modal-card" (click)="$event.stopPropagation()">
+                              <div class="terms-modal-header">
+                                <div class="modal-badge">
+                                  <span class="material-symbols-outlined">verified_user</span>
+                                  <span>{{ langService.isRtl() ? 'السياسة الوطنية الموحدة لحماية البيانات الصحية 2026' : 'Unified National Health Data Protection Policy 2026' }}</span>
+                                </div>
+                                <button type="button" class="modal-close-btn" (click)="closeTermsModal()">
+                                  <span class="material-symbols-outlined">close</span>
+                                </button>
+                              </div>
+                              <div class="terms-modal-body">
+                                <h2 class="policy-heading">
+                                  {{ langService.isRtl() ? 'ميثاق سيادة البيانات وحماية السجلات الطبية (صِحّتي)' : 'Data Sovereignty & Health Data Governance Charter (Sehati)' }}
+                                </h2>
+                                <p class="policy-intro">
+                                  {{ langService.isRtl()
+                                  ? 'بموجب قانون حماية البيانات الشخصية المصري رقم 151 لسنة 2020 ومعايير التحول الرقمي للتأمين الصحي، تلتزم منظومة صِحّتي بتوفير أعلى درجات السيادة والأمان لبياناتك الصحية:'
+                                  : 'Under Egyptian Personal Data Protection Law No. 151/2020 and sovereign digital health standards, Sehati guarantees absolute citizen privacy and security:' }}
+                                </p>
+                                <div class="policy-grid">
+                                  <div class="policy-card">
+                                    <div class="policy-icon-wrap teal">
+                                      <span class="material-symbols-outlined">shield</span>
+                                    </div>
+                                    <div class="policy-card-content">
+                                      <h4>{{ langService.isRtl() ? '1. سيادة المريض ومبدأ عدم الثقة (Zero-Trust)' : '1. Patient Sovereignty & Zero-Trust Consent' }}</h4>
+                                      <p>{{ langService.isRtl()
+                                        ? 'أنت المالك الوحيد لسجلك الطبي. لا يمكن لأي عيادة، مستشفى، أو ممارس صحي الاطلاع على فحوصاتك أو تاريخك الطبي إلا بعد موافقتك اللحظية عبر كود التحقق OTP أو مسح تصريح الاستشارة.'
+                                      : 'You own your medical data. No clinic, hospital, or clinician can view your consultation records or diagnostic labs without your explicit OTP verification or active QR consent.' }}</p>
+                                    </div>
+                                  </div>
+                                  <div class="policy-card">
+                                    <div class="policy-icon-wrap emerald">
+                                      <span class="material-symbols-outlined">lock</span>
+                                    </div>
+                                    <div class="policy-card-content">
+                                      <h4>{{ langService.isRtl() ? '2. تشفير سيبراني عسكري (AES-256)' : '2. End-to-End Cryptographic Encryption' }}</h4>
+                                      <p>{{ langService.isRtl()
+                                        ? 'كافة السجلات الطبية، الروشتات، والتحاليل مشفرة بالكامل أثناء الحفظ (At-Rest) وأثناء النقل (In-Transit) عبر بنية تحتية سحابية حكومية مؤمنة 100%.'
+                                      : 'All electronic medical records, e-prescriptions, and telemetry are encrypted with AES-256 at rest and TLS 1.3 in transit, hosted securely on sovereign infrastructure.' }}</p>
+                                    </div>
+                                  </div>
+                                  <div class="policy-card">
+                                    <div class="policy-icon-wrap amber">
+                                      <span class="material-symbols-outlined">emergency</span>
+                                    </div>
+                                    <div class="policy-card-content">
+                                      <h4>{{ langService.isRtl() ? '3. بروتوكول طوارئ الإنقاذ السريع (Rescue QR)' : '3. Emergency Rescue QR Protocol' }}</h4>
+                                      <p>{{ langService.isRtl()
+                                        ? 'في حالات الحوادث الطارئة أو الغيبوبة، يُتاح للمسعفين المعتمدين حصراً قراءة المؤشرات الحيوية المنقذة للحياة فقط (فصيلة الدم، الحساسيات الحرجة، الأمراض المزمنة، جهة اتصال الطوارئ).'
+                                      : 'In acute medical emergencies, accredited EMTs and paramedics access ONLY life-saving vitals (blood group, critical allergies, chronic illnesses, and emergency contacts).' }}</p>
+                                    </div>
+                                  </div>
+                                  <div class="policy-card">
+                                    <div class="policy-icon-wrap indigo">
+                                      <span class="material-symbols-outlined">history</span>
+                                    </div>
+                                    <div class="policy-card-content">
+                                      <h4>{{ langService.isRtl() ? '4. سجل تدقيق غير قابل للتلاعب وحق الإلغاء الفوري' : '4. Immutable Audit Trail & Immediate Revocation' }}</h4>
+                                      <p>{{ langService.isRtl()
+                                        ? 'يتم تسجيل كل محاولة وصول لملفك الطبي بتوقيت دقيق وهوية الطبيب في سجل التدقيق الأمني. ويحق لك إلغاء تصريح أي عيادة أو طبيب بنقرة واحدة وفي أي لحظة.'
+                                      : 'Every single view of your passport is permanently recorded in your tamper-proof security audit log. You hold the legal right to revoke any provider’s consent in real time.' }}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="terms-modal-footer">
+                                <button type="button" class="btn-modal-close" (click)="closeTermsModal()">
+                                  <span>{{ langService.isRtl() ? 'إغلاق' : 'Close' }}</span>
+                                </button>
+                                <button type="button" class="btn-modal-agree" (click)="acceptTermsAndClose()">
+                                  <span class="material-symbols-outlined">check_circle</span>
+                                  <span>{{ langService.isRtl() ? 'أوافق على الشروط والسياسة' : 'I Accept & Agree' }}</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .auth-card-wrapper.register-wrapper {
       width: 100%;

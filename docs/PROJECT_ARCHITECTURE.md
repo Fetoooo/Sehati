@@ -1,7 +1,7 @@
 # 🏗️ SEHATI — Project Architecture
 
-> **Document Version:** 1.0.0  
-> **Last Updated:** November 2, 2026  
+> **Document Version:** 1.0.0
+> **Last Updated:** November 2, 2026
 > **Status:** Approved — Phase 0 (Initial Setup)
 
 ---
@@ -44,7 +44,7 @@ Sehati follows a **Clean Architecture** (also known as Onion Architecture) patte
 │   └──────┬───────┘  └──────┬───────┘  └──────┬───────┘               │
 │          │                 │                  │                        │
 │          └─────────────────┼──────────────────┘                       │
-│                            │ Angular 19 SPA                           │
+│                            │ Angular 22 SPA                           │
 └────────────────────────────┼──────────────────────────────────────────┘
                              │ HTTPS / REST (JSON)
 ┌────────────────────────────┼──────────────────────────────────────────┐
@@ -387,7 +387,7 @@ The UI follows the **MedicPro** design language defined in the project documenta
 
 - **Authentication state:** Managed via `AuthService` + `BehaviorSubject`
 - **API data:** RxJS observables with caching where appropriate
-- **Component state:** Angular signals (Angular 19 feature) for local state
+- **Component state:** Angular signals for local state
 
 ---
 

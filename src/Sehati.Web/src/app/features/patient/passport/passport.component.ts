@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PatientService } from '../../../core/services/patient.service';
@@ -17,246 +17,277 @@ import { AllergyDto, MedicationDto, PatientDetailDto, ScanDto, TestDto } from '.
         <div class="header-titles">
           <h1 class="page-title">{{ langService.isRtl() ? 'الجواز الطبي الموحد' : 'Unified Medical Passport' }}</h1>
           <p class="page-subtitle">
-            {{ langService.isRtl() 
-                ? 'ملفك الطبي الرقمي الشامل المربوط برقم صِحّتي الموحد عبر كافة العيادات والمستشفيات.' 
-                : 'Your lifelong digital medical chart synchronized under your Unified Patient ID.' }}
+            {{ langService.isRtl()
+            ? 'ملفك الطبي الرقمي الشامل المربوط برقم صِحّتي الموحد عبر كافة العيادات والمستشفيات.'
+            : 'Your lifelong digital medical chart synchronized under your Unified Patient ID.' }}
           </p>
         </div>
       </header>
 
       <!-- Loading State -->
-      <div class="loading-state" *ngIf="isLoading()">
-        <span class="medic-spinner"></span>
-        <p>{{ langService.isRtl() ? 'جاري تحميل السجل الطبي...' : 'Loading medical passport...' }}</p>
-      </div>
+      @if (isLoading()) {
+        <div class="loading-state">
+          <span class="medic-spinner"></span>
+          <p>{{ langService.isRtl() ? 'جاري تحميل السجل الطبي...' : 'Loading medical passport...' }}</p>
+        </div>
+      }
 
       <!-- Main Content -->
-      <div class="passport-content" *ngIf="!isLoading()">
-        <!-- Top Physical ID Card Simulation -->
-        <div class="medic-card passport-card">
-          <div class="card-top">
-            <div class="card-brand">
-              <img src="/sehati_logo.png" alt="Sehati Logo" class="card-logo" />
-              <div>
-                <span class="brand-ar">صِحّتي</span>
-                <span class="brand-en">SEHATI PASSPORT</span>
+      @if (!isLoading()) {
+        <div class="passport-content">
+          <!-- Top Physical ID Card Simulation -->
+          <div class="medic-card passport-card">
+            <div class="card-top">
+              <div class="card-brand">
+                <img src="/sehati_logo.png" alt="Sehati Logo" class="card-logo" />
+                <div>
+                  <span class="brand-ar">صِحّتي</span>
+                  <span class="brand-en">SEHATI PASSPORT</span>
+                </div>
+              </div>
+              <span class="blood-pill">{{ patient()?.bloodType || 'O+' }}</span>
+            </div>
+            <div class="card-body">
+              <div class="patient-id-display">
+                <span class="id-label">{{ langService.isRtl() ? 'رقم صِحّتي الموحد' : 'UNIFIED PATIENT ID' }}</span>
+                <span class="id-val">{{ patient()?.unifiedPatientId || user()?.unifiedPatientId || 'SH-2026-004812' }}</span>
+              </div>
+              <div class="patient-vitals-row">
+                <div class="vital-item">
+                  <span class="v-label">{{ langService.isRtl() ? 'الاسم' : 'Name' }}</span>
+                  <span class="v-val">{{ patient()?.fullName || user()?.fullName }}</span>
+                </div>
+                <div class="vital-item">
+                  <span class="v-label">{{ langService.isRtl() ? 'الهاتف' : 'Phone' }}</span>
+                  <span class="v-val">{{ patient()?.phoneNumber || user()?.phoneNumber }}</span>
+                </div>
+                <div class="vital-item">
+                  <span class="v-label">{{ langService.isRtl() ? 'تاريخ التسجيل' : 'Registered' }}</span>
+                  <span class="v-val">{{ (patient()?.createdAt || user()?.createdAt) | date:'mediumDate' }}</span>
+                </div>
               </div>
             </div>
-            <span class="blood-pill">{{ patient()?.bloodType || 'O+' }}</span>
           </div>
-
-          <div class="card-body">
-            <div class="patient-id-display">
-              <span class="id-label">{{ langService.isRtl() ? 'رقم صِحّتي الموحد' : 'UNIFIED PATIENT ID' }}</span>
-              <span class="id-val">{{ patient()?.unifiedPatientId || user()?.unifiedPatientId || 'SH-2026-004812' }}</span>
-            </div>
-
-            <div class="patient-vitals-row">
-              <div class="vital-item">
-                <span class="v-label">{{ langService.isRtl() ? 'الاسم' : 'Name' }}</span>
-                <span class="v-val">{{ patient()?.fullName || user()?.fullName }}</span>
-              </div>
-              <div class="vital-item">
-                <span class="v-label">{{ langService.isRtl() ? 'الهاتف' : 'Phone' }}</span>
-                <span class="v-val">{{ patient()?.phoneNumber || user()?.phoneNumber }}</span>
-              </div>
-              <div class="vital-item">
-                <span class="v-label">{{ langService.isRtl() ? 'تاريخ التسجيل' : 'Registered' }}</span>
-                <span class="v-val">{{ (patient()?.createdAt || user()?.createdAt) | date:'mediumDate' }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sub-Resources Tabs -->
-        <div class="records-tabs-container">
-          <div class="tabs-nav">
-            <button
-              class="tab-btn"
-              [class.active]="activeTab() === 'allergies'"
-              (click)="activeTab.set('allergies')"
-            >
-              <span class="material-symbols-outlined">coronavirus</span>
-              <span>{{ langService.isRtl() ? 'الحساسية (' + allergies().length + ')' : 'Allergies (' + allergies().length + ')' }}</span>
-            </button>
-
-            <button
-              class="tab-btn"
-              [class.active]="activeTab() === 'medications'"
-              (click)="activeTab.set('medications')"
-            >
-              <span class="material-symbols-outlined">medication</span>
-              <span>{{ langService.isRtl() ? 'الأدوية (' + medications().length + ')' : 'Medications (' + medications().length + ')' }}</span>
-            </button>
-
-            <button
-              class="tab-btn"
-              [class.active]="activeTab() === 'tests'"
-              (click)="activeTab.set('tests')"
-            >
-              <span class="material-symbols-outlined">biotechnology</span>
-              <span>{{ langService.isRtl() ? 'التحاليل (' + tests().length + ')' : 'Lab Tests (' + tests().length + ')' }}</span>
-            </button>
-
-            <button
-              class="tab-btn"
-              [class.active]="activeTab() === 'scans'"
-              (click)="activeTab.set('scans')"
-            >
-              <span class="material-symbols-outlined">radiology</span>
-              <span>{{ langService.isRtl() ? 'الأشعات (' + scans().length + ')' : 'Imaging & Scans (' + scans().length + ')' }}</span>
-            </button>
-          </div>
-
-          <!-- Tab Content: Allergies -->
-          <div class="tab-pane" *ngIf="activeTab() === 'allergies'">
-            <div class="pane-header">
-              <h3>{{ langService.isRtl() ? 'سجل الحساسية الموثق' : 'Verified Allergy Profile' }}</h3>
-              <button class="medic-btn btn-secondary btn-sm" (click)="toggleAddAllergyModal()">
-                <span class="material-symbols-outlined">add</span>
-                <span>{{ langService.isRtl() ? 'إضافة حساسية' : 'Add Allergy' }}</span>
+          <!-- Sub-Resources Tabs -->
+          <div class="records-tabs-container">
+            <div class="tabs-nav">
+              <button
+                class="tab-btn"
+                [class.active]="activeTab() === 'allergies'"
+                (click)="activeTab.set('allergies')"
+                >
+                <span class="material-symbols-outlined">coronavirus</span>
+                <span>{{ langService.isRtl() ? 'الحساسية (' + allergies().length + ')' : 'Allergies (' + allergies().length + ')' }}</span>
+              </button>
+              <button
+                class="tab-btn"
+                [class.active]="activeTab() === 'medications'"
+                (click)="activeTab.set('medications')"
+                >
+                <span class="material-symbols-outlined">medication</span>
+                <span>{{ langService.isRtl() ? 'الأدوية (' + medications().length + ')' : 'Medications (' + medications().length + ')' }}</span>
+              </button>
+              <button
+                class="tab-btn"
+                [class.active]="activeTab() === 'tests'"
+                (click)="activeTab.set('tests')"
+                >
+                <span class="material-symbols-outlined">biotechnology</span>
+                <span>{{ langService.isRtl() ? 'التحاليل (' + tests().length + ')' : 'Lab Tests (' + tests().length + ')' }}</span>
+              </button>
+              <button
+                class="tab-btn"
+                [class.active]="activeTab() === 'scans'"
+                (click)="activeTab.set('scans')"
+                >
+                <span class="material-symbols-outlined">radiology</span>
+                <span>{{ langService.isRtl() ? 'الأشعات (' + scans().length + ')' : 'Imaging & Scans (' + scans().length + ')' }}</span>
               </button>
             </div>
-
-            <div class="empty-state" *ngIf="allergies().length === 0">
-              <span class="material-symbols-outlined empty-icon">check_circle</span>
-              <p>{{ langService.isRtl() ? 'لا توجد حساسية دوائية أو غذائية مسجلة.' : 'No known drug or environmental allergies recorded.' }}</p>
-            </div>
-
-            <div class="records-grid" *ngIf="allergies().length > 0">
-              <div class="medic-card record-card allergy-card" *ngFor="let item of allergies()">
-                <div class="record-top">
-                  <span class="record-title">{{ item.substance }}</span>
-                  <span class="medic-badge badge-danger">{{ item.severity }}</span>
+            <!-- Tab Content: Allergies -->
+            @if (activeTab() === 'allergies') {
+              <div class="tab-pane">
+                <div class="pane-header">
+                  <h3>{{ langService.isRtl() ? 'سجل الحساسية الموثق' : 'Verified Allergy Profile' }}</h3>
+                  <button class="medic-btn btn-secondary btn-sm" (click)="toggleAddAllergyModal()">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>{{ langService.isRtl() ? 'إضافة حساسية' : 'Add Allergy' }}</span>
+                  </button>
                 </div>
-                <p class="record-desc"><strong>{{ langService.isRtl() ? 'رد الفعل:' : 'Reaction:' }}</strong> {{ item.reaction }}</p>
-                <div class="record-meta" *ngIf="item.diagnosedDate">
-                  <span>{{ item.diagnosedDate | date:'mediumDate' }}</span>
-                </div>
+                @if (allergies().length === 0) {
+                  <div class="empty-state">
+                    <span class="material-symbols-outlined empty-icon">check_circle</span>
+                    <p>{{ langService.isRtl() ? 'لا توجد حساسية دوائية أو غذائية مسجلة.' : 'No known drug or environmental allergies recorded.' }}</p>
+                  </div>
+                }
+                @if (allergies().length > 0) {
+                  <div class="records-grid">
+                    @for (item of allergies(); track item) {
+                      <div class="medic-card record-card allergy-card">
+                        <div class="record-top">
+                          <span class="record-title">{{ item.substance }}</span>
+                          <span class="medic-badge badge-danger">{{ item.severity }}</span>
+                        </div>
+                        <p class="record-desc"><strong>{{ langService.isRtl() ? 'رد الفعل:' : 'Reaction:' }}</strong> {{ item.reaction }}</p>
+                        @if (item.diagnosedDate) {
+                          <div class="record-meta">
+                            <span>{{ item.diagnosedDate | date:'mediumDate' }}</span>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
-          </div>
-
-          <!-- Tab Content: Medications -->
-          <div class="tab-pane" *ngIf="activeTab() === 'medications'">
-            <div class="pane-header">
-              <h3>{{ langService.isRtl() ? 'الأدوية الحالية والمزمنة' : 'Current & Chronic Medications' }}</h3>
-            </div>
-
-            <div class="empty-state" *ngIf="medications().length === 0">
-              <span class="material-symbols-outlined empty-icon">pill</span>
-              <p>{{ langService.isRtl() ? 'لا توجد أدوية حالية مسجلة.' : 'No active medications recorded.' }}</p>
-            </div>
-
-            <div class="records-grid" *ngIf="medications().length > 0">
-              <div class="medic-card record-card" *ngFor="let med of medications()">
-                <div class="record-top">
-                  <span class="record-title">{{ med.name }}</span>
-                  <span class="medic-badge" [class.badge-success]="med.isActive" [class.badge-info]="!med.isActive">
-                    {{ med.isActive ? (langService.isRtl() ? 'ساري' : 'Active') : (langService.isRtl() ? 'سابق' : 'Historic') }}
-                  </span>
+            }
+            <!-- Tab Content: Medications -->
+            @if (activeTab() === 'medications') {
+              <div class="tab-pane">
+                <div class="pane-header">
+                  <h3>{{ langService.isRtl() ? 'الأدوية الحالية والمزمنة' : 'Current & Chronic Medications' }}</h3>
                 </div>
-                <p class="record-desc"><strong>{{ langService.isRtl() ? 'الجرعة:' : 'Dosage:' }}</strong> {{ med.dosage }} - {{ med.frequency }}</p>
-                <div class="record-meta">
-                  <span>{{ langService.isRtl() ? 'من:' : 'Started:' }} {{ med.startDate | date:'mediumDate' }}</span>
-                  <span *ngIf="med.prescribedBy">• {{ med.prescribedBy }}</span>
-                </div>
+                @if (medications().length === 0) {
+                  <div class="empty-state">
+                    <span class="material-symbols-outlined empty-icon">pill</span>
+                    <p>{{ langService.isRtl() ? 'لا توجد أدوية حالية مسجلة.' : 'No active medications recorded.' }}</p>
+                  </div>
+                }
+                @if (medications().length > 0) {
+                  <div class="records-grid">
+                    @for (med of medications(); track med) {
+                      <div class="medic-card record-card">
+                        <div class="record-top">
+                          <span class="record-title">{{ med.name }}</span>
+                          <span class="medic-badge" [class.badge-success]="med.isActive" [class.badge-info]="!med.isActive">
+                            {{ med.isActive ? (langService.isRtl() ? 'ساري' : 'Active') : (langService.isRtl() ? 'سابق' : 'Historic') }}
+                          </span>
+                        </div>
+                        <p class="record-desc"><strong>{{ langService.isRtl() ? 'الجرعة:' : 'Dosage:' }}</strong> {{ med.dosage }} - {{ med.frequency }}</p>
+                        <div class="record-meta">
+                          <span>{{ langService.isRtl() ? 'من:' : 'Started:' }} {{ med.startDate | date:'mediumDate' }}</span>
+                          @if (med.prescribedBy) {
+                            <span>• {{ med.prescribedBy }}</span>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
-          </div>
-
-          <!-- Tab Content: Tests -->
-          <div class="tab-pane" *ngIf="activeTab() === 'tests'">
-            <div class="pane-header">
-              <h3>{{ langService.isRtl() ? 'التحاليل المعملية' : 'Diagnostic Pathology Reports' }}</h3>
-            </div>
-
-            <div class="empty-state" *ngIf="tests().length === 0">
-              <span class="material-symbols-outlined empty-icon">biotechnology</span>
-              <p>{{ langService.isRtl() ? 'لا توجد نتائج تحاليل معملية مسجلة.' : 'No laboratory test results recorded.' }}</p>
-            </div>
-
-            <div class="records-grid" *ngIf="tests().length > 0">
-              <div class="medic-card record-card" *ngFor="let t of tests()">
-                <div class="record-top">
-                  <span class="record-title">{{ t.testName }}</span>
-                  <span class="test-date">{{ t.testDate | date:'mediumDate' }}</span>
+            }
+            <!-- Tab Content: Tests -->
+            @if (activeTab() === 'tests') {
+              <div class="tab-pane">
+                <div class="pane-header">
+                  <h3>{{ langService.isRtl() ? 'التحاليل المعملية' : 'Diagnostic Pathology Reports' }}</h3>
                 </div>
-                <div class="test-result-box">
-                  <span class="res-val"><strong>{{ langService.isRtl() ? 'النتيجة:' : 'Result:' }}</strong> {{ t.result }}</span>
-                  <span class="res-range" *ngIf="t.normalRange">({{ langService.isRtl() ? 'المعدل الطبيعي:' : 'Normal:' }} {{ t.normalRange }})</span>
-                </div>
-                <div class="record-meta" *ngIf="t.laboratoryName">
-                  <span>{{ t.laboratoryName }}</span>
-                </div>
+                @if (tests().length === 0) {
+                  <div class="empty-state">
+                    <span class="material-symbols-outlined empty-icon">biotechnology</span>
+                    <p>{{ langService.isRtl() ? 'لا توجد نتائج تحاليل معملية مسجلة.' : 'No laboratory test results recorded.' }}</p>
+                  </div>
+                }
+                @if (tests().length > 0) {
+                  <div class="records-grid">
+                    @for (t of tests(); track t) {
+                      <div class="medic-card record-card">
+                        <div class="record-top">
+                          <span class="record-title">{{ t.testName }}</span>
+                          <span class="test-date">{{ t.testDate | date:'mediumDate' }}</span>
+                        </div>
+                        <div class="test-result-box">
+                          <span class="res-val"><strong>{{ langService.isRtl() ? 'النتيجة:' : 'Result:' }}</strong> {{ t.result }}</span>
+                          @if (t.normalRange) {
+                            <span class="res-range">({{ langService.isRtl() ? 'المعدل الطبيعي:' : 'Normal:' }} {{ t.normalRange }})</span>
+                          }
+                        </div>
+                        @if (t.laboratoryName) {
+                          <div class="record-meta">
+                            <span>{{ t.laboratoryName }}</span>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
-          </div>
-
-          <!-- Tab Content: Scans -->
-          <div class="tab-pane" *ngIf="activeTab() === 'scans'">
-            <div class="pane-header">
-              <h3>{{ langService.isRtl() ? 'الأشعات والتقارير التصويرية' : 'Diagnostic Radiology & Scans' }}</h3>
-            </div>
-
-            <div class="empty-state" *ngIf="scans().length === 0">
-              <span class="material-symbols-outlined empty-icon">radiology</span>
-              <p>{{ langService.isRtl() ? 'لا توجد أشعات مسجلة.' : 'No imaging scans recorded.' }}</p>
-            </div>
-
-            <div class="records-grid" *ngIf="scans().length > 0">
-              <div class="medic-card record-card" *ngFor="let s of scans()">
-                <div class="record-top">
-                  <span class="record-title">{{ s.scanType }} - {{ s.bodyPart }}</span>
-                  <span class="test-date">{{ s.scanDate | date:'mediumDate' }}</span>
+            }
+            <!-- Tab Content: Scans -->
+            @if (activeTab() === 'scans') {
+              <div class="tab-pane">
+                <div class="pane-header">
+                  <h3>{{ langService.isRtl() ? 'الأشعات والتقارير التصويرية' : 'Diagnostic Radiology & Scans' }}</h3>
                 </div>
-                <p class="record-desc"><strong>{{ langService.isRtl() ? 'التقرير:' : 'Findings:' }}</strong> {{ s.findings }}</p>
-                <div class="record-meta" *ngIf="s.imagingCenter">
-                  <span>{{ s.imagingCenter }}</span>
-                </div>
+                @if (scans().length === 0) {
+                  <div class="empty-state">
+                    <span class="material-symbols-outlined empty-icon">radiology</span>
+                    <p>{{ langService.isRtl() ? 'لا توجد أشعات مسجلة.' : 'No imaging scans recorded.' }}</p>
+                  </div>
+                }
+                @if (scans().length > 0) {
+                  <div class="records-grid">
+                    @for (s of scans(); track s) {
+                      <div class="medic-card record-card">
+                        <div class="record-top">
+                          <span class="record-title">{{ s.scanType }} - {{ s.bodyPart }}</span>
+                          <span class="test-date">{{ s.scanDate | date:'mediumDate' }}</span>
+                        </div>
+                        <p class="record-desc"><strong>{{ langService.isRtl() ? 'التقرير:' : 'Findings:' }}</strong> {{ s.findings }}</p>
+                        @if (s.imagingCenter) {
+                          <div class="record-meta">
+                            <span>{{ s.imagingCenter }}</span>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
+            }
           </div>
         </div>
-      </div>
+      }
 
       <!-- Add Allergy Modal -->
-      <div class="modal-backdrop" *ngIf="showAddAllergyModal">
-        <div class="medic-card modal-dialog">
-          <div class="modal-header">
-            <h3>{{ langService.isRtl() ? 'إضافة حساسية جديدة' : 'Add New Allergy' }}</h3>
-            <button class="close-btn" (click)="toggleAddAllergyModal()">&times;</button>
+      @if (showAddAllergyModal) {
+        <div class="modal-backdrop">
+          <div class="medic-card modal-dialog">
+            <div class="modal-header">
+              <h3>{{ langService.isRtl() ? 'إضافة حساسية جديدة' : 'Add New Allergy' }}</h3>
+              <button class="close-btn" (click)="toggleAddAllergyModal()">&times;</button>
+            </div>
+            <form [formGroup]="allergyForm" (ngSubmit)="onAddAllergySubmit()">
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'المادة المسببة' : 'Substance' }} <span class="req">*</span></label>
+                <input class="medic-input" formControlName="substance" placeholder="e.g. Penicillin, Peanuts" />
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'الأعراض / رد الفعل' : 'Reaction' }} <span class="req">*</span></label>
+                <input class="medic-input" formControlName="reaction" placeholder="e.g. Skin rash, Anaphylaxis" />
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'درجة الخطورة' : 'Severity' }} <span class="req">*</span></label>
+                <select class="medic-select" formControlName="severity">
+                  <option value="Mild">{{ langService.isRtl() ? 'طفيفة' : 'Mild' }}</option>
+                  <option value="Moderate">{{ langService.isRtl() ? 'متوسطة' : 'Moderate' }}</option>
+                  <option value="Severe">{{ langService.isRtl() ? 'خطيرة' : 'Severe' }}</option>
+                </select>
+              </div>
+              <div class="modal-actions">
+                <button type="button" class="medic-btn btn-outline" (click)="toggleAddAllergyModal()">
+                  {{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}
+                </button>
+                <button type="submit" class="medic-btn btn-primary" [disabled]="allergyForm.invalid">
+                  {{ langService.isRtl() ? 'حفظ' : 'Save' }}
+                </button>
+              </div>
+            </form>
           </div>
-          <form [formGroup]="allergyForm" (ngSubmit)="onAddAllergySubmit()">
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'المادة المسببة' : 'Substance' }} <span class="req">*</span></label>
-              <input class="medic-input" formControlName="substance" placeholder="e.g. Penicillin, Peanuts" />
-            </div>
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'الأعراض / رد الفعل' : 'Reaction' }} <span class="req">*</span></label>
-              <input class="medic-input" formControlName="reaction" placeholder="e.g. Skin rash, Anaphylaxis" />
-            </div>
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'درجة الخطورة' : 'Severity' }} <span class="req">*</span></label>
-              <select class="medic-select" formControlName="severity">
-                <option value="Mild">{{ langService.isRtl() ? 'طفيفة' : 'Mild' }}</option>
-                <option value="Moderate">{{ langService.isRtl() ? 'متوسطة' : 'Moderate' }}</option>
-                <option value="Severe">{{ langService.isRtl() ? 'خطيرة' : 'Severe' }}</option>
-              </select>
-            </div>
-            <div class="modal-actions">
-              <button type="button" class="medic-btn btn-outline" (click)="toggleAddAllergyModal()">
-                {{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}
-              </button>
-              <button type="submit" class="medic-btn btn-primary" [disabled]="allergyForm.invalid">
-                {{ langService.isRtl() ? 'حفظ' : 'Save' }}
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
+      }
     </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .passport-page {
       display: flex;

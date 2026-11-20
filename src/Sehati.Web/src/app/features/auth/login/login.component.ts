@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -8,7 +8,7 @@ import { LanguageService } from '../../../core/services/language.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink],
   template: `
     <div class="auth-card-wrapper">
       <div class="auth-luxury-card">
@@ -25,7 +25,7 @@ import { LanguageService } from '../../../core/services/language.service';
         </div>
 
         <!-- MODE 1: STANDARD SIGN IN -->
-        <ng-container *ngIf="!isForgotPasswordMode">
+        @if (!isForgotPasswordMode) {
           <!-- Card Header -->
           <div class="card-header">
             <div class="header-badge">
@@ -35,22 +35,23 @@ import { LanguageService } from '../../../core/services/language.service';
             <h1 class="card-title">{{ langService.isRtl() ? 'أهلاً بك مجدداً في صِحّتي' : 'Welcome Back to Sehati' }}</h1>
             <p class="card-caption">{{ langService.t('loginSubtitle') }}</p>
           </div>
-
           <!-- Registration Success Celebration Alert Banner -->
-          <div class="alert-banner success" *ngIf="registeredSuccess && !errorMessage">
-            <span class="material-symbols-outlined">verified</span>
-            <div class="alert-content-block">
-              <strong class="alert-block-title">{{ langService.isRtl() ? 'تم إصدار جوازك الصحي الموحد بنجاح! 🎉' : 'Unified Health Passport Issued! 🎉' }}</strong>
-              <span class="alert-block-desc">{{ langService.isRtl() ? 'حسابك مفعل وجاهز. يرجى إدخال كلمة المرور لتسجيل الدخول.' : 'Your account is active. Enter your password to sign in.' }}</span>
+          @if (registeredSuccess && !errorMessage) {
+            <div class="alert-banner success">
+              <span class="material-symbols-outlined">verified</span>
+              <div class="alert-content-block">
+                <strong class="alert-block-title">{{ langService.isRtl() ? 'تم إصدار جوازك الصحي الموحد بنجاح! 🎉' : 'Unified Health Passport Issued! 🎉' }}</strong>
+                <span class="alert-block-desc">{{ langService.isRtl() ? 'حسابك مفعل وجاهز. يرجى إدخال كلمة المرور لتسجيل الدخول.' : 'Your account is active. Enter your password to sign in.' }}</span>
+              </div>
             </div>
-          </div>
-
+          }
           <!-- Error Alert Banner -->
-          <div class="alert-banner error" *ngIf="errorMessage">
-            <span class="material-symbols-outlined">error</span>
-            <span>{{ errorMessage }}</span>
-          </div>
-
+          @if (errorMessage) {
+            <div class="alert-banner error">
+              <span class="material-symbols-outlined">error</span>
+              <span>{{ errorMessage }}</span>
+            </div>
+          }
           <!-- Sign In Form -->
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
             <!-- Identifier Field -->
@@ -68,168 +69,180 @@ import { LanguageService } from '../../../core/services/language.service';
                   class="native-input"
                   [placeholder]="langService.t('identifierPlaceholder')"
                   autocomplete="username"
-                />
+                  />
+                </div>
+                @if (isFieldInvalid('identifier')) {
+                  <div class="field-error-hint">
+                    {{ langService.isRtl() ? 'يرجى إدخال البريد الإلكتروني أو رقم الهاتف المسجل.' : 'Please enter your registered email or phone number.' }}
+                  </div>
+                }
               </div>
-              <div class="field-error-hint" *ngIf="isFieldInvalid('identifier')">
-                {{ langService.isRtl() ? 'يرجى إدخال البريد الإلكتروني أو رقم الهاتف المسجل.' : 'Please enter your registered email or phone number.' }}
-              </div>
-            </div>
-
-            <!-- Password Field -->
-            <div class="form-group">
-              <div class="label-split-row">
-                <label class="form-label" for="password">
-                  <span>{{ langService.t('passwordLabel') }}</span>
-                  <span class="req">*</span>
-                </label>
+              <!-- Password Field -->
+              <div class="form-group">
+                <div class="label-split-row">
+                  <label class="form-label" for="password">
+                    <span>{{ langService.t('passwordLabel') }}</span>
+                    <span class="req">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    class="text-link-btn"
+                    (click)="openForgotPassword()"
+                    >
+                    {{ langService.t('forgotPasswordLink') }}
+                  </button>
+                </div>
+                <div class="input-shell" [class.has-error]="isFieldInvalid('password')">
+                  <span class="material-symbols-outlined input-icon">lock</span>
+                  <input
+                    id="password"
+                    [type]="showPassword ? 'text' : 'password'"
+                    formControlName="password"
+                    class="native-input"
+                    [placeholder]="langService.t('passwordPlaceholder')"
+                    autocomplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      class="eye-btn"
+                      (click)="showPassword = !showPassword"
+                      [title]="showPassword ? 'Hide password' : 'Show password'"
+                      >
+                      <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                    </button>
+                  </div>
+                  @if (isFieldInvalid('password')) {
+                    <div class="field-error-hint">
+                      {{ langService.isRtl() ? 'كلمة المرور مطلوبة (8 أحرف على الأقل).' : 'Password is required (min 8 characters).' }}
+                    </div>
+                  }
+                </div>
+                <!-- Remember Me -->
+                <div class="form-options">
+                  <label class="remember-label">
+                    <input type="checkbox" formControlName="rememberMe" class="styled-checkbox" />
+                    <span>{{ langService.t('rememberMe') }}</span>
+                  </label>
+                </div>
+                <!-- Primary Submit Button -->
                 <button
-                  type="button"
-                  class="text-link-btn"
-                  (click)="openForgotPassword()"
-                >
-                  {{ langService.t('forgotPasswordLink') }}
+                  type="submit"
+                  class="btn-primary-auth"
+                  [disabled]="loginForm.invalid || isLoading"
+                  >
+                  @if (isLoading) {
+                    <span class="spinner"></span>
+                  }
+                  @if (!isLoading) {
+                    <span>{{ langService.t('signInBtn') }}</span>
+                  }
+                  @if (!isLoading) {
+                    <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+                  }
                 </button>
+              </form>
+              <!-- Discreet Demo Accounts Selector -->
+              <div class="demo-access-panel">
+                <div class="demo-caption">
+                  <span class="material-symbols-outlined">bolt</span>
+                  <span>{{ langService.isRtl() ? 'دخول تجريبي سريع:' : 'Quick Demo Fill:' }}</span>
+                </div>
+                <div class="demo-pills-row">
+                  <button type="button" class="demo-pill patient" (click)="fillDemo('patient')">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>{{ langService.isRtl() ? 'مريض' : 'Patient' }}</span>
+                  </button>
+                  <button type="button" class="demo-pill doctor" (click)="fillDemo('doctor')">
+                    <span class="material-symbols-outlined">stethoscope</span>
+                    <span>{{ langService.isRtl() ? 'طبيب' : 'Doctor' }}</span>
+                  </button>
+                  <button type="button" class="demo-pill receptionist" (click)="fillDemo('receptionist')">
+                    <span class="material-symbols-outlined">desk</span>
+                    <span>{{ langService.isRtl() ? 'استقبال' : 'Reception' }}</span>
+                  </button>
+                  <button type="button" class="demo-pill admin" (click)="fillDemo('admin')">
+                    <span class="material-symbols-outlined">admin_panel_settings</span>
+                    <span>{{ langService.isRtl() ? 'مدير' : 'Admin' }}</span>
+                  </button>
+                </div>
               </div>
-              <div class="input-shell" [class.has-error]="isFieldInvalid('password')">
-                <span class="material-symbols-outlined input-icon">lock</span>
-                <input
-                  id="password"
-                  [type]="showPassword ? 'text' : 'password'"
-                  formControlName="password"
-                  class="native-input"
-                  [placeholder]="langService.t('passwordPlaceholder')"
-                  autocomplete="current-password"
-                />
-                <button
-                  type="button"
-                  class="eye-btn"
-                  (click)="showPassword = !showPassword"
-                  [title]="showPassword ? 'Hide password' : 'Show password'"
-                >
-                  <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
-                </button>
+              <!-- Bottom Switch Prompt -->
+              <div class="card-footer-switch">
+                <span>{{ langService.t('dontHaveAccount') }}</span>
+                <a routerLink="/auth/register" class="switch-link">
+                  <span>{{ langService.t('createAccountLink') }}</span>
+                  <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
+                </a>
               </div>
-              <div class="field-error-hint" *ngIf="isFieldInvalid('password')">
-                {{ langService.isRtl() ? 'كلمة المرور مطلوبة (8 أحرف على الأقل).' : 'Password is required (min 8 characters).' }}
+            }
+
+            <!-- MODE 2: FORGOT PASSWORD RECOVERY -->
+            @if (isForgotPasswordMode) {
+              <div class="card-header">
+                <div class="header-badge warning">
+                  <span class="material-symbols-outlined badge-icon">lock_reset</span>
+                  <span>{{ langService.isRtl() ? 'استعادة الوصول' : 'Account Recovery' }}</span>
+                </div>
+                <h1 class="card-title">{{ langService.t('forgotPasswordTitle') }}</h1>
+                <p class="card-caption">{{ langService.t('forgotPasswordSubtitle') }}</p>
               </div>
-            </div>
-
-            <!-- Remember Me -->
-            <div class="form-options">
-              <label class="remember-label">
-                <input type="checkbox" formControlName="rememberMe" class="styled-checkbox" />
-                <span>{{ langService.t('rememberMe') }}</span>
-              </label>
-            </div>
-
-            <!-- Primary Submit Button -->
-            <button
-              type="submit"
-              class="btn-primary-auth"
-              [disabled]="loginForm.invalid || isLoading"
-            >
-              <span class="spinner" *ngIf="isLoading"></span>
-              <span *ngIf="!isLoading">{{ langService.t('signInBtn') }}</span>
-              <span class="material-symbols-outlined flip-rtl" *ngIf="!isLoading">arrow_forward</span>
-            </button>
-          </form>
-
-          <!-- Discreet Demo Accounts Selector -->
-          <div class="demo-access-panel">
-            <div class="demo-caption">
-              <span class="material-symbols-outlined">bolt</span>
-              <span>{{ langService.isRtl() ? 'دخول تجريبي سريع:' : 'Quick Demo Fill:' }}</span>
-            </div>
-            <div class="demo-pills-row">
-              <button type="button" class="demo-pill patient" (click)="fillDemo('patient')">
-                <span class="material-symbols-outlined">person</span>
-                <span>{{ langService.isRtl() ? 'مريض' : 'Patient' }}</span>
-              </button>
-              <button type="button" class="demo-pill doctor" (click)="fillDemo('doctor')">
-                <span class="material-symbols-outlined">stethoscope</span>
-                <span>{{ langService.isRtl() ? 'طبيب' : 'Doctor' }}</span>
-              </button>
-              <button type="button" class="demo-pill receptionist" (click)="fillDemo('receptionist')">
-                <span class="material-symbols-outlined">desk</span>
-                <span>{{ langService.isRtl() ? 'استقبال' : 'Reception' }}</span>
-              </button>
-              <button type="button" class="demo-pill admin" (click)="fillDemo('admin')">
-                <span class="material-symbols-outlined">admin_panel_settings</span>
-                <span>{{ langService.isRtl() ? 'مدير' : 'Admin' }}</span>
-              </button>
+              <!-- Success Alert -->
+              @if (resetSuccessMessage) {
+                <div class="alert-banner success">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  <span>{{ resetSuccessMessage }}</span>
+                </div>
+              }
+              <!-- Recovery Form -->
+              @if (!resetSuccessMessage) {
+                <form (ngSubmit)="sendPasswordReset()" class="auth-form">
+                  <div class="form-group">
+                    <label class="form-label" for="recoveryIdentifier">
+                      <span>{{ langService.t('identifierLabel') }}</span>
+                      <span class="req">*</span>
+                    </label>
+                    <div class="input-shell">
+                      <span class="material-symbols-outlined input-icon">contact_mail</span>
+                      <input
+                        id="recoveryIdentifier"
+                        type="text"
+                        [(ngModel)]="recoveryInput"
+                        name="recoveryIdentifier"
+                        class="native-input"
+                        [placeholder]="langService.t('identifierPlaceholder')"
+                        required
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      class="btn-primary-auth"
+                      [disabled]="!recoveryInput.trim() || isRecoveryLoading"
+                      >
+                      @if (isRecoveryLoading) {
+                        <span class="spinner"></span>
+                      }
+                      @if (!isRecoveryLoading) {
+                        <span>{{ langService.t('sendResetCode') }}</span>
+                      }
+                      @if (!isRecoveryLoading) {
+                        <span class="material-symbols-outlined flip-rtl">send</span>
+                      }
+                    </button>
+                  </form>
+                }
+                <!-- Back to Sign In -->
+                <div class="card-footer-switch">
+                  <button type="button" class="btn-ghost-back" (click)="closeForgotPassword()">
+                    <span class="material-symbols-outlined flip-rtl">arrow_back</span>
+                    <span>{{ langService.t('backToLoginBtn') }}</span>
+                  </button>
+                </div>
+              }
             </div>
           </div>
-
-          <!-- Bottom Switch Prompt -->
-          <div class="card-footer-switch">
-            <span>{{ langService.t('dontHaveAccount') }}</span>
-            <a routerLink="/auth/register" class="switch-link">
-              <span>{{ langService.t('createAccountLink') }}</span>
-              <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
-            </a>
-          </div>
-        </ng-container>
-
-        <!-- MODE 2: FORGOT PASSWORD RECOVERY -->
-        <ng-container *ngIf="isForgotPasswordMode">
-          <div class="card-header">
-            <div class="header-badge warning">
-              <span class="material-symbols-outlined badge-icon">lock_reset</span>
-              <span>{{ langService.isRtl() ? 'استعادة الوصول' : 'Account Recovery' }}</span>
-            </div>
-            <h1 class="card-title">{{ langService.t('forgotPasswordTitle') }}</h1>
-            <p class="card-caption">{{ langService.t('forgotPasswordSubtitle') }}</p>
-          </div>
-
-          <!-- Success Alert -->
-          <div class="alert-banner success" *ngIf="resetSuccessMessage">
-            <span class="material-symbols-outlined">check_circle</span>
-            <span>{{ resetSuccessMessage }}</span>
-          </div>
-
-          <!-- Recovery Form -->
-          <form (ngSubmit)="sendPasswordReset()" class="auth-form" *ngIf="!resetSuccessMessage">
-            <div class="form-group">
-              <label class="form-label" for="recoveryIdentifier">
-                <span>{{ langService.t('identifierLabel') }}</span>
-                <span class="req">*</span>
-              </label>
-              <div class="input-shell">
-                <span class="material-symbols-outlined input-icon">contact_mail</span>
-                <input
-                  id="recoveryIdentifier"
-                  type="text"
-                  [(ngModel)]="recoveryInput"
-                  name="recoveryIdentifier"
-                  class="native-input"
-                  [placeholder]="langService.t('identifierPlaceholder')"
-                  required
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              class="btn-primary-auth"
-              [disabled]="!recoveryInput.trim() || isRecoveryLoading"
-            >
-              <span class="spinner" *ngIf="isRecoveryLoading"></span>
-              <span *ngIf="!isRecoveryLoading">{{ langService.t('sendResetCode') }}</span>
-              <span class="material-symbols-outlined flip-rtl" *ngIf="!isRecoveryLoading">send</span>
-            </button>
-          </form>
-
-          <!-- Back to Sign In -->
-          <div class="card-footer-switch">
-            <button type="button" class="btn-ghost-back" (click)="closeForgotPassword()">
-              <span class="material-symbols-outlined flip-rtl">arrow_back</span>
-              <span>{{ langService.t('backToLoginBtn') }}</span>
-            </button>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .auth-card-wrapper {
       width: 100%;

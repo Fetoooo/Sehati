@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentService } from '../../core/services/appointment.service';
@@ -19,9 +19,9 @@ import { DoctorDto } from '../../core/models/clinic.models';
         <div class="header-titles">
           <h1 class="page-title">{{ langService.isRtl() ? 'المواعيد والحجوزات' : 'Appointments & Consultations' }}</h1>
           <p class="page-subtitle">
-            {{ langService.isRtl() 
-                ? 'جدولة المواعيد مع الأطباء الاستشاريين ومتابعة دورك اللحظي في طابور العيادة.' 
-                : 'Book consultations with specialist doctors and track your real-time clinic queue status.' }}
+            {{ langService.isRtl()
+            ? 'جدولة المواعيد مع الأطباء الاستشاريين ومتابعة دورك اللحظي في طابور العيادة.'
+            : 'Book consultations with specialist doctors and track your real-time clinic queue status.' }}
           </p>
         </div>
         <button class="medic-btn btn-primary" (click)="openBookModal()">
@@ -36,146 +36,146 @@ import { DoctorDto } from '../../core/models/clinic.models';
           class="filter-btn"
           [class.active]="filterStatus() === 'All'"
           (click)="filterStatus.set('All')"
-        >
+          >
           {{ langService.isRtl() ? 'الكل' : 'All' }} ({{ appointments().length }})
         </button>
         <button
           class="filter-btn"
           [class.active]="filterStatus() === 'Confirmed'"
           (click)="filterStatus.set('Confirmed')"
-        >
+          >
           {{ langService.isRtl() ? 'المؤكدة' : 'Confirmed' }}
         </button>
         <button
           class="filter-btn"
           [class.active]="filterStatus() === 'Pending'"
           (click)="filterStatus.set('Pending')"
-        >
+          >
           {{ langService.isRtl() ? 'قيد التأكيد' : 'Pending' }}
         </button>
         <button
           class="filter-btn"
           [class.active]="filterStatus() === 'Completed'"
           (click)="filterStatus.set('Completed')"
-        >
+          >
           {{ langService.isRtl() ? 'المكتملة' : 'Completed' }}
         </button>
       </div>
 
       <!-- Appointments List Grid -->
       <div class="appointments-grid">
-        <div class="medic-card appointment-card" *ngFor="let apt of filteredAppointments()">
-          <div class="card-head">
-            <div class="doctor-meta">
-              <span class="material-symbols-outlined doc-icon">stethoscope</span>
-              <div>
-                <h3 class="doc-name">{{ apt.doctorName }}</h3>
-                <span class="doc-spec">{{ apt.specialty || (langService.isRtl() ? 'استشاري متخصص' : 'Specialist') }}</span>
+        @for (apt of filteredAppointments(); track apt) {
+          <div class="medic-card appointment-card">
+            <div class="card-head">
+              <div class="doctor-meta">
+                <span class="material-symbols-outlined doc-icon">stethoscope</span>
+                <div>
+                  <h3 class="doc-name">{{ apt.doctorName }}</h3>
+                  <span class="doc-spec">{{ apt.specialty || (langService.isRtl() ? 'استشاري متخصص' : 'Specialist') }}</span>
+                </div>
               </div>
+              <span class="medic-badge" [ngClass]="getStatusBadgeClass(apt.status)">
+                {{ apt.status }}
+              </span>
             </div>
-
-            <span class="medic-badge" [ngClass]="getStatusBadgeClass(apt.status)">
-              {{ apt.status }}
-            </span>
-          </div>
-
-          <div class="card-body">
-            <div class="clinic-location">
-              <span class="material-symbols-outlined">domain</span>
-              <span>{{ apt.clinicName }}</span>
-            </div>
-
-            <div class="date-time-box">
-              <div class="dt-item">
-                <span class="material-symbols-outlined">calendar_today</span>
-                <span>{{ apt.appointmentDateTime | date:'fullDate' }}</span>
+            <div class="card-body">
+              <div class="clinic-location">
+                <span class="material-symbols-outlined">domain</span>
+                <span>{{ apt.clinicName }}</span>
               </div>
-              <div class="dt-item">
-                <span class="material-symbols-outlined">schedule</span>
-                <span>{{ apt.appointmentDateTime | date:'shortTime' }}</span>
+              <div class="date-time-box">
+                <div class="dt-item">
+                  <span class="material-symbols-outlined">calendar_today</span>
+                  <span>{{ apt.appointmentDateTime | date:'fullDate' }}</span>
+                </div>
+                <div class="dt-item">
+                  <span class="material-symbols-outlined">schedule</span>
+                  <span>{{ apt.appointmentDateTime | date:'shortTime' }}</span>
+                </div>
               </div>
+              <!-- Queue Number Pill -->
+              @if (apt.queueNumber) {
+                <div class="queue-number-box">
+                  <span class="q-label">{{ langService.isRtl() ? 'رقم الدور بالطابور:' : 'Queue Number:' }}</span>
+                  <span class="q-num">#{{ apt.queueNumber }}</span>
+                </div>
+              }
             </div>
-
-            <!-- Queue Number Pill -->
-            <div class="queue-number-box" *ngIf="apt.queueNumber">
-              <span class="q-label">{{ langService.isRtl() ? 'رقم الدور بالطابور:' : 'Queue Number:' }}</span>
-              <span class="q-num">#{{ apt.queueNumber }}</span>
-            </div>
+            @if (apt.status === 'Confirmed' || apt.status === 'Pending') {
+              <div class="card-footer">
+                <button class="medic-btn btn-outline btn-sm" (click)="cancelAppointment(apt.id)">
+                  <span class="material-symbols-outlined">cancel</span>
+                  <span>{{ langService.isRtl() ? 'إلغاء الموعد' : 'Cancel' }}</span>
+                </button>
+              </div>
+            }
           </div>
-
-          <div class="card-footer" *ngIf="apt.status === 'Confirmed' || apt.status === 'Pending'">
-            <button class="medic-btn btn-outline btn-sm" (click)="cancelAppointment(apt.id)">
-              <span class="material-symbols-outlined">cancel</span>
-              <span>{{ langService.isRtl() ? 'إلغاء الموعد' : 'Cancel' }}</span>
-            </button>
-          </div>
-        </div>
+        }
       </div>
 
       <!-- Empty State -->
-      <div class="empty-state" *ngIf="filteredAppointments().length === 0">
-        <span class="material-symbols-outlined empty-icon">calendar_month</span>
-        <p>{{ langService.isRtl() ? 'لا توجد مواعيد في هذا التصنيف.' : 'No appointments found in this view.' }}</p>
-      </div>
+      @if (filteredAppointments().length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined empty-icon">calendar_month</span>
+          <p>{{ langService.isRtl() ? 'لا توجد مواعيد في هذا التصنيف.' : 'No appointments found in this view.' }}</p>
+        </div>
+      }
 
       <!-- Book Appointment Modal -->
-      <div class="modal-backdrop" *ngIf="showBookModal">
-        <div class="medic-card modal-dialog">
-          <div class="modal-header">
-            <h3>{{ langService.isRtl() ? 'حجز موعد كشف طبي جديد' : 'Book Specialist Consultation' }}</h3>
-            <button class="close-btn" (click)="closeBookModal()">&times;</button>
+      @if (showBookModal) {
+        <div class="modal-backdrop">
+          <div class="medic-card modal-dialog">
+            <div class="modal-header">
+              <h3>{{ langService.isRtl() ? 'حجز موعد كشف طبي جديد' : 'Book Specialist Consultation' }}</h3>
+              <button class="close-btn" (click)="closeBookModal()">&times;</button>
+            </div>
+            <form [formGroup]="bookForm" (ngSubmit)="onBookSubmit()">
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'اختر الطبيب المعالج' : 'Select Doctor' }} <span class="req">*</span></label>
+                <select class="medic-select" formControlName="doctorId">
+                  <option value="doc-1">Dr. Sarah Ahmed (Cardiology)</option>
+                  <option value="doc-2">Dr. Mohamed Khaled (Pediatrics)</option>
+                  <option value="doc-3">Dr. Tarek Mostafa (Internal Medicine)</option>
+                </select>
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'العيادة / المركز الطبي' : 'Clinic' }} <span class="req">*</span></label>
+                <select class="medic-select" formControlName="clinicId">
+                  <option value="1">Sehati Specialized Clinic - Nasr City</option>
+                  <option value="2">Nile Medical Center - Maadi</option>
+                </select>
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'تاريخ ووقت الموعد' : 'Appointment Date & Time' }} <span class="req">*</span></label>
+                <input type="datetime-local" class="medic-input" formControlName="appointmentDateTime" />
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'نوع الكشف' : 'Consultation Type' }}</label>
+                <select class="medic-select" formControlName="type">
+                  <option value="FirstVisit">{{ langService.isRtl() ? 'كشف أول' : 'First Visit' }}</option>
+                  <option value="FollowUp">{{ langService.isRtl() ? 'استشارة ومتابعة' : 'Follow-up' }}</option>
+                  <option value="Urgent">{{ langService.isRtl() ? 'عاجل' : 'Urgent' }}</option>
+                </select>
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'ملاحظات / الشكوى المبدئية' : 'Chief Complaint / Notes' }}</label>
+                <textarea class="medic-input" formControlName="notes" rows="2" placeholder="e.g. Routine checkup or chest discomfort"></textarea>
+              </div>
+              <div class="modal-actions">
+                <button type="button" class="medic-btn btn-outline" (click)="closeBookModal()">
+                  {{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}
+                </button>
+                <button type="submit" class="medic-btn btn-primary" [disabled]="bookForm.invalid">
+                  {{ langService.isRtl() ? 'تأكيد الحجز' : 'Confirm Booking' }}
+                </button>
+              </div>
+            </form>
           </div>
-
-          <form [formGroup]="bookForm" (ngSubmit)="onBookSubmit()">
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'اختر الطبيب المعالج' : 'Select Doctor' }} <span class="req">*</span></label>
-              <select class="medic-select" formControlName="doctorId">
-                <option value="doc-1">Dr. Sarah Ahmed (Cardiology)</option>
-                <option value="doc-2">Dr. Mohamed Khaled (Pediatrics)</option>
-                <option value="doc-3">Dr. Tarek Mostafa (Internal Medicine)</option>
-              </select>
-            </div>
-
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'العيادة / المركز الطبي' : 'Clinic' }} <span class="req">*</span></label>
-              <select class="medic-select" formControlName="clinicId">
-                <option value="1">Sehati Specialized Clinic - Nasr City</option>
-                <option value="2">Nile Medical Center - Maadi</option>
-              </select>
-            </div>
-
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'تاريخ ووقت الموعد' : 'Appointment Date & Time' }} <span class="req">*</span></label>
-              <input type="datetime-local" class="medic-input" formControlName="appointmentDateTime" />
-            </div>
-
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'نوع الكشف' : 'Consultation Type' }}</label>
-              <select class="medic-select" formControlName="type">
-                <option value="FirstVisit">{{ langService.isRtl() ? 'كشف أول' : 'First Visit' }}</option>
-                <option value="FollowUp">{{ langService.isRtl() ? 'استشارة ومتابعة' : 'Follow-up' }}</option>
-                <option value="Urgent">{{ langService.isRtl() ? 'عاجل' : 'Urgent' }}</option>
-              </select>
-            </div>
-
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'ملاحظات / الشكوى المبدئية' : 'Chief Complaint / Notes' }}</label>
-              <textarea class="medic-input" formControlName="notes" rows="2" placeholder="e.g. Routine checkup or chest discomfort"></textarea>
-            </div>
-
-            <div class="modal-actions">
-              <button type="button" class="medic-btn btn-outline" (click)="closeBookModal()">
-                {{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}
-              </button>
-              <button type="submit" class="medic-btn btn-primary" [disabled]="bookForm.invalid">
-                {{ langService.isRtl() ? 'تأكيد الحجز' : 'Confirm Booking' }}
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
+      }
     </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .appointments-page {
       display: flex;

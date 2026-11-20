@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
@@ -16,7 +16,7 @@ interface HealthResponse {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   template: `
     <div class="dashboard-container" [class.rtl]="langService.isRtl()">
       <!-- Welcome Hero Banner -->
@@ -26,19 +26,21 @@ interface HealthResponse {
             <span class="medic-badge badge-teal">
               {{ user()?.roleName || 'Healthcare' }} {{ langService.isRtl() ? 'بوابة' : 'Portal' }}
             </span>
-            <span class="unified-chip" *ngIf="user()?.unifiedPatientId">
-              <span class="material-symbols-outlined">badge</span>
-              <span>{{ langService.isRtl() ? 'رقم صِحّتي الموحد:' : 'Unified ID:' }} <strong>{{ user()?.unifiedPatientId }}</strong></span>
-            </span>
+            @if (user()?.unifiedPatientId) {
+              <span class="unified-chip">
+                <span class="material-symbols-outlined">badge</span>
+                <span>{{ langService.isRtl() ? 'رقم صِحّتي الموحد:' : 'Unified ID:' }} <strong>{{ user()?.unifiedPatientId }}</strong></span>
+              </span>
+            }
           </div>
 
           <h1 class="welcome-heading">
             {{ langService.isRtl() ? 'مرحباً بك،' : 'Welcome back,' }} {{ user()?.fullName }}
           </h1>
           <p class="welcome-desc">
-            {{ langService.isRtl() 
-                ? 'لوحة التحكم الصحية الموحدة الخاصة بك. جميع السجلات، الروشتات، الكشوفات، والمواعيد مرتبطة بأمان تحت منظومة صِحّتي.' 
-                : 'Your connected healthcare dashboard. All records, prescriptions, visits, and appointments are securely synced under Sehati.' }}
+            {{ langService.isRtl()
+            ? 'لوحة التحكم الصحية الموحدة الخاصة بك. جميع السجلات، الروشتات، الكشوفات، والمواعيد مرتبطة بأمان تحت منظومة صِحّتي.'
+            : 'Your connected healthcare dashboard. All records, prescriptions, visits, and appointments are securely synced under Sehati.' }}
           </p>
 
           <div class="quick-actions">
@@ -46,10 +48,12 @@ interface HealthResponse {
               <span class="material-symbols-outlined">architecture</span>
               <span>{{ langService.isRtl() ? 'استعراض الهيكلية والأنظمة' : 'Architecture Showcase' }}</span>
             </a>
-            <a routerLink="/auth/login" class="medic-btn btn-secondary" *ngIf="!authService.isAuthenticated()">
-              <span class="material-symbols-outlined">login</span>
-              <span>{{ langService.t('signInBtn') }}</span>
-            </a>
+            @if (!authService.isAuthenticated()) {
+              <a routerLink="/auth/login" class="medic-btn btn-secondary">
+                <span class="material-symbols-outlined">login</span>
+                <span>{{ langService.t('signInBtn') }}</span>
+              </a>
+            }
           </div>
         </div>
 
@@ -62,13 +66,19 @@ interface HealthResponse {
           <div class="status-body">
             <div class="status-metric">
               <span class="metric-label">{{ langService.isRtl() ? 'الحالة:' : 'Status:' }}</span>
-              <span class="metric-val online" *ngIf="isApiOnline">{{ langService.isRtl() ? 'متصل وجاهز' : 'Operational' }}</span>
-              <span class="metric-val checking" *ngIf="!isApiOnline">{{ langService.isRtl() ? 'جاري الاتصال...' : 'Connecting...' }}</span>
+              @if (isApiOnline) {
+                <span class="metric-val online">{{ langService.isRtl() ? 'متصل وجاهز' : 'Operational' }}</span>
+              }
+              @if (!isApiOnline) {
+                <span class="metric-val checking">{{ langService.isRtl() ? 'جاري الاتصال...' : 'Connecting...' }}</span>
+              }
             </div>
-            <div class="status-metric" *ngIf="healthData">
-              <span class="metric-label">{{ langService.isRtl() ? 'البيئة:' : 'Environment:' }}</span>
-              <span class="metric-val">{{ healthData.environment }} (v{{ healthData.version }})</span>
-            </div>
+            @if (healthData) {
+              <div class="status-metric">
+                <span class="metric-label">{{ langService.isRtl() ? 'البيئة:' : 'Environment:' }}</span>
+                <span class="metric-val">{{ healthData.environment }} (v{{ healthData.version }})</span>
+              </div>
+            }
           </div>
         </div>
       </section>
@@ -83,9 +93,9 @@ interface HealthResponse {
             <span class="metric-title">{{ langService.isRtl() ? 'الملف الطبي الموحد' : 'Unified Records' }}</span>
             <span class="metric-sub">{{ langService.isRtl() ? 'سجل طبي رقمي مدى الحياة' : 'Connected EHR' }}</span>
             <p class="metric-note">
-              {{ langService.isRtl() 
-                  ? 'السجل التراكمي الشامل للحساسية، الأمراض المزمنة، التحاليل المعملية، والأشعات.' 
-                  : 'Full medical history, allergies, medications, lab tests, and imaging scans.' }}
+              {{ langService.isRtl()
+              ? 'السجل التراكمي الشامل للحساسية، الأمراض المزمنة، التحاليل المعملية، والأشعات.'
+              : 'Full medical history, allergies, medications, lab tests, and imaging scans.' }}
             </p>
           </div>
         </div>
@@ -99,8 +109,8 @@ interface HealthResponse {
             <span class="metric-sub">{{ langService.isRtl() ? 'الروشتات الفعالة والسابقة' : 'Active & Historic' }}</span>
             <p class="metric-note">
               {{ langService.isRtl()
-                  ? 'روشتات معتمدة رقمياً من الأطباء مع الجرعات، مدة العلاج، وتعليمات الاستخدام.'
-                  : 'Doctor-issued digital prescriptions with dosages, durations, and instructions.' }}
+              ? 'روشتات معتمدة رقمياً من الأطباء مع الجرعات، مدة العلاج، وتعليمات الاستخدام.'
+              : 'Doctor-issued digital prescriptions with dosages, durations, and instructions.' }}
             </p>
           </div>
         </div>
@@ -116,8 +126,8 @@ interface HealthResponse {
             <span class="metric-sub">{{ langService.isRtl() ? 'طابور المرضى اللحظي' : 'Real-Time Queue' }}</span>
             <p class="metric-note">
               {{ langService.isRtl()
-                  ? 'منع الازدواجية في الحجز وإدارة نوبات العمل والطابور اليومي بالعيادات.'
-                  : 'Double-booking collision prevention and daily clinic queue management.' }}
+              ? 'منع الازدواجية في الحجز وإدارة نوبات العمل والطابور اليومي بالعيادات.'
+              : 'Double-booking collision prevention and daily clinic queue management.' }}
             </p>
           </div>
         </div>
@@ -131,14 +141,15 @@ interface HealthResponse {
             <span class="metric-sub">{{ langService.isRtl() ? 'تحكم كامل في المشاركة' : 'Access Control' }}</span>
             <p class="metric-note">
               {{ langService.isRtl()
-                  ? 'مستويات صلاحيات دقيقة (عرض فقط أو عرض وإضافة) مع إمكانية الإلغاء الفوري.'
-                  : 'Granular permissions with active verification and immediate revocation.' }}
+              ? 'مستويات صلاحيات دقيقة (عرض فقط أو عرض وإضافة) مع إمكانية الإلغاء الفوري.'
+              : 'Granular permissions with active verification and immediate revocation.' }}
             </p>
           </div>
         </div>
       </section>
     </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .dashboard-container {
       display: flex;

@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
@@ -7,7 +7,7 @@ import { LanguageService } from '../../core/services/language.service';
 @Component({
   selector: 'app-auth-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink],
   template: `
     <div class="auth-viewport" [class.rtl]="langService.isRtl()">
       <!-- Ambient Lighting Backdrops -->
@@ -94,6 +94,7 @@ import { LanguageService } from '../../core/services/language.service';
       </footer>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .auth-viewport {
       position: relative;

@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { ClinicService } from '../../../core/services/clinic.service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -8,7 +8,7 @@ import { ClinicDto, DoctorDto, ReceptionistDto } from '../../../core/models/clin
 @Component({
   selector: 'app-clinic-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   template: `
     <div class="clinic-admin-page" [class.rtl]="langService.isRtl()">
       <!-- Page Header -->
@@ -22,8 +22,8 @@ import { ClinicDto, DoctorDto, ReceptionistDto } from '../../../core/models/clin
           </div>
           <p class="page-subtitle">
             {{ langService.isRtl()
-              ? 'إدارة الكادر الطبي، توزيع نوبات الاستقبال، وضبط ساعات العمل ومواعيد الكشف'
-              : 'Manage medical staff roster, receptionist shifts, operating hours, and facility profiles' }}
+            ? 'إدارة الكادر الطبي، توزيع نوبات الاستقبال، وضبط ساعات العمل ومواعيد الكشف'
+            : 'Manage medical staff roster, receptionist shifts, operating hours, and facility profiles' }}
           </p>
         </div>
 
@@ -98,7 +98,7 @@ import { ClinicDto, DoctorDto, ReceptionistDto } from '../../../core/models/clin
             class="tab-item"
             [class.active]="activeTab === 'doctors'"
             (click)="activeTab = 'doctors'"
-          >
+            >
             <span class="material-symbols-outlined">stethoscope</span>
             <span>{{ langService.isRtl() ? 'الأطباء المعالجون' : 'Doctors Roster' }} ({{ doctorsList().length }})</span>
           </button>
@@ -107,7 +107,7 @@ import { ClinicDto, DoctorDto, ReceptionistDto } from '../../../core/models/clin
             class="tab-item"
             [class.active]="activeTab === 'receptionists'"
             (click)="activeTab = 'receptionists'"
-          >
+            >
             <span class="material-symbols-outlined">badge</span>
             <span>{{ langService.isRtl() ? 'موظفو الاستقبال' : 'Reception Staff' }} ({{ receptionistsList().length }})</span>
           </button>
@@ -116,143 +116,155 @@ import { ClinicDto, DoctorDto, ReceptionistDto } from '../../../core/models/clin
             class="tab-item"
             [class.active]="activeTab === 'shifts'"
             (click)="activeTab = 'shifts'"
-          >
+            >
             <span class="material-symbols-outlined">calendar_clock</span>
             <span>{{ langService.isRtl() ? 'ساعات العمل والفترات' : 'Operating Shifts' }}</span>
           </button>
         </div>
 
         <!-- Doctors Tab -->
-        <div class="tab-body" *ngIf="activeTab === 'doctors'">
-          <div class="table-container">
-            <table class="styled-table">
-              <thead>
-                <tr>
-                  <th>{{ langService.isRtl() ? 'اسم الطبيب' : 'Doctor Name' }}</th>
-                  <th>{{ langService.isRtl() ? 'التخصص الطبي' : 'Specialty' }}</th>
-                  <th>{{ langService.isRtl() ? 'رقم الترخيص' : 'License #' }}</th>
-                  <th>{{ langService.isRtl() ? 'الهاتف' : 'Phone' }}</th>
-                  <th>{{ langService.isRtl() ? 'سعر الكشف' : 'Consult Fee' }}</th>
-                  <th>{{ langService.isRtl() ? 'الحالة' : 'Status' }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let doc of doctorsList()">
-                  <td>
-                    <div class="doc-cell">
-                      <div class="avatar-circle">
-                        <span class="material-symbols-outlined">person</span>
-                      </div>
-                      <span class="font-bold">{{ doc.fullName }}</span>
-                    </div>
-                  </td>
-                  <td>{{ doc.specialty }}</td>
-                  <td><span class="mono-badge">{{ doc.licenseNumber }}</span></td>
-                  <td>{{ doc.phoneNumber }}</td>
-                  <td class="fee-col">{{ doc.consultationFee || 250 }} EGP</td>
-                  <td>
-                    <span class="status-pill active">
-                      {{ langService.isRtl() ? 'نشط بالعيادة' : 'Active' }}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Receptionists Tab -->
-        <div class="tab-body" *ngIf="activeTab === 'receptionists'">
-          <div class="table-container">
-            <table class="styled-table">
-              <thead>
-                <tr>
-                  <th>{{ langService.isRtl() ? 'اسم الموظف' : 'Staff Member' }}</th>
-                  <th>{{ langService.isRtl() ? 'البريد الإلكتروني' : 'Email' }}</th>
-                  <th>{{ langService.isRtl() ? 'رقم الهاتف' : 'Phone' }}</th>
-                  <th>{{ langService.isRtl() ? 'فترة النوبات' : 'Shift Hours' }}</th>
-                  <th>{{ langService.isRtl() ? 'الحالة' : 'Status' }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let rec of receptionistsList()">
-                  <td class="font-bold">{{ rec.fullName }}</td>
-                  <td>{{ rec.email || 'reception@sehati.gov.eg' }}</td>
-                  <td>{{ rec.phoneNumber }}</td>
-                  <td><span class="shift-badge">{{ rec.shiftHours || 'Morning (08:00 - 16:00)' }}</span></td>
-                  <td>
-                    <span class="status-pill active">
-                      {{ langService.isRtl() ? 'على رأس العمل' : 'On Duty' }}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Shifts Tab -->
-        <div class="tab-body" *ngIf="activeTab === 'shifts'">
-          <div class="schedule-grid">
-            <div class="day-slot" *ngFor="let day of clinicSchedule">
-              <div class="day-title">{{ day.day }}</div>
-              <div class="day-status" [class.open]="day.isOpen">
-                {{ day.isOpen ? (langService.isRtl() ? 'مفتوح للكشف' : 'Open for Consultations') : (langService.isRtl() ? 'عطلة أسبوعية' : 'Closed') }}
-              </div>
-              <div class="day-hours" *ngIf="day.isOpen">
-                <span class="material-symbols-outlined">schedule</span>
-                {{ day.hours }}
-              </div>
+        @if (activeTab === 'doctors') {
+          <div class="tab-body">
+            <div class="table-container">
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>{{ langService.isRtl() ? 'اسم الطبيب' : 'Doctor Name' }}</th>
+                    <th>{{ langService.isRtl() ? 'التخصص الطبي' : 'Specialty' }}</th>
+                    <th>{{ langService.isRtl() ? 'رقم الترخيص' : 'License #' }}</th>
+                    <th>{{ langService.isRtl() ? 'الهاتف' : 'Phone' }}</th>
+                    <th>{{ langService.isRtl() ? 'سعر الكشف' : 'Consult Fee' }}</th>
+                    <th>{{ langService.isRtl() ? 'الحالة' : 'Status' }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (doc of doctorsList(); track doc) {
+                    <tr>
+                      <td>
+                        <div class="doc-cell">
+                          <div class="avatar-circle">
+                            <span class="material-symbols-outlined">person</span>
+                          </div>
+                          <span class="font-bold">{{ doc.fullName }}</span>
+                        </div>
+                      </td>
+                      <td>{{ doc.specialty }}</td>
+                      <td><span class="mono-badge">{{ doc.licenseNumber }}</span></td>
+                      <td>{{ doc.phoneNumber }}</td>
+                      <td class="fee-col">{{ doc.consultationFee || 250 }} EGP</td>
+                      <td>
+                        <span class="status-pill active">
+                          {{ langService.isRtl() ? 'نشط بالعيادة' : 'Active' }}
+                        </span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
             </div>
           </div>
-        </div>
+        }
+
+        <!-- Receptionists Tab -->
+        @if (activeTab === 'receptionists') {
+          <div class="tab-body">
+            <div class="table-container">
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>{{ langService.isRtl() ? 'اسم الموظف' : 'Staff Member' }}</th>
+                    <th>{{ langService.isRtl() ? 'البريد الإلكتروني' : 'Email' }}</th>
+                    <th>{{ langService.isRtl() ? 'رقم الهاتف' : 'Phone' }}</th>
+                    <th>{{ langService.isRtl() ? 'فترة النوبات' : 'Shift Hours' }}</th>
+                    <th>{{ langService.isRtl() ? 'الحالة' : 'Status' }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (rec of receptionistsList(); track rec) {
+                    <tr>
+                      <td class="font-bold">{{ rec.fullName }}</td>
+                      <td>{{ rec.email || 'reception@sehati.gov.eg' }}</td>
+                      <td>{{ rec.phoneNumber }}</td>
+                      <td><span class="shift-badge">{{ rec.shiftHours || 'Morning (08:00 - 16:00)' }}</span></td>
+                      <td>
+                        <span class="status-pill active">
+                          {{ langService.isRtl() ? 'على رأس العمل' : 'On Duty' }}
+                        </span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+        <!-- Shifts Tab -->
+        @if (activeTab === 'shifts') {
+          <div class="tab-body">
+            <div class="schedule-grid">
+              @for (day of clinicSchedule; track day) {
+                <div class="day-slot">
+                  <div class="day-title">{{ day.day }}</div>
+                  <div class="day-status" [class.open]="day.isOpen">
+                    {{ day.isOpen ? (langService.isRtl() ? 'مفتوح للكشف' : 'Open for Consultations') : (langService.isRtl() ? 'عطلة أسبوعية' : 'Closed') }}
+                  </div>
+                  @if (day.isOpen) {
+                    <div class="day-hours">
+                      <span class="material-symbols-outlined">schedule</span>
+                      {{ day.hours }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
 
       <!-- Affiliate Doctor Modal -->
-      <div class="modal-backdrop" *ngIf="showAffiliateModal" (click)="showAffiliateModal = false">
-        <div class="modal-dialog" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h3>{{ langService.isRtl() ? 'ربط طبيب معالج جديد بالعيادة' : 'Affiliate Doctor with Clinic' }}</h3>
-            <button class="close-btn" (click)="showAffiliateModal = false">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
-          <div class="modal-body">
-            <div class="form-group">
-              <label class="required">{{ langService.isRtl() ? 'اسم الطبيب' : 'Doctor Full Name' }}</label>
-              <input type="text" class="form-control" [(ngModel)]="newDoc.fullName" placeholder="Dr. Tarek Omar" />
+      @if (showAffiliateModal) {
+        <div class="modal-backdrop" (click)="showAffiliateModal = false">
+          <div class="modal-dialog" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h3>{{ langService.isRtl() ? 'ربط طبيب معالج جديد بالعيادة' : 'Affiliate Doctor with Clinic' }}</h3>
+              <button class="close-btn" (click)="showAffiliateModal = false">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
-
-            <div class="form-group">
-              <label class="required">{{ langService.isRtl() ? 'التخصص الطبي' : 'Specialty' }}</label>
-              <input type="text" class="form-control" [(ngModel)]="newDoc.specialty" placeholder="Orthopedic Surgery" />
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="required">{{ langService.isRtl() ? 'اسم الطبيب' : 'Doctor Full Name' }}</label>
+                <input type="text" class="form-control" [(ngModel)]="newDoc.fullName" placeholder="Dr. Tarek Omar" />
+              </div>
+              <div class="form-group">
+                <label class="required">{{ langService.isRtl() ? 'التخصص الطبي' : 'Specialty' }}</label>
+                <input type="text" class="form-control" [(ngModel)]="newDoc.specialty" placeholder="Orthopedic Surgery" />
+              </div>
+              <div class="form-group">
+                <label class="required">{{ langService.isRtl() ? 'رقم ترخيص مزاولة المهنة' : 'Medical License Number' }}</label>
+                <input type="text" class="form-control" [(ngModel)]="newDoc.licenseNumber" placeholder="MD-77889-EG" />
+              </div>
+              <div class="form-group">
+                <label class="required">{{ langService.isRtl() ? 'سعر الكشف (بالجنيه)' : 'Consultation Fee (EGP)' }}</label>
+                <input type="number" class="form-control" [(ngModel)]="newDoc.consultationFee" placeholder="300" />
+              </div>
             </div>
-
-            <div class="form-group">
-              <label class="required">{{ langService.isRtl() ? 'رقم ترخيص مزاولة المهنة' : 'Medical License Number' }}</label>
-              <input type="text" class="form-control" [(ngModel)]="newDoc.licenseNumber" placeholder="MD-77889-EG" />
+            <div class="modal-footer">
+              <button class="btn btn-secondary" (click)="showAffiliateModal = false">
+                <span>{{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}</span>
+              </button>
+              <button class="btn btn-primary" (click)="submitAffiliation()">
+                <span class="material-symbols-outlined">check</span>
+                <span>{{ langService.isRtl() ? 'اعتماد الربط' : 'Affiliate Doctor' }}</span>
+              </button>
             </div>
-
-            <div class="form-group">
-              <label class="required">{{ langService.isRtl() ? 'سعر الكشف (بالجنيه)' : 'Consultation Fee (EGP)' }}</label>
-              <input type="number" class="form-control" [(ngModel)]="newDoc.consultationFee" placeholder="300" />
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="showAffiliateModal = false">
-              <span>{{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}</span>
-            </button>
-            <button class="btn btn-primary" (click)="submitAffiliation()">
-              <span class="material-symbols-outlined">check</span>
-              <span>{{ langService.isRtl() ? 'اعتماد الربط' : 'Affiliate Doctor' }}</span>
-            </button>
           </div>
         </div>
-      </div>
+      }
     </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .clinic-admin-page {
       display: flex;

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ClinicalService } from '../../../core/services/clinical.service';
@@ -17,9 +17,9 @@ import { AccessPermissionDto, ConsentScope } from '../../../core/models/clinical
         <div class="header-titles">
           <h1 class="page-title">{{ langService.isRtl() ? 'محرك الأذونات والخصوصية' : 'Dynamic Consent & Access Governance' }}</h1>
           <p class="page-subtitle">
-            {{ langService.isRtl() 
-                ? 'تحكم كامل في الأطباء والمراكز الطبية المصرح لهم بالاطلاع على سجلك الطبي أو إضافة كشوفات جديدة.' 
-                : 'Granular patient-controlled consent. Manage who can view or append to your lifelong medical record.' }}
+            {{ langService.isRtl()
+            ? 'تحكم كامل في الأطباء والمراكز الطبية المصرح لهم بالاطلاع على سجلك الطبي أو إضافة كشوفات جديدة.'
+            : 'Granular patient-controlled consent. Manage who can view or append to your lifelong medical record.' }}
           </p>
         </div>
         <button class="medic-btn btn-primary" (click)="openGrantModal()">
@@ -30,99 +30,101 @@ import { AccessPermissionDto, ConsentScope } from '../../../core/models/clinical
 
       <!-- Permissions List Grid -->
       <div class="permissions-grid">
-        <div class="medic-card permission-card" *ngFor="let perm of permissions()" [class.revoked]="perm.isRevoked || !perm.isActive">
-          <div class="card-head">
-            <div class="provider-info">
-              <span class="material-symbols-outlined provider-icon">
-                {{ perm.doctorId ? 'stethoscope' : 'local_hospital' }}
+        @for (perm of permissions(); track perm) {
+          <div class="medic-card permission-card" [class.revoked]="perm.isRevoked || !perm.isActive">
+            <div class="card-head">
+              <div class="provider-info">
+                <span class="material-symbols-outlined provider-icon">
+                  {{ perm.doctorId ? 'stethoscope' : 'local_hospital' }}
+                </span>
+                <div>
+                  <h3 class="provider-name">{{ perm.doctorName || perm.clinicName || 'Healthcare Provider' }}</h3>
+                  <span class="provider-sub">{{ perm.clinicName ? perm.clinicName : (langService.isRtl() ? 'طبيب معالج' : 'Licensed Physician') }}</span>
+                </div>
+              </div>
+              <span class="medic-badge" [class.badge-success]="perm.isActive && !perm.isRevoked" [class.badge-danger]="perm.isRevoked || !perm.isActive">
+                {{ perm.isActive && !perm.isRevoked ? (langService.isRtl() ? 'ساري ومفعل' : 'Active') : (langService.isRtl() ? 'ملغي / منتهي' : 'Revoked') }}
               </span>
-              <div>
-                <h3 class="provider-name">{{ perm.doctorName || perm.clinicName || 'Healthcare Provider' }}</h3>
-                <span class="provider-sub">{{ perm.clinicName ? perm.clinicName : (langService.isRtl() ? 'طبيب معالج' : 'Licensed Physician') }}</span>
+            </div>
+            <div class="card-body">
+              <div class="permission-scope-badge">
+                <span class="material-symbols-outlined">shield</span>
+                <span>
+                  {{ perm.scope === 'ViewAndAddRecords'
+                  ? (langService.isRtl() ? 'صلاحية العرض والإضافة (View & Add)' : 'View & Add Records')
+                  : (langService.isRtl() ? 'صلاحية العرض فقط (View Only)' : 'View Only') }}
+                </span>
+              </div>
+              <div class="dates-meta">
+                <span><strong>{{ langService.isRtl() ? 'تاريخ المنح:' : 'Granted:' }}</strong> {{ perm.grantedAt | date:'mediumDate' }}</span>
+                @if (perm.expiresAt) {
+                  <span><strong>{{ langService.isRtl() ? 'ينتهي في:' : 'Expires:' }}</strong> {{ perm.expiresAt | date:'mediumDate' }}</span>
+                }
+                @if (!perm.expiresAt) {
+                  <span><strong>{{ langService.isRtl() ? 'المدة:' : 'Duration:' }}</strong> {{ langService.isRtl() ? 'دائم حتى الإلغاء' : 'Indefinite' }}</span>
+                }
               </div>
             </div>
-
-            <span class="medic-badge" [class.badge-success]="perm.isActive && !perm.isRevoked" [class.badge-danger]="perm.isRevoked || !perm.isActive">
-              {{ perm.isActive && !perm.isRevoked ? (langService.isRtl() ? 'ساري ومفعل' : 'Active') : (langService.isRtl() ? 'ملغي / منتهي' : 'Revoked') }}
-            </span>
+            @if (perm.isActive && !perm.isRevoked) {
+              <div class="card-actions">
+                <button class="medic-btn btn-danger btn-sm" (click)="revokePermission(perm.id)">
+                  <span class="material-symbols-outlined">block</span>
+                  <span>{{ langService.isRtl() ? 'إلغاء الصلاحية فوراً' : 'Revoke Access' }}</span>
+                </button>
+              </div>
+            }
           </div>
-
-          <div class="card-body">
-            <div class="permission-scope-badge">
-              <span class="material-symbols-outlined">shield</span>
-              <span>
-                {{ perm.scope === 'ViewAndAddRecords' 
-                    ? (langService.isRtl() ? 'صلاحية العرض والإضافة (View & Add)' : 'View & Add Records') 
-                    : (langService.isRtl() ? 'صلاحية العرض فقط (View Only)' : 'View Only') }}
-              </span>
-            </div>
-
-            <div class="dates-meta">
-              <span><strong>{{ langService.isRtl() ? 'تاريخ المنح:' : 'Granted:' }}</strong> {{ perm.grantedAt | date:'mediumDate' }}</span>
-              <span *ngIf="perm.expiresAt"><strong>{{ langService.isRtl() ? 'ينتهي في:' : 'Expires:' }}</strong> {{ perm.expiresAt | date:'mediumDate' }}</span>
-              <span *ngIf="!perm.expiresAt"><strong>{{ langService.isRtl() ? 'المدة:' : 'Duration:' }}</strong> {{ langService.isRtl() ? 'دائم حتى الإلغاء' : 'Indefinite' }}</span>
-            </div>
-          </div>
-
-          <div class="card-actions" *ngIf="perm.isActive && !perm.isRevoked">
-            <button class="medic-btn btn-danger btn-sm" (click)="revokePermission(perm.id)">
-              <span class="material-symbols-outlined">block</span>
-              <span>{{ langService.isRtl() ? 'إلغاء الصلاحية فوراً' : 'Revoke Access' }}</span>
-            </button>
-          </div>
-        </div>
+        }
       </div>
 
       <!-- Grant Permission Modal Drawer -->
-      <div class="modal-backdrop" *ngIf="showGrantModal">
-        <div class="medic-card modal-dialog">
-          <div class="modal-header">
-            <h3>{{ langService.isRtl() ? 'منح صلاحية وصول جديدة' : 'Authorize Healthcare Provider' }}</h3>
-            <button class="close-btn" (click)="closeGrantModal()">&times;</button>
+      @if (showGrantModal) {
+        <div class="modal-backdrop">
+          <div class="medic-card modal-dialog">
+            <div class="modal-header">
+              <h3>{{ langService.isRtl() ? 'منح صلاحية وصول جديدة' : 'Authorize Healthcare Provider' }}</h3>
+              <button class="close-btn" (click)="closeGrantModal()">&times;</button>
+            </div>
+            <form [formGroup]="grantForm" (ngSubmit)="onGrantSubmit()">
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'اسم الطبيب المعالج' : 'Doctor Name' }}</label>
+                <input class="medic-input" formControlName="doctorName" placeholder="e.g. Dr. Tarek Mostafa" />
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'العيادة / المستشفى' : 'Clinic / Hospital' }}</label>
+                <input class="medic-input" formControlName="clinicName" placeholder="e.g. Sehati Specialized Heart Clinic" />
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'مستوى الصلاحية' : 'Permission Scope' }} <span class="req">*</span></label>
+                <select class="medic-select" formControlName="scope">
+                  <option value="ViewOnly">{{ langService.isRtl() ? 'الاطلاع فقط على السجل الطبي (View Only)' : 'View Only (Read clinical chart)' }}</option>
+                  <option value="ViewAndAddRecords">{{ langService.isRtl() ? 'الاطلاع وإضافة كشوفات وروشتات (View & Add)' : 'View & Add Records (Consultation & Prescriptions)' }}</option>
+                </select>
+              </div>
+              <div class="medic-form-group">
+                <label class="medic-label">{{ langService.isRtl() ? 'مدة الصلاحية' : 'Access Expiration' }} <span class="req">*</span></label>
+                <select class="medic-select" formControlName="expiryDays">
+                  <option [value]="1">{{ langService.isRtl() ? '24 ساعة (كشف عاجل)' : '24 Hours (Urgent Visit)' }}</option>
+                  <option [value]="7">{{ langService.isRtl() ? 'أسبوع واحد (متابعة واستشارة)' : '1 Week (Standard Review)' }}</option>
+                  <option [value]="30">{{ langService.isRtl() ? 'شهر واحد' : '30 Days' }}</option>
+                  <option [value]="null">{{ langService.isRtl() ? 'دائم حتى الإلغاء اليدوي' : 'Indefinite (Until manually revoked)' }}</option>
+                </select>
+              </div>
+              <div class="modal-actions">
+                <button type="button" class="medic-btn btn-outline" (click)="closeGrantModal()">
+                  {{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}
+                </button>
+                <button type="submit" class="medic-btn btn-primary" [disabled]="grantForm.invalid">
+                  {{ langService.isRtl() ? 'تأكيد ومنح الصلاحية' : 'Authorize Access' }}
+                </button>
+              </div>
+            </form>
           </div>
-
-          <form [formGroup]="grantForm" (ngSubmit)="onGrantSubmit()">
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'اسم الطبيب المعالج' : 'Doctor Name' }}</label>
-              <input class="medic-input" formControlName="doctorName" placeholder="e.g. Dr. Tarek Mostafa" />
-            </div>
-
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'العيادة / المستشفى' : 'Clinic / Hospital' }}</label>
-              <input class="medic-input" formControlName="clinicName" placeholder="e.g. Sehati Specialized Heart Clinic" />
-            </div>
-
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'مستوى الصلاحية' : 'Permission Scope' }} <span class="req">*</span></label>
-              <select class="medic-select" formControlName="scope">
-                <option value="ViewOnly">{{ langService.isRtl() ? 'الاطلاع فقط على السجل الطبي (View Only)' : 'View Only (Read clinical chart)' }}</option>
-                <option value="ViewAndAddRecords">{{ langService.isRtl() ? 'الاطلاع وإضافة كشوفات وروشتات (View & Add)' : 'View & Add Records (Consultation & Prescriptions)' }}</option>
-              </select>
-            </div>
-
-            <div class="medic-form-group">
-              <label class="medic-label">{{ langService.isRtl() ? 'مدة الصلاحية' : 'Access Expiration' }} <span class="req">*</span></label>
-              <select class="medic-select" formControlName="expiryDays">
-                <option [value]="1">{{ langService.isRtl() ? '24 ساعة (كشف عاجل)' : '24 Hours (Urgent Visit)' }}</option>
-                <option [value]="7">{{ langService.isRtl() ? 'أسبوع واحد (متابعة واستشارة)' : '1 Week (Standard Review)' }}</option>
-                <option [value]="30">{{ langService.isRtl() ? 'شهر واحد' : '30 Days' }}</option>
-                <option [value]="null">{{ langService.isRtl() ? 'دائم حتى الإلغاء اليدوي' : 'Indefinite (Until manually revoked)' }}</option>
-              </select>
-            </div>
-
-            <div class="modal-actions">
-              <button type="button" class="medic-btn btn-outline" (click)="closeGrantModal()">
-                {{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}
-              </button>
-              <button type="submit" class="medic-btn btn-primary" [disabled]="grantForm.invalid">
-                {{ langService.isRtl() ? 'تأكيد ومنح الصلاحية' : 'Authorize Access' }}
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
+      }
     </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .consent-page {
       display: flex;

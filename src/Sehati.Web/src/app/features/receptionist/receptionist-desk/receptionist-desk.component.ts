@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -27,8 +27,8 @@ import { DoctorDto } from '../../../core/models/clinic.models';
           </div>
           <p class="page-subtitle">
             {{ langService.isRtl()
-              ? 'تسجيل المرضى الجدد، استخراج الكود الموحد، وتوزيع أرقام الطابور وغرف الكشف'
-              : 'Register new walk-in patients, issue unified IDs, and manage daily check-ins' }}
+            ? 'تسجيل المرضى الجدد، استخراج الكود الموحد، وتوزيع أرقام الطابور وغرف الكشف'
+            : 'Register new walk-in patients, issue unified IDs, and manage daily check-ins' }}
           </p>
         </div>
 
@@ -88,213 +88,210 @@ import { DoctorDto } from '../../../core/models/clinic.models';
               [(ngModel)]="searchQuery"
               (keyup.enter)="searchPatient()"
               [placeholder]="langService.isRtl() ? 'أدخل مثلاً: SH-2026-000101 أو 01012345678 أو الرقم القومي...' : 'Enter e.g. SH-2026-000101, 29805121601234, or name...'"
-            />
-            <button class="btn btn-secondary" (click)="searchPatient()">
-              <span>{{ langService.isRtl() ? 'بحث' : 'Search' }}</span>
+              />
+              <button class="btn btn-secondary" (click)="searchPatient()">
+                <span>{{ langService.isRtl() ? 'بحث' : 'Search' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Selected Patient Quick Card -->
+          @if (foundPatient) {
+            <div class="patient-found-box">
+              <div class="found-header">
+                <div class="avatar-col">
+                  <span class="material-symbols-outlined">account_circle</span>
+                </div>
+                <div class="info-col">
+                  <div class="found-name-row">
+                    <h3>{{ foundPatient.fullName }}</h3>
+                    <span class="uid-tag">{{ foundPatient.unifiedPatientId }}</span>
+                    <span class="blood-tag">{{ foundPatient.bloodType || 'A+' }}</span>
+                  </div>
+                  <div class="found-meta-row">
+                    <span>{{ langService.isRtl() ? 'الرقم القومي:' : 'National ID:' }} {{ foundPatient.nationalId }}</span>
+                    <span>•</span>
+                    <span>{{ langService.isRtl() ? 'الهاتف:' : 'Phone:' }} {{ foundPatient.phoneNumber }}</span>
+                    <span>•</span>
+                    <span>{{ langService.isRtl() ? 'تاريخ الميلاد:' : 'DOB:' }} {{ foundPatient.dateOfBirth }}</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Quick Check-in Controller -->
+              <div class="checkin-controller">
+                <div class="ctrl-field">
+                  <label>{{ langService.isRtl() ? 'اختر الطبيب المعالج:' : 'Assign to Doctor:' }}</label>
+                  <select [(ngModel)]="assignedDoctorId">
+                    @for (doc of doctorsList; track doc) {
+                      <option [value]="doc.id">
+                        {{ doc.fullName }} ({{ doc.specialty }})
+                      </option>
+                    }
+                  </select>
+                </div>
+                <button class="btn btn-primary checkin-btn" (click)="checkInPatient()">
+                  <span class="material-symbols-outlined">how_to_reg</span>
+                  <span>{{ langService.isRtl() ? 'تسجيل دخول وتخصيص رقم طابور' : 'Check-In & Assign Queue Token' }}</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Today's Queue Management Table -->
+        <div class="queue-table-card">
+          <div class="table-card-header">
+            <div class="title-col">
+              <span class="material-symbols-outlined">reorder</span>
+              <h3>{{ langService.isRtl() ? 'طابور المرضى الحالي بالعيادة' : "Live Clinic Waiting Queue" }}</h3>
+            </div>
+            <button class="btn btn-secondary btn-sm" (click)="loadQueue()">
+              <span class="material-symbols-outlined">sync</span>
+              <span>{{ langService.isRtl() ? 'تحديث' : 'Refresh' }}</span>
             </button>
+          </div>
+
+          <div class="table-container">
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  <th>{{ langService.isRtl() ? 'رقم الكشف' : 'Queue #' }}</th>
+                  <th>{{ langService.isRtl() ? 'اسم المريض' : 'Patient Name' }}</th>
+                  <th>{{ langService.isRtl() ? 'الكود الموحد' : 'Unified ID' }}</th>
+                  <th>{{ langService.isRtl() ? 'الطبيب المعالج' : 'Doctor' }}</th>
+                  <th>{{ langService.isRtl() ? 'وقت الدخول' : 'Time' }}</th>
+                  <th>{{ langService.isRtl() ? 'الحالة' : 'Status' }}</th>
+                  <th class="actions-header">{{ langService.isRtl() ? 'إجراءات' : 'Actions' }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of todayQueue(); track item; let idx = $index) {
+                  <tr>
+                    <td>
+                      <span class="queue-token-pill">#{{ item.queueNumber || (idx + 1) }}</span>
+                    </td>
+                    <td class="font-bold">{{ item.patientName }}</td>
+                    <td>
+                      <span class="uid-code">{{ item.unifiedPatientId }}</span>
+                    </td>
+                    <td>{{ item.doctorName }}</td>
+                    <td>{{ item.appointmentTime }}</td>
+                    <td>
+                      <span class="status-badge" [ngClass]="item.status.toLowerCase()">
+                        {{ item.status }}
+                      </span>
+                    </td>
+                    <td class="actions-cell">
+                      <button
+                        class="icon-action-btn"
+                        [title]="langService.isRtl() ? 'استدعاء المريض' : 'Call Patient'"
+                        (click)="callPatient(item)"
+                        >
+                        <span class="material-symbols-outlined">campaign</span>
+                      </button>
+                      <button
+                        class="icon-action-btn complete"
+                        [title]="langService.isRtl() ? 'تحديد كمكتمل' : 'Mark Completed'"
+                        (click)="completePatient(item)"
+                        >
+                        <span class="material-symbols-outlined">check_circle</span>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <!-- Selected Patient Quick Card -->
-        <div class="patient-found-box" *ngIf="foundPatient">
-          <div class="found-header">
-            <div class="avatar-col">
-              <span class="material-symbols-outlined">account_circle</span>
-            </div>
-            <div class="info-col">
-              <div class="found-name-row">
-                <h3>{{ foundPatient.fullName }}</h3>
-                <span class="uid-tag">{{ foundPatient.unifiedPatientId }}</span>
-                <span class="blood-tag">{{ foundPatient.bloodType || 'A+' }}</span>
+        <!-- Quick Register Modal -->
+        @if (showRegisterModal) {
+          <div class="modal-backdrop" (click)="showRegisterModal = false">
+            <div class="modal-dialog" (click)="$event.stopPropagation()">
+              <div class="modal-header">
+                <div class="modal-title-with-icon">
+                  <span class="material-symbols-outlined">badge</span>
+                  <h3>{{ langService.isRtl() ? 'تسجيل مريض جديد وإصدار كود صحتي الموحد' : 'New Patient Registration (Unified Health ID)' }}</h3>
+                </div>
+                <button class="close-btn" (click)="showRegisterModal = false">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
               </div>
-              <div class="found-meta-row">
-                <span>{{ langService.isRtl() ? 'الرقم القومي:' : 'National ID:' }} {{ foundPatient.nationalId }}</span>
-                <span>•</span>
-                <span>{{ langService.isRtl() ? 'الهاتف:' : 'Phone:' }} {{ foundPatient.phoneNumber }}</span>
-                <span>•</span>
-                <span>{{ langService.isRtl() ? 'تاريخ الميلاد:' : 'DOB:' }} {{ foundPatient.dateOfBirth }}</span>
+              <div class="modal-body">
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="required">{{ langService.isRtl() ? 'الاسم رباعي' : 'Full Name' }}</label>
+                    <input type="text" class="form-control" [(ngModel)]="newReg.fullName" placeholder="Ahmed Mahmoud Hassan" />
+                  </div>
+                  <div class="form-group">
+                    <label class="required">{{ langService.isRtl() ? 'الرقم القومي (14 رقم)' : 'National ID (14 digits)' }}</label>
+                    <input type="text" class="form-control" maxlength="14" [(ngModel)]="newReg.nationalId" placeholder="29805121601234" />
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="required">{{ langService.isRtl() ? 'رقم الهاتف المحمول' : 'Phone Number' }}</label>
+                    <input type="tel" class="form-control" [(ngModel)]="newReg.phoneNumber" placeholder="01012345678" />
+                  </div>
+                  <div class="form-group">
+                    <label>{{ langService.isRtl() ? 'البريد الإلكتروني (اختياري)' : 'Email Address' }}</label>
+                    <input type="email" class="form-control" [(ngModel)]="newReg.email" placeholder="patient@example.com" />
+                  </div>
+                </div>
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label class="required">{{ langService.isRtl() ? 'تاريخ الميلاد' : 'Date of Birth' }}</label>
+                    <input type="date" class="form-control" [(ngModel)]="newReg.dateOfBirth" />
+                  </div>
+                  <div class="form-group">
+                    <label class="required">{{ langService.isRtl() ? 'النوع' : 'Gender' }}</label>
+                    <select class="form-control" [(ngModel)]="newReg.gender">
+                      <option [value]="1">{{ langService.isRtl() ? 'ذكر' : 'Male' }}</option>
+                      <option [value]="2">{{ langService.isRtl() ? 'أنثى' : 'Female' }}</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>{{ langService.isRtl() ? 'فصيلة الدم' : 'Blood Type' }}</label>
+                    <select class="form-control" [(ngModel)]="newReg.bloodType">
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label>{{ langService.isRtl() ? 'اسم جهة اتصال الطوارئ' : 'Emergency Contact Name' }}</label>
+                    <input type="text" class="form-control" [(ngModel)]="newReg.emergencyContactName" placeholder="Mona Hassan" />
+                  </div>
+                  <div class="form-group">
+                    <label>{{ langService.isRtl() ? 'هاتف جهة اتصال الطوارئ' : 'Emergency Contact Phone' }}</label>
+                    <input type="tel" class="form-control" [(ngModel)]="newReg.emergencyContactPhone" placeholder="01098765432" />
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="showRegisterModal = false">
+                  <span>{{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}</span>
+                </button>
+                <button class="btn btn-primary" (click)="submitRegister()" [disabled]="isSaving()">
+                  <span class="material-symbols-outlined">badge</span>
+                  <span>{{ isSaving()
+                    ? (langService.isRtl() ? 'جاري الإصدار...' : 'Issuing Unified ID...')
+                  : (langService.isRtl() ? 'إصدار الكود الطبي والتسجيل' : 'Generate ID & Save') }}</span>
+                </button>
               </div>
             </div>
           </div>
-
-          <!-- Quick Check-in Controller -->
-          <div class="checkin-controller">
-            <div class="ctrl-field">
-              <label>{{ langService.isRtl() ? 'اختر الطبيب المعالج:' : 'Assign to Doctor:' }}</label>
-              <select [(ngModel)]="assignedDoctorId">
-                <option *ngFor="let doc of doctorsList" [value]="doc.id">
-                  {{ doc.fullName }} ({{ doc.specialty }})
-                </option>
-              </select>
-            </div>
-
-            <button class="btn btn-primary checkin-btn" (click)="checkInPatient()">
-              <span class="material-symbols-outlined">how_to_reg</span>
-              <span>{{ langService.isRtl() ? 'تسجيل دخول وتخصيص رقم طابور' : 'Check-In & Assign Queue Token' }}</span>
-            </button>
-          </div>
-        </div>
+        }
       </div>
-
-      <!-- Today's Queue Management Table -->
-      <div class="queue-table-card">
-        <div class="table-card-header">
-          <div class="title-col">
-            <span class="material-symbols-outlined">reorder</span>
-            <h3>{{ langService.isRtl() ? 'طابور المرضى الحالي بالعيادة' : "Live Clinic Waiting Queue" }}</h3>
-          </div>
-          <button class="btn btn-secondary btn-sm" (click)="loadQueue()">
-            <span class="material-symbols-outlined">sync</span>
-            <span>{{ langService.isRtl() ? 'تحديث' : 'Refresh' }}</span>
-          </button>
-        </div>
-
-        <div class="table-container">
-          <table class="styled-table">
-            <thead>
-              <tr>
-                <th>{{ langService.isRtl() ? 'رقم الكشف' : 'Queue #' }}</th>
-                <th>{{ langService.isRtl() ? 'اسم المريض' : 'Patient Name' }}</th>
-                <th>{{ langService.isRtl() ? 'الكود الموحد' : 'Unified ID' }}</th>
-                <th>{{ langService.isRtl() ? 'الطبيب المعالج' : 'Doctor' }}</th>
-                <th>{{ langService.isRtl() ? 'وقت الدخول' : 'Time' }}</th>
-                <th>{{ langService.isRtl() ? 'الحالة' : 'Status' }}</th>
-                <th class="actions-header">{{ langService.isRtl() ? 'إجراءات' : 'Actions' }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of todayQueue(); let idx = index">
-                <td>
-                  <span class="queue-token-pill">#{{ item.queueNumber || (idx + 1) }}</span>
-                </td>
-                <td class="font-bold">{{ item.patientName }}</td>
-                <td>
-                  <span class="uid-code">{{ item.unifiedPatientId }}</span>
-                </td>
-                <td>{{ item.doctorName }}</td>
-                <td>{{ item.appointmentTime }}</td>
-                <td>
-                  <span class="status-badge" [ngClass]="item.status.toLowerCase()">
-                    {{ item.status }}
-                  </span>
-                </td>
-                <td class="actions-cell">
-                  <button
-                    class="icon-action-btn"
-                    [title]="langService.isRtl() ? 'استدعاء المريض' : 'Call Patient'"
-                    (click)="callPatient(item)"
-                  >
-                    <span class="material-symbols-outlined">campaign</span>
-                  </button>
-                  <button
-                    class="icon-action-btn complete"
-                    [title]="langService.isRtl() ? 'تحديد كمكتمل' : 'Mark Completed'"
-                    (click)="completePatient(item)"
-                  >
-                    <span class="material-symbols-outlined">check_circle</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Quick Register Modal -->
-      <div class="modal-backdrop" *ngIf="showRegisterModal" (click)="showRegisterModal = false">
-        <div class="modal-dialog" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <div class="modal-title-with-icon">
-              <span class="material-symbols-outlined">badge</span>
-              <h3>{{ langService.isRtl() ? 'تسجيل مريض جديد وإصدار كود صحتي الموحد' : 'New Patient Registration (Unified Health ID)' }}</h3>
-            </div>
-            <button class="close-btn" (click)="showRegisterModal = false">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
-          <div class="modal-body">
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label class="required">{{ langService.isRtl() ? 'الاسم رباعي' : 'Full Name' }}</label>
-                <input type="text" class="form-control" [(ngModel)]="newReg.fullName" placeholder="Ahmed Mahmoud Hassan" />
-              </div>
-
-              <div class="form-group">
-                <label class="required">{{ langService.isRtl() ? 'الرقم القومي (14 رقم)' : 'National ID (14 digits)' }}</label>
-                <input type="text" class="form-control" maxlength="14" [(ngModel)]="newReg.nationalId" placeholder="29805121601234" />
-              </div>
-            </div>
-
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label class="required">{{ langService.isRtl() ? 'رقم الهاتف المحمول' : 'Phone Number' }}</label>
-                <input type="tel" class="form-control" [(ngModel)]="newReg.phoneNumber" placeholder="01012345678" />
-              </div>
-
-              <div class="form-group">
-                <label>{{ langService.isRtl() ? 'البريد الإلكتروني (اختياري)' : 'Email Address' }}</label>
-                <input type="email" class="form-control" [(ngModel)]="newReg.email" placeholder="patient@example.com" />
-              </div>
-            </div>
-
-            <div class="form-grid-3">
-              <div class="form-group">
-                <label class="required">{{ langService.isRtl() ? 'تاريخ الميلاد' : 'Date of Birth' }}</label>
-                <input type="date" class="form-control" [(ngModel)]="newReg.dateOfBirth" />
-              </div>
-
-              <div class="form-group">
-                <label class="required">{{ langService.isRtl() ? 'النوع' : 'Gender' }}</label>
-                <select class="form-control" [(ngModel)]="newReg.gender">
-                  <option [value]="1">{{ langService.isRtl() ? 'ذكر' : 'Male' }}</option>
-                  <option [value]="2">{{ langService.isRtl() ? 'أنثى' : 'Female' }}</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label>{{ langService.isRtl() ? 'فصيلة الدم' : 'Blood Type' }}</label>
-                <select class="form-control" [(ngModel)]="newReg.bloodType">
-                  <option value="A+">A+</option>
-                  <option value="A-">A-</option>
-                  <option value="B+">B+</option>
-                  <option value="B-">B-</option>
-                  <option value="AB+">AB+</option>
-                  <option value="AB-">AB-</option>
-                  <option value="O+">O+</option>
-                  <option value="O-">O-</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-grid-2">
-              <div class="form-group">
-                <label>{{ langService.isRtl() ? 'اسم جهة اتصال الطوارئ' : 'Emergency Contact Name' }}</label>
-                <input type="text" class="form-control" [(ngModel)]="newReg.emergencyContactName" placeholder="Mona Hassan" />
-              </div>
-
-              <div class="form-group">
-                <label>{{ langService.isRtl() ? 'هاتف جهة اتصال الطوارئ' : 'Emergency Contact Phone' }}</label>
-                <input type="tel" class="form-control" [(ngModel)]="newReg.emergencyContactPhone" placeholder="01098765432" />
-              </div>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="showRegisterModal = false">
-              <span>{{ langService.isRtl() ? 'إلغاء' : 'Cancel' }}</span>
-            </button>
-            <button class="btn btn-primary" (click)="submitRegister()" [disabled]="isSaving()">
-              <span class="material-symbols-outlined">badge</span>
-              <span>{{ isSaving() 
-                ? (langService.isRtl() ? 'جاري الإصدار...' : 'Issuing Unified ID...') 
-                : (langService.isRtl() ? 'إصدار الكود الطبي والتسجيل' : 'Generate ID & Save') }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .desk-page {
       display: flex;

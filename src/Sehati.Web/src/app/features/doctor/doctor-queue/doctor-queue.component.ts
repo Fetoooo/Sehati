@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -34,9 +34,9 @@ interface QueueStats {
             </span>
           </div>
           <p class="page-subtitle">
-            {{ langService.isRtl() 
-              ? 'إدارة طابور الانتظار، استدعاء المرضى، وبدء الكشف الطبي وتوثيق الروشتات' 
-              : 'Manage patient waiting queue, call patients to examination room, and launch clinical encounters' }}
+            {{ langService.isRtl()
+            ? 'إدارة طابور الانتظار، استدعاء المرضى، وبدء الكشف الطبي وتوثيق الروشتات'
+            : 'Manage patient waiting queue, call patients to examination room, and launch clinical encounters' }}
           </p>
         </div>
 
@@ -104,137 +104,140 @@ interface QueueStats {
             [(ngModel)]="searchQuery"
             [placeholder]="langService.isRtl() ? 'بحث برقم الطابور، اسم المريض، أو الكود الموحد...' : 'Search by queue #, patient name, or Unified ID...'"
             class="search-input"
-          />
-          <button *ngIf="searchQuery" class="clear-btn" (click)="searchQuery = ''">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        <div class="filter-tabs">
-          <button
-            class="tab-btn"
-            [class.active]="activeTab === 'all'"
-            (click)="activeTab = 'all'"
-          >
-            {{ langService.isRtl() ? 'الكل' : 'All' }} ({{ queueList().length }})
-          </button>
-          <button
-            class="tab-btn"
-            [class.active]="activeTab === 'waiting'"
-            (click)="activeTab = 'waiting'"
-          >
-            {{ langService.isRtl() ? 'في الانتظار' : 'Waiting' }} ({{ stats().waiting }})
-          </button>
-          <button
-            class="tab-btn"
-            [class.active]="activeTab === 'inProgress'"
-            (click)="activeTab = 'inProgress'"
-          >
-            {{ langService.isRtl() ? 'قيد الكشف' : 'In Consultation' }} ({{ stats().inProgress }})
-          </button>
-          <button
-            class="tab-btn"
-            [class.active]="activeTab === 'completed'"
-            (click)="activeTab = 'completed'"
-          >
-            {{ langService.isRtl() ? 'المكتملة' : 'Completed' }} ({{ stats().completed }})
-          </button>
-        </div>
-      </div>
-
-      <!-- Queue Cards List -->
-      <div class="queue-list" *ngIf="filteredQueue().length > 0; else emptyState">
-        <div
-          *ngFor="let item of filteredQueue()"
-          class="queue-card"
-          [class.active-consult]="item.status === 'Confirmed'"
-          [class.done]="item.status === 'Completed'"
-        >
-          <!-- Queue Number Token -->
-          <div class="queue-number-badge">
-            <span class="token-prefix">{{ langService.isRtl() ? 'رقم' : 'No.' }}</span>
-            <span class="token-number">{{ item.queueNumber || '—' }}</span>
+            />
+            @if (searchQuery) {
+              <button class="clear-btn" (click)="searchQuery = ''">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            }
           </div>
 
-          <!-- Patient Information Summary -->
-          <div class="patient-main-info">
-            <div class="name-row">
-              <h3 class="patient-name">{{ item.patientName }}</h3>
-              <span class="unified-badge">
-                <span class="material-symbols-outlined">badge</span>
-                {{ item.unifiedPatientId }}
-              </span>
-            </div>
+          <div class="filter-tabs">
+            <button
+              class="tab-btn"
+              [class.active]="activeTab === 'all'"
+              (click)="activeTab = 'all'"
+              >
+              {{ langService.isRtl() ? 'الكل' : 'All' }} ({{ queueList().length }})
+            </button>
+            <button
+              class="tab-btn"
+              [class.active]="activeTab === 'waiting'"
+              (click)="activeTab = 'waiting'"
+              >
+              {{ langService.isRtl() ? 'في الانتظار' : 'Waiting' }} ({{ stats().waiting }})
+            </button>
+            <button
+              class="tab-btn"
+              [class.active]="activeTab === 'inProgress'"
+              (click)="activeTab = 'inProgress'"
+              >
+              {{ langService.isRtl() ? 'قيد الكشف' : 'In Consultation' }} ({{ stats().inProgress }})
+            </button>
+            <button
+              class="tab-btn"
+              [class.active]="activeTab === 'completed'"
+              (click)="activeTab = 'completed'"
+              >
+              {{ langService.isRtl() ? 'المكتملة' : 'Completed' }} ({{ stats().completed }})
+            </button>
+          </div>
+        </div>
 
-            <div class="meta-row">
-              <div class="meta-item">
-                <span class="material-symbols-outlined">schedule</span>
-                <span>{{ item.appointmentTime }}</span>
+        <!-- Queue Cards List -->
+        @if (filteredQueue().length > 0) {
+          <div class="queue-list">
+            @for (item of filteredQueue(); track item) {
+              <div
+                class="queue-card"
+                [class.active-consult]="item.status === 'Confirmed'"
+                [class.done]="item.status === 'Completed'"
+                >
+                <!-- Queue Number Token -->
+                <div class="queue-number-badge">
+                  <span class="token-prefix">{{ langService.isRtl() ? 'رقم' : 'No.' }}</span>
+                  <span class="token-number">{{ item.queueNumber || '—' }}</span>
+                </div>
+                <!-- Patient Information Summary -->
+                <div class="patient-main-info">
+                  <div class="name-row">
+                    <h3 class="patient-name">{{ item.patientName }}</h3>
+                    <span class="unified-badge">
+                      <span class="material-symbols-outlined">badge</span>
+                      {{ item.unifiedPatientId }}
+                    </span>
+                  </div>
+                  <div class="meta-row">
+                    <div class="meta-item">
+                      <span class="material-symbols-outlined">schedule</span>
+                      <span>{{ item.appointmentTime }}</span>
+                    </div>
+                    @if (item.doctorName) {
+                      <div class="meta-item">
+                        <span class="material-symbols-outlined">medical_services</span>
+                        <span>{{ item.doctorName }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+                <!-- Status Indicator Pill -->
+                <div class="status-col">
+                  <span class="status-pill" [ngClass]="getStatusClass(item.status)">
+                    <span class="status-dot"></span>
+                    {{ getStatusLabel(item.status) }}
+                  </span>
+                </div>
+                <!-- Action Controls -->
+                <div class="actions-col">
+                  <!-- Call Patient Action -->
+                  @if (item.status === 'Pending' || item.status === 'Confirmed') {
+                    <button
+                      class="action-btn call-btn"
+                      (click)="callPatient(item)"
+                      [title]="langService.isRtl() ? 'استدعاء المريض للدخول' : 'Call Patient to Room'"
+                      >
+                      <span class="material-symbols-outlined">notifications_active</span>
+                      <span>{{ langService.isRtl() ? 'استدعاء' : 'Call' }}</span>
+                    </button>
+                  }
+                  <!-- Start / Resume Encounter Action -->
+                  <button
+                    class="action-btn encounter-btn"
+                    (click)="startEncounter(item)"
+                    >
+                    <span class="material-symbols-outlined">stethoscope</span>
+                    <span>{{ langService.isRtl() ? 'بدء الكشف والروشتة' : 'Open Encounter' }}</span>
+                  </button>
+                  <!-- Mark Complete Action -->
+                  @if (item.status !== 'Completed') {
+                    <button
+                      class="action-btn complete-btn"
+                      (click)="markCompleted(item)"
+                      [title]="langService.isRtl() ? 'تحديد كمكتمل' : 'Mark as Completed'"
+                      >
+                      <span class="material-symbols-outlined">check</span>
+                    </button>
+                  }
+                </div>
               </div>
-              <div class="meta-item" *ngIf="item.doctorName">
-                <span class="material-symbols-outlined">medical_services</span>
-                <span>{{ item.doctorName }}</span>
-              </div>
-            </div>
+            }
           </div>
-
-          <!-- Status Indicator Pill -->
-          <div class="status-col">
-            <span class="status-pill" [ngClass]="getStatusClass(item.status)">
-              <span class="status-dot"></span>
-              {{ getStatusLabel(item.status) }}
-            </span>
-          </div>
-
-          <!-- Action Controls -->
-          <div class="actions-col">
-            <!-- Call Patient Action -->
-            <button
-              *ngIf="item.status === 'Pending' || item.status === 'Confirmed'"
-              class="action-btn call-btn"
-              (click)="callPatient(item)"
-              [title]="langService.isRtl() ? 'استدعاء المريض للدخول' : 'Call Patient to Room'"
-            >
-              <span class="material-symbols-outlined">notifications_active</span>
-              <span>{{ langService.isRtl() ? 'استدعاء' : 'Call' }}</span>
-            </button>
-
-            <!-- Start / Resume Encounter Action -->
-            <button
-              class="action-btn encounter-btn"
-              (click)="startEncounter(item)"
-            >
-              <span class="material-symbols-outlined">stethoscope</span>
-              <span>{{ langService.isRtl() ? 'بدء الكشف والروشتة' : 'Open Encounter' }}</span>
-            </button>
-
-            <!-- Mark Complete Action -->
-            <button
-              *ngIf="item.status !== 'Completed'"
-              class="action-btn complete-btn"
-              (click)="markCompleted(item)"
-              [title]="langService.isRtl() ? 'تحديد كمكتمل' : 'Mark as Completed'"
-            >
-              <span class="material-symbols-outlined">check</span>
+        } @else {
+          <div class="empty-card">
+            <span class="material-symbols-outlined empty-icon">group_off</span>
+            <h3>{{ langService.isRtl() ? 'لا يوجد مرضى في هذه القائمة' : 'No patients found in this queue' }}</h3>
+            <p>{{ langService.isRtl() ? 'سيظهر المرضى المسجلون والمحجوزون لهذا اليوم تلقائياً هنا.' : 'Patients booked or checked in for today will appear here in real-time.' }}</p>
+            <button class="btn btn-secondary" (click)="loadQueue()">
+              <span class="material-symbols-outlined">refresh</span>
+              <span>{{ langService.isRtl() ? 'إعادة التحميل' : 'Reload' }}</span>
             </button>
           </div>
-        </div>
+        }
+
+        <!-- Empty State -->
       </div>
-
-      <!-- Empty State -->
-      <ng-template #emptyState>
-        <div class="empty-card">
-          <span class="material-symbols-outlined empty-icon">group_off</span>
-          <h3>{{ langService.isRtl() ? 'لا يوجد مرضى في هذه القائمة' : 'No patients found in this queue' }}</h3>
-          <p>{{ langService.isRtl() ? 'سيظهر المرضى المسجلون والمحجوزون لهذا اليوم تلقائياً هنا.' : 'Patients booked or checked in for today will appear here in real-time.' }}</p>
-          <button class="btn btn-secondary" (click)="loadQueue()">
-            <span class="material-symbols-outlined">refresh</span>
-            <span>{{ langService.isRtl() ? 'إعادة التحميل' : 'Reload' }}</span>
-          </button>
-        </div>
-      </ng-template>
-    </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .queue-page {
       display: flex;

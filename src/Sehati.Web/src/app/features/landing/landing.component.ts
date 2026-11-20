@@ -1,5 +1,5 @@
-import { Component, inject, signal, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, OnInit, OnDestroy, HostListener, ChangeDetectionStrategy } from '@angular/core';
+
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
@@ -32,7 +32,7 @@ interface PersonaRole {
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   template: `
     <div class="landing-page" [class.rtl]="langService.isRtl()">
       <!-- Background Ambient Lighting -->
@@ -65,7 +65,7 @@ interface PersonaRole {
                 class="nav-dropdown-trigger"
                 (click)="toggleExploreMenu($event)"
                 [attr.aria-expanded]="isExploreMenuOpen"
-              >
+                >
                 <span>{{ langService.isRtl() ? 'استكشف' : 'Explore' }}</span>
                 <span class="material-symbols-outlined dropdown-chevron">expand_more</span>
               </button>
@@ -124,7 +124,7 @@ interface PersonaRole {
               class="icon-action-btn"
               (click)="themeService.toggleTheme()"
               [title]="themeService.isDark() ? (langService.isRtl() ? 'الوضع النهاري' : 'Light Mode') : (langService.isRtl() ? 'الوضع الليلي' : 'Dark Mode')"
-            >
+              >
               <span class="material-symbols-outlined">
                 {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
               </span>
@@ -135,13 +135,13 @@ interface PersonaRole {
               type="button"
               class="lang-action-btn"
               (click)="langService.toggleLanguage()"
-            >
+              >
               <span class="material-symbols-outlined">translate</span>
               <span>{{ langService.currentLang() === 'en' ? 'العربية' : 'English' }}</span>
             </button>
 
             <!-- Auth Buttons -->
-            <ng-container *ngIf="!authService.isAuthenticated(); else authUserActions">
+            @if (!authService.isAuthenticated()) {
               <a routerLink="/auth/login" class="login-text-btn">
                 {{ langService.isRtl() ? 'تسجيل الدخول' : 'Sign In' }}
               </a>
@@ -149,62 +149,63 @@ interface PersonaRole {
                 <span>{{ langService.isRtl() ? 'أنشئ حسابك' : 'Get Started' }}</span>
                 <span class="material-symbols-outlined flip-rtl">arrow_forward</span>
               </a>
-            </ng-container>
-
-            <ng-template #authUserActions>
+            } @else {
               <a routerLink="/dashboard" class="join-pill-btn dashboard-pill">
                 <span class="material-symbols-outlined">space_dashboard</span>
                 <span>{{ langService.isRtl() ? 'لوحة التحكم' : 'Dashboard' }}</span>
               </a>
-            </ng-template>
+            }
+
 
             <!-- Mobile Hamburger Toggle -->
             <button
               type="button"
               class="mobile-toggle-btn"
               (click)="isMobileMenuOpen = !isMobileMenuOpen"
-            >
+              >
               <span class="material-symbols-outlined">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
             </button>
           </div>
         </div>
 
         <!-- Mobile Drawer -->
-        <div class="mobile-drawer" *ngIf="isMobileMenuOpen">
-          <a href="#hero" class="drawer-item" (click)="isMobileMenuOpen = false">
-            {{ langService.isRtl() ? 'نظرة عامة' : 'Overview' }}
-          </a>
-          <a href="#capabilities" class="drawer-item" (click)="isMobileMenuOpen = false">
-            {{ langService.isRtl() ? 'المميزات الرقمية' : 'Capabilities' }}
-          </a>
-          <a href="#personas" class="drawer-item" (click)="isMobileMenuOpen = false">
-            {{ langService.isRtl() ? 'الفئات والخدمات' : 'Healthcare Roles' }}
-          </a>
-          <a href="#how-it-works" class="drawer-item" (click)="isMobileMenuOpen = false">
-            {{ langService.isRtl() ? 'كيف تعمل المنظومة' : 'How It Works' }}
-          </a>
-          <a href="#faq" class="drawer-item" (click)="isMobileMenuOpen = false">
-            {{ langService.isRtl() ? 'الأسئلة الشائعة' : 'FAQ' }}
-          </a>
-          <a routerLink="/preview" class="drawer-item" (click)="isMobileMenuOpen = false">
-            {{ langService.isRtl() ? 'استعراض الهيكلية والأنظمة' : 'Architecture Showcase' }}
-          </a>
-          <div class="drawer-buttons">
-            <ng-container *ngIf="!authService.isAuthenticated()">
-              <a routerLink="/auth/login" class="btn-drawer-outline" (click)="isMobileMenuOpen = false">
-                {{ langService.isRtl() ? 'تسجيل الدخول' : 'Sign In' }}
-              </a>
-              <a routerLink="/auth/register" class="btn-drawer-solid" (click)="isMobileMenuOpen = false">
-                {{ langService.isRtl() ? 'إنشاء حساب جديد' : 'Get Started Free' }}
-              </a>
-            </ng-container>
-            <ng-container *ngIf="authService.isAuthenticated()">
-              <a routerLink="/dashboard" class="btn-drawer-solid" (click)="isMobileMenuOpen = false">
-                {{ langService.isRtl() ? 'الانتقال إلى لوحة التحكم' : 'Go to Dashboard' }}
-              </a>
-            </ng-container>
+        @if (isMobileMenuOpen) {
+          <div class="mobile-drawer">
+            <a href="#hero" class="drawer-item" (click)="isMobileMenuOpen = false">
+              {{ langService.isRtl() ? 'نظرة عامة' : 'Overview' }}
+            </a>
+            <a href="#capabilities" class="drawer-item" (click)="isMobileMenuOpen = false">
+              {{ langService.isRtl() ? 'المميزات الرقمية' : 'Capabilities' }}
+            </a>
+            <a href="#personas" class="drawer-item" (click)="isMobileMenuOpen = false">
+              {{ langService.isRtl() ? 'الفئات والخدمات' : 'Healthcare Roles' }}
+            </a>
+            <a href="#how-it-works" class="drawer-item" (click)="isMobileMenuOpen = false">
+              {{ langService.isRtl() ? 'كيف تعمل المنظومة' : 'How It Works' }}
+            </a>
+            <a href="#faq" class="drawer-item" (click)="isMobileMenuOpen = false">
+              {{ langService.isRtl() ? 'الأسئلة الشائعة' : 'FAQ' }}
+            </a>
+            <a routerLink="/preview" class="drawer-item" (click)="isMobileMenuOpen = false">
+              {{ langService.isRtl() ? 'استعراض الهيكلية والأنظمة' : 'Architecture Showcase' }}
+            </a>
+            <div class="drawer-buttons">
+              @if (!authService.isAuthenticated()) {
+                <a routerLink="/auth/login" class="btn-drawer-outline" (click)="isMobileMenuOpen = false">
+                  {{ langService.isRtl() ? 'تسجيل الدخول' : 'Sign In' }}
+                </a>
+                <a routerLink="/auth/register" class="btn-drawer-solid" (click)="isMobileMenuOpen = false">
+                  {{ langService.isRtl() ? 'إنشاء حساب جديد' : 'Get Started Free' }}
+                </a>
+              }
+              @if (authService.isAuthenticated()) {
+                <a routerLink="/dashboard" class="btn-drawer-solid" (click)="isMobileMenuOpen = false">
+                  {{ langService.isRtl() ? 'الانتقال إلى لوحة التحكم' : 'Go to Dashboard' }}
+                </a>
+              }
+            </div>
           </div>
-        </div>
+        }
       </header>
 
       <!-- ================================================================= -->
@@ -231,8 +232,8 @@ interface PersonaRole {
             <!-- Subtitle Description -->
             <p class="hero-subtext">
               {{ langService.isRtl()
-                ? 'منصة صحتي تنهي تشتت السجلات الطبية الورقية، وتربط بين المستشفيات والعيادات والمعامل وطوارئ الإسعاف بكود صحي موحد، تحت تحكمك الكامل وبأعلى معايير الخصوصية.'
-                : 'Sehati terminates fragmented paper records by unifying hospitals, clinics, pathology labs, and emergency dispatch under one lifelong digital health passport with patient-governed privacy.' }}
+              ? 'منصة صحتي تنهي تشتت السجلات الطبية الورقية، وتربط بين المستشفيات والعيادات والمعامل وطوارئ الإسعاف بكود صحي موحد، تحت تحكمك الكامل وبأعلى معايير الخصوصية.'
+              : 'Sehati terminates fragmented paper records by unifying hospitals, clinics, pathology labs, and emergency dispatch under one lifelong digital health passport with patient-governed privacy.' }}
             </p>
 
             <!-- Dual CTAs -->
@@ -299,7 +300,7 @@ interface PersonaRole {
                   class="t-tab-btn"
                   [class.active]="activePassportTab === 0"
                   (click)="activePassportTab = 0"
-                >
+                  >
                   <span class="material-symbols-outlined">badge</span>
                   <span>{{ langService.isRtl() ? 'الجواز الطبي' : 'Passport' }}</span>
                 </button>
@@ -308,7 +309,7 @@ interface PersonaRole {
                   class="t-tab-btn"
                   [class.active]="activePassportTab === 1"
                   (click)="activePassportTab = 1"
-                >
+                  >
                   <span class="material-symbols-outlined text-red">emergency</span>
                   <span>{{ langService.isRtl() ? 'طوارئ QR' : 'ER QR' }}</span>
                 </button>
@@ -317,7 +318,7 @@ interface PersonaRole {
                   class="t-tab-btn"
                   [class.active]="activePassportTab === 2"
                   (click)="activePassportTab = 2"
-                >
+                  >
                   <span class="material-symbols-outlined text-teal">clinical_notes</span>
                   <span>{{ langService.isRtl() ? 'روشتة رقمية' : 'E-Rx' }}</span>
                 </button>
@@ -326,145 +327,147 @@ interface PersonaRole {
                   class="t-tab-btn"
                   [class.active]="activePassportTab === 3"
                   (click)="activePassportTab = 3"
-                >
+                  >
                   <span class="material-symbols-outlined text-purple">vital_signs</span>
                   <span>{{ langService.isRtl() ? 'المؤشرات' : 'Vitals' }}</span>
                 </button>
               </div>
 
               <!-- SCREEN 0: UNIFIED HEALTH PASSPORT -->
-              <div class="terminal-screen" *ngIf="activePassportTab === 0">
-                <div class="id-banner-block">
-                  <div class="id-code-wrap">
-                    <span class="id-label">{{ langService.isRtl() ? 'الكود الصحي الموحد' : 'UNIFIED HEALTH CODE' }}</span>
-                    <strong class="id-number font-mono">SH-2026-000101</strong>
+              @if (activePassportTab === 0) {
+                <div class="terminal-screen">
+                  <div class="id-banner-block">
+                    <div class="id-code-wrap">
+                      <span class="id-label">{{ langService.isRtl() ? 'الكود الصحي الموحد' : 'UNIFIED HEALTH CODE' }}</span>
+                      <strong class="id-number font-mono">SH-2026-000101</strong>
+                    </div>
+                    <span class="blood-group-badge">A+</span>
                   </div>
-                  <span class="blood-group-badge">A+</span>
+                  <div class="patient-profile-grid">
+                    <div class="p-field">
+                      <span class="f-lbl">{{ langService.isRtl() ? 'اسم المواطن' : 'CITIZEN NAME' }}</span>
+                      <strong class="f-val">Ahmed Mahmoud Hassan</strong>
+                    </div>
+                    <div class="p-field">
+                      <span class="f-lbl">{{ langService.isRtl() ? 'الرقم القومي' : 'NATIONAL ID' }}</span>
+                      <strong class="f-val font-mono">29805121601234</strong>
+                    </div>
+                    <div class="p-field">
+                      <span class="f-lbl">{{ langService.isRtl() ? 'تاريخ الميلاد' : 'DATE OF BIRTH' }}</span>
+                      <span class="f-val">12 Jun 1988</span>
+                    </div>
+                    <div class="p-field">
+                      <span class="f-lbl">{{ langService.isRtl() ? 'حالة السجل' : 'STATUS' }}</span>
+                      <span class="f-val verified-tag">
+                        <span class="material-symbols-outlined">verified</span>
+                        <span>ACTIVE & VERIFIED</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="terminal-footer-bar">
+                    <div class="encryption-badge">
+                      <span class="material-symbols-outlined">lock</span>
+                      <span>AES-256 ENCRYPTED</span>
+                    </div>
+                    <div class="consent-status-badge">
+                      <span class="material-symbols-outlined">verified_user</span>
+                      <span>CONSENT: ACTIVE</span>
+                    </div>
+                  </div>
                 </div>
-
-                <div class="patient-profile-grid">
-                  <div class="p-field">
-                    <span class="f-lbl">{{ langService.isRtl() ? 'اسم المواطن' : 'CITIZEN NAME' }}</span>
-                    <strong class="f-val">Ahmed Mahmoud Hassan</strong>
-                  </div>
-                  <div class="p-field">
-                    <span class="f-lbl">{{ langService.isRtl() ? 'الرقم القومي' : 'NATIONAL ID' }}</span>
-                    <strong class="f-val font-mono">29805121601234</strong>
-                  </div>
-                  <div class="p-field">
-                    <span class="f-lbl">{{ langService.isRtl() ? 'تاريخ الميلاد' : 'DATE OF BIRTH' }}</span>
-                    <span class="f-val">12 Jun 1988</span>
-                  </div>
-                  <div class="p-field">
-                    <span class="f-lbl">{{ langService.isRtl() ? 'حالة السجل' : 'STATUS' }}</span>
-                    <span class="f-val verified-tag">
-                      <span class="material-symbols-outlined">verified</span>
-                      <span>ACTIVE & VERIFIED</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div class="terminal-footer-bar">
-                  <div class="encryption-badge">
-                    <span class="material-symbols-outlined">lock</span>
-                    <span>AES-256 ENCRYPTED</span>
-                  </div>
-                  <div class="consent-status-badge">
-                    <span class="material-symbols-outlined">verified_user</span>
-                    <span>CONSENT: ACTIVE</span>
-                  </div>
-                </div>
-              </div>
+              }
 
               <!-- SCREEN 1: EMERGENCY RESCUE QR -->
-              <div class="terminal-screen" *ngIf="activePassportTab === 1">
-                <div class="er-rescue-banner">
-                  <span class="material-symbols-outlined er-alert-icon">e911_emergency</span>
-                  <div>
-                    <strong>{{ langService.isRtl() ? 'بطاقة الإنقاذ السريع لطواقم الإسعاف' : 'First Responder Triage Profile' }}</strong>
-                    <p>{{ langService.isRtl() ? 'متاح فوراً دون كلمة مرور لإنقاذ الحياة' : 'Immediate anonymous access during trauma & triage' }}</p>
+              @if (activePassportTab === 1) {
+                <div class="terminal-screen">
+                  <div class="er-rescue-banner">
+                    <span class="material-symbols-outlined er-alert-icon">e911_emergency</span>
+                    <div>
+                      <strong>{{ langService.isRtl() ? 'بطاقة الإنقاذ السريع لطواقم الإسعاف' : 'First Responder Triage Profile' }}</strong>
+                      <p>{{ langService.isRtl() ? 'متاح فوراً دون كلمة مرور لإنقاذ الحياة' : 'Immediate anonymous access during trauma & triage' }}</p>
+                    </div>
+                  </div>
+                  <div class="er-content-layout">
+                    <div class="qr-visual-box">
+                      <span class="material-symbols-outlined qr-big-icon">qr_code_2</span>
+                      <span class="qr-scan-label">{{ langService.isRtl() ? 'امسح للإسعاف' : 'SCAN TO RESCUE' }}</span>
+                    </div>
+                    <div class="er-critical-details">
+                      <div class="er-detail-item">
+                        <span class="lbl">{{ langService.isRtl() ? 'فصيلة الدم:' : 'Blood Group:' }}</span>
+                        <strong class="val blood-red">A+ Positive</strong>
+                      </div>
+                      <div class="er-detail-item allergy-alert">
+                        <span class="lbl">{{ langService.isRtl() ? 'حساسية دوائية حرجة:' : 'Severe Drug Allergy:' }}</span>
+                        <strong class="val">بنسلين (Penicillin)</strong>
+                      </div>
+                      <div class="er-detail-item">
+                        <span class="lbl">{{ langService.isRtl() ? 'طوارئ الأقارب (ICE):' : 'Emergency Contact:' }}</span>
+                        <strong class="val font-mono">0101-234-5678</strong>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <div class="er-content-layout">
-                  <div class="qr-visual-box">
-                    <span class="material-symbols-outlined qr-big-icon">qr_code_2</span>
-                    <span class="qr-scan-label">{{ langService.isRtl() ? 'امسح للإسعاف' : 'SCAN TO RESCUE' }}</span>
-                  </div>
-                  <div class="er-critical-details">
-                    <div class="er-detail-item">
-                      <span class="lbl">{{ langService.isRtl() ? 'فصيلة الدم:' : 'Blood Group:' }}</span>
-                      <strong class="val blood-red">A+ Positive</strong>
-                    </div>
-                    <div class="er-detail-item allergy-alert">
-                      <span class="lbl">{{ langService.isRtl() ? 'حساسية دوائية حرجة:' : 'Severe Drug Allergy:' }}</span>
-                      <strong class="val">بنسلين (Penicillin)</strong>
-                    </div>
-                    <div class="er-detail-item">
-                      <span class="lbl">{{ langService.isRtl() ? 'طوارئ الأقارب (ICE):' : 'Emergency Contact:' }}</span>
-                      <strong class="val font-mono">0101-234-5678</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              }
 
               <!-- SCREEN 2: DIGITAL PRESCRIPTION -->
-              <div class="terminal-screen" *ngIf="activePassportTab === 2">
-                <div class="rx-header-banner">
-                  <div>
-                    <span class="rx-doc-name">Dr. Sarah Samir Hassan</span>
-                    <span class="rx-doc-spec">{{ langService.isRtl() ? 'استشاري الباطنة والجهاز الهضمي' : 'Consultant Internal Medicine' }}</span>
+              @if (activePassportTab === 2) {
+                <div class="terminal-screen">
+                  <div class="rx-header-banner">
+                    <div>
+                      <span class="rx-doc-name">Dr. Sarah Samir Hassan</span>
+                      <span class="rx-doc-spec">{{ langService.isRtl() ? 'استشاري الباطنة والجهاز الهضمي' : 'Consultant Internal Medicine' }}</span>
+                    </div>
+                    <span class="rx-pill-tag">VERIFIED E-RX</span>
                   </div>
-                  <span class="rx-pill-tag">VERIFIED E-RX</span>
-                </div>
-
-                <div class="rx-medicines-list">
-                  <div class="rx-med-card">
-                    <div class="med-name">Augmentin 1g (Amoxicillin)</div>
-                    <div class="med-instructions">{{ langService.isRtl() ? 'قرص واحد كل 12 ساعة بعد الأكل لمدة 7 أيام' : '1 tablet every 12 hrs after meals (7 days)' }}</div>
+                  <div class="rx-medicines-list">
+                    <div class="rx-med-card">
+                      <div class="med-name">Augmentin 1g (Amoxicillin)</div>
+                      <div class="med-instructions">{{ langService.isRtl() ? 'قرص واحد كل 12 ساعة بعد الأكل لمدة 7 أيام' : '1 tablet every 12 hrs after meals (7 days)' }}</div>
+                    </div>
+                    <div class="rx-med-card">
+                      <div class="med-name">Panadol Extra 500mg</div>
+                      <div class="med-instructions">{{ langService.isRtl() ? 'قرص عند اللزوم لتخفيف الصداع' : '1 tablet as needed for headache' }}</div>
+                    </div>
                   </div>
-                  <div class="rx-med-card">
-                    <div class="med-name">Panadol Extra 500mg</div>
-                    <div class="med-instructions">{{ langService.isRtl() ? 'قرص عند اللزوم لتخفيف الصداع' : '1 tablet as needed for headache' }}</div>
+                  <div class="rx-signature-seal">
+                    <span class="material-symbols-outlined">draw</span>
+                    <span>{{ langService.isRtl() ? 'موقعة إلكترونياً بمعيار SHA-256 • صيدليات مصر المعتمدة' : 'SHA-256 Digitally Signed & Sealed' }}</span>
                   </div>
                 </div>
-
-                <div class="rx-signature-seal">
-                  <span class="material-symbols-outlined">draw</span>
-                  <span>{{ langService.isRtl() ? 'موقعة إلكترونياً بمعيار SHA-256 • صيدليات مصر المعتمدة' : 'SHA-256 Digitally Signed & Sealed' }}</span>
-                </div>
-              </div>
+              }
 
               <!-- SCREEN 3: LIVE VITALS -->
-              <div class="terminal-screen" *ngIf="activePassportTab === 3">
-                <div class="vitals-header-banner">
-                  <span class="vitals-pulse-dot"></span>
-                  <strong>{{ langService.isRtl() ? 'المؤشرات الحيوية المتزامنة لحظياً' : 'Live Synchronized Clinical Telemetry' }}</strong>
+              @if (activePassportTab === 3) {
+                <div class="terminal-screen">
+                  <div class="vitals-header-banner">
+                    <span class="vitals-pulse-dot"></span>
+                    <strong>{{ langService.isRtl() ? 'المؤشرات الحيوية المتزامنة لحظياً' : 'Live Synchronized Clinical Telemetry' }}</strong>
+                  </div>
+                  <div class="vitals-matrix-grid">
+                    <div class="vital-tile">
+                      <span class="material-symbols-outlined v-icon red">favorite</span>
+                      <span class="v-value">72 bpm</span>
+                      <span class="v-label">{{ langService.isRtl() ? 'نبض سليم' : 'Heart Rate' }}</span>
+                    </div>
+                    <div class="vital-tile">
+                      <span class="material-symbols-outlined v-icon teal">vital_signs</span>
+                      <span class="v-value">120/80</span>
+                      <span class="v-label">{{ langService.isRtl() ? 'ضغط الدم (mmHg)' : 'Blood Pressure' }}</span>
+                    </div>
+                    <div class="vital-tile">
+                      <span class="material-symbols-outlined v-icon amber">bloodtype</span>
+                      <span class="v-value">95 mg/dL</span>
+                      <span class="v-label">{{ langService.isRtl() ? 'سكر عشوائي' : 'Glucose' }}</span>
+                    </div>
+                    <div class="vital-tile">
+                      <span class="material-symbols-outlined v-icon purple">fitness_center</span>
+                      <span class="v-value">22.4</span>
+                      <span class="v-label">{{ langService.isRtl() ? 'كتلة الجسم (BMI)' : 'BMI (Normal)' }}</span>
+                    </div>
+                  </div>
                 </div>
-
-                <div class="vitals-matrix-grid">
-                  <div class="vital-tile">
-                    <span class="material-symbols-outlined v-icon red">favorite</span>
-                    <span class="v-value">72 bpm</span>
-                    <span class="v-label">{{ langService.isRtl() ? 'نبض سليم' : 'Heart Rate' }}</span>
-                  </div>
-                  <div class="vital-tile">
-                    <span class="material-symbols-outlined v-icon teal">vital_signs</span>
-                    <span class="v-value">120/80</span>
-                    <span class="v-label">{{ langService.isRtl() ? 'ضغط الدم (mmHg)' : 'Blood Pressure' }}</span>
-                  </div>
-                  <div class="vital-tile">
-                    <span class="material-symbols-outlined v-icon amber">bloodtype</span>
-                    <span class="v-value">95 mg/dL</span>
-                    <span class="v-label">{{ langService.isRtl() ? 'سكر عشوائي' : 'Glucose' }}</span>
-                  </div>
-                  <div class="vital-tile">
-                    <span class="material-symbols-outlined v-icon purple">fitness_center</span>
-                    <span class="v-value">22.4</span>
-                    <span class="v-label">{{ langService.isRtl() ? 'كتلة الجسم (BMI)' : 'BMI (Normal)' }}</span>
-                  </div>
-                </div>
-              </div>
+              }
             </div>
           </div>
         </div>
@@ -482,24 +485,25 @@ interface PersonaRole {
             </h2>
             <p class="section-subheadline">
               {{ langService.isRtl()
-                ? 'واجهات مصممة باحترافية لتناسب كل طرف في المنظومة: المواطن، الأطباء، المستشفيات، طواقم الطوارئ، والصيدليات.'
-                : 'Tailored workspaces engineered for clinical speed, patient empowerment, and instant emergency triage.' }}
+              ? 'واجهات مصممة باحترافية لتناسب كل طرف في المنظومة: المواطن، الأطباء، المستشفيات، طواقم الطوارئ، والصيدليات.'
+              : 'Tailored workspaces engineered for clinical speed, patient empowerment, and instant emergency triage.' }}
             </p>
           </div>
 
           <!-- Role Selector Navigation Tabs -->
           <div class="roles-nav-bar">
-            <button
-              *ngFor="let role of rolesList"
-              type="button"
-              class="role-pill-btn"
-              [class.active]="selectedRole.id === role.id"
-              [style.--role-color]="role.color"
-              (click)="selectedRole = role"
-            >
-              <span class="material-symbols-outlined">{{ role.icon }}</span>
-              <span>{{ langService.isRtl() ? role.nameAr : role.nameEn }}</span>
-            </button>
+            @for (role of rolesList; track role) {
+              <button
+                type="button"
+                class="role-pill-btn"
+                [class.active]="selectedRole.id === role.id"
+                [style.--role-color]="role.color"
+                (click)="selectedRole = role"
+                >
+                <span class="material-symbols-outlined">{{ role.icon }}</span>
+                <span>{{ langService.isRtl() ? role.nameAr : role.nameEn }}</span>
+              </button>
+            }
           </div>
 
           <!-- Active Role Showcase Console -->
@@ -515,10 +519,12 @@ interface PersonaRole {
               <p class="console-desc">{{ langService.isRtl() ? selectedRole.descAr : selectedRole.descEn }}</p>
 
               <div class="console-bullets-list">
-                <div class="bullet-row" *ngFor="let f of (langService.isRtl() ? selectedRole.featuresAr : selectedRole.featuresEn)">
-                  <span class="material-symbols-outlined check-mark" [style.color]="selectedRole.color">check_circle</span>
-                  <span>{{ f }}</span>
-                </div>
+                @for (f of (langService.isRtl() ? selectedRole.featuresAr : selectedRole.featuresEn); track f) {
+                  <div class="bullet-row">
+                    <span class="material-symbols-outlined check-mark" [style.color]="selectedRole.color">check_circle</span>
+                    <span>{{ f }}</span>
+                  </div>
+                }
               </div>
 
               <div class="console-action-row">
@@ -568,8 +574,8 @@ interface PersonaRole {
             </h2>
             <p class="section-subheadline">
               {{ langService.isRtl()
-                ? 'تجربة رقمية ميسرة للمواطن تبدأ من التسجيل وحتى المتابعة الطبية الشاملة.'
-                : 'A seamless journey from registration to lifelong medical records and clinical follow-ups.' }}
+              ? 'تجربة رقمية ميسرة للمواطن تبدأ من التسجيل وحتى المتابعة الطبية الشاملة.'
+              : 'A seamless journey from registration to lifelong medical records and clinical follow-ups.' }}
             </p>
           </div>
 
@@ -582,8 +588,8 @@ interface PersonaRole {
               <h3 class="step-title">{{ langService.isRtl() ? 'أنشئ حسابك واستلم كودك الموحد' : 'Claim Your Lifetime Unified ID' }}</h3>
               <p class="step-desc">
                 {{ langService.isRtl()
-                  ? 'سجّل ببياناتك القومية في أقل من دقيقة لتوليد كود صحتي الموحد، وتفعيل بطاقة الطوارئ الذكية.'
-                  : 'Sign up in under 60 seconds with your national ID to generate your lifetime health passport and emergency rescue QR.' }}
+                ? 'سجّل ببياناتك القومية في أقل من دقيقة لتوليد كود صحتي الموحد، وتفعيل بطاقة الطوارئ الذكية.'
+                : 'Sign up in under 60 seconds with your national ID to generate your lifetime health passport and emergency rescue QR.' }}
               </p>
             </div>
 
@@ -595,8 +601,8 @@ interface PersonaRole {
               <h3 class="step-title">{{ langService.isRtl() ? 'احجز واكشف وامنح الإذن لطبيبك' : 'Book & Grant Doctor Consent' }}</h3>
               <p class="step-desc">
                 {{ langService.isRtl()
-                  ? 'احجز موعدك بالعيادة وامنح طبيبك تصريح الاطلاع على تاريخك المرضي وفحوصاتك السابقة لتقديم أدق تشخيص.'
-                  : 'Schedule clinic visits and grant your attending physician time-limited access to your comprehensive clinical history.' }}
+                ? 'احجز موعدك بالعيادة وامنح طبيبك تصريح الاطلاع على تاريخك المرضي وفحوصاتك السابقة لتقديم أدق تشخيص.'
+                : 'Schedule clinic visits and grant your attending physician time-limited access to your comprehensive clinical history.' }}
               </p>
             </div>
 
@@ -608,8 +614,8 @@ interface PersonaRole {
               <h3 class="step-title">{{ langService.isRtl() ? 'سجل طبي رقمي وروشتاتك في جيبك' : 'Lifelong Health Chart In Your Pocket' }}</h3>
               <p class="step-desc">
                 {{ langService.isRtl()
-                  ? 'استلم الروشتات الرقمية ونتائج التحاليل فوراً على هاتفك دون قلق من فقدان التقارير الورقية أبداً.'
-                  : 'Access certified digital prescriptions, lab test reports, and imaging scans anytime on any device with zero paperwork.' }}
+                ? 'استلم الروشتات الرقمية ونتائج التحاليل فوراً على هاتفك دون قلق من فقدان التقارير الورقية أبداً.'
+                : 'Access certified digital prescriptions, lab test reports, and imaging scans anytime on any device with zero paperwork.' }}
               </p>
             </div>
           </div>
@@ -628,8 +634,8 @@ interface PersonaRole {
             </h2>
             <p class="section-subheadline">
               {{ langService.isRtl()
-                ? 'حلول برمجية متقدمة تنهي عهد الدفاتر الورقية وتضمن الأمان التام لمعلومات المرضى.'
-                : 'Advanced healthcare primitives ensuring record integrity, zero-trust consent, and instant emergency response.' }}
+              ? 'حلول برمجية متقدمة تنهي عهد الدفاتر الورقية وتضمن الأمان التام لمعلومات المرضى.'
+              : 'Advanced healthcare primitives ensuring record integrity, zero-trust consent, and instant emergency response.' }}
             </p>
           </div>
 
@@ -641,8 +647,8 @@ interface PersonaRole {
               <h3 class="cap-title">{{ langService.isRtl() ? 'الكود الصحي الموحد (Unified ID)' : 'Unified Health Passport' }}</h3>
               <p class="cap-desc">
                 {{ langService.isRtl()
-                  ? 'رقم طبي مركزي موحد بصيغة (SH-YYYY-NNNNNN) يربط كافة كشوفاتك، روشتاتك، وتحاليلك عبر جميع المنشآت الطبية مدى الحياة.'
-                  : 'A lifetime health code (SH-YYYY-NNNNNN) synchronizing visits, prescriptions, labs, and scans across all providers nationwide.' }}
+                ? 'رقم طبي مركزي موحد بصيغة (SH-YYYY-NNNNNN) يربط كافة كشوفاتك، روشتاتك، وتحاليلك عبر جميع المنشآت الطبية مدى الحياة.'
+                : 'A lifetime health code (SH-YYYY-NNNNNN) synchronizing visits, prescriptions, labs, and scans across all providers nationwide.' }}
               </p>
             </div>
 
@@ -653,8 +659,8 @@ interface PersonaRole {
               <h3 class="cap-title">{{ langService.isRtl() ? 'محرك الأذونات والخصوصية' : 'Zero-Trust Consent Engine' }}</h3>
               <p class="cap-desc">
                 {{ langService.isRtl()
-                  ? 'المريض هو المالك الوحيد لبياناته؛ يمنح الأطباء حق الاطلاع أو الإضافة لفترات محددة مع إمكانية الإلغاء الفوري بضغطة واحدة.'
-                  : 'Zero-trust governance where patients grant time-limited permissions to doctors with instant one-click revocation.' }}
+                ? 'المريض هو المالك الوحيد لبياناته؛ يمنح الأطباء حق الاطلاع أو الإضافة لفترات محددة مع إمكانية الإلغاء الفوري بضغطة واحدة.'
+                : 'Zero-trust governance where patients grant time-limited permissions to doctors with instant one-click revocation.' }}
               </p>
             </div>
 
@@ -665,8 +671,8 @@ interface PersonaRole {
               <h3 class="cap-title">{{ langService.isRtl() ? 'بطاقة الإنقاذ السريع (QR)' : 'Rapid ER Rescue Profile' }}</h3>
               <p class="cap-desc">
                 {{ langService.isRtl()
-                  ? 'رمز استجابة سريع يتيح لأطقم الإسعاف معرفة فصيلة الدم والحساسيات الحرجة وجهات الاتصال فوراً في الحوادث دون كلمة مرور.'
-                  : 'Instant anonymous triage profile giving paramedics immediate access to blood type, severe allergies, and emergency contacts in under 2s.' }}
+                ? 'رمز استجابة سريع يتيح لأطقم الإسعاف معرفة فصيلة الدم والحساسيات الحرجة وجهات الاتصال فوراً في الحوادث دون كلمة مرور.'
+                : 'Instant anonymous triage profile giving paramedics immediate access to blood type, severe allergies, and emergency contacts in under 2s.' }}
               </p>
             </div>
 
@@ -677,8 +683,8 @@ interface PersonaRole {
               <h3 class="cap-title">{{ langService.isRtl() ? 'عيادة الطبيب والروشتة الرقمية' : 'Doctor Encounter & E-Rx Builder' }}</h3>
               <p class="cap-desc">
                 {{ langService.isRtl()
-                  ? 'توثيق سريري فوري مع قياس المؤشرات الحيوية وحساب كتلة الجسم (BMI)، وتصنيف الأمراض (ICD-10)، وإصدار روشتات إلكترونية معتمدة.'
-                  : 'Fast clinical notes, automatic BMI calculation, ICD-10 diagnostic coding, and tamper-proof digital prescriptions with digital signature.' }}
+                ? 'توثيق سريري فوري مع قياس المؤشرات الحيوية وحساب كتلة الجسم (BMI)، وتصنيف الأمراض (ICD-10)، وإصدار روشتات إلكترونية معتمدة.'
+                : 'Fast clinical notes, automatic BMI calculation, ICD-10 diagnostic coding, and tamper-proof digital prescriptions with digital signature.' }}
               </p>
             </div>
 
@@ -689,8 +695,8 @@ interface PersonaRole {
               <h3 class="cap-title">{{ langService.isRtl() ? 'تنظيم طوابير الحجز والكشف' : 'Live Clinic Queue Orchestration' }}</h3>
               <p class="cap-desc">
                 {{ langService.isRtl()
-                  ? 'جدولة مواعيد دقيقة تمنع التضارب وحجز المواعيد المزدوجة، مع إدارة طابور الانتظار وتوزيع الأرقام اللحظية بغرف الكشف.'
-                  : 'Intelligent scheduling with collision prevention and live token queues coordinating waiting lounges with examination rooms.' }}
+                ? 'جدولة مواعيد دقيقة تمنع التضارب وحجز المواعيد المزدوجة، مع إدارة طابور الانتظار وتوزيع الأرقام اللحظية بغرف الكشف.'
+                : 'Intelligent scheduling with collision prevention and live token queues coordinating waiting lounges with examination rooms.' }}
               </p>
             </div>
 
@@ -701,8 +707,8 @@ interface PersonaRole {
               <h3 class="cap-title">{{ langService.isRtl() ? 'سجل العمليات والرقابة الأمنية' : 'Forensic Immutable Audit Trail' }}</h3>
               <p class="cap-desc">
                 {{ langService.isRtl()
-                  ? 'تسجيل أمني غير قابل للتعديل (WORM) لكل محاولة قراءة أو كتابة أو تعديل للسجلات الطبية وفقاً لمعايير HIPAA و GDPR الصارمة.'
-                  : 'Cryptographically accountable audit log recording every single view, modification, and access attempt with timestamp and client IP.' }}
+                ? 'تسجيل أمني غير قابل للتعديل (WORM) لكل محاولة قراءة أو كتابة أو تعديل للسجلات الطبية وفقاً لمعايير HIPAA و GDPR الصارمة.'
+                : 'Cryptographically accountable audit log recording every single view, modification, and access attempt with timestamp and client IP.' }}
               </p>
             </div>
           </div>
@@ -721,28 +727,31 @@ interface PersonaRole {
             </h2>
             <p class="section-subheadline">
               {{ langService.isRtl()
-                ? 'إجابات مباشرة وموثوقة حول الأمان، خصوصية البيانات، واستخدام بطاقة الطوارئ.'
-                : 'Clear answers about security, patient consent, and platform usage.' }}
+              ? 'إجابات مباشرة وموثوقة حول الأمان، خصوصية البيانات، واستخدام بطاقة الطوارئ.'
+              : 'Clear answers about security, patient consent, and platform usage.' }}
             </p>
           </div>
 
           <div class="faq-accordion-list">
-            <div
-              *ngFor="let item of faqList; let i = index"
-              class="faq-card-item"
-              [class.open]="item.open"
-              (click)="toggleFaq(i)"
-            >
-              <div class="faq-question-row">
-                <span class="faq-q-text">{{ langService.isRtl() ? item.qAr : item.qEn }}</span>
-                <span class="material-symbols-outlined expand-icon">
-                  {{ item.open ? 'remove' : 'add' }}
-                </span>
+            @for (item of faqList; track item; let i = $index) {
+              <div
+                class="faq-card-item"
+                [class.open]="item.open"
+                (click)="toggleFaq(i)"
+                >
+                <div class="faq-question-row">
+                  <span class="faq-q-text">{{ langService.isRtl() ? item.qAr : item.qEn }}</span>
+                  <span class="material-symbols-outlined expand-icon">
+                    {{ item.open ? 'remove' : 'add' }}
+                  </span>
+                </div>
+                @if (item.open) {
+                  <div class="faq-answer-panel">
+                    <p>{{ langService.isRtl() ? item.aAr : item.aEn }}</p>
+                  </div>
+                }
               </div>
-              <div class="faq-answer-panel" *ngIf="item.open">
-                <p>{{ langService.isRtl() ? item.aAr : item.aEn }}</p>
-              </div>
-            </div>
+            }
           </div>
         </div>
       </section>
@@ -760,8 +769,8 @@ interface PersonaRole {
               </h2>
               <p class="cta-subtext">
                 {{ langService.isRtl()
-                  ? 'انضم الآن إلى منظومة صحتي واستمتع بسجل طبي موحد مدى الحياة تحت أمان كامل وبدون أوراق.'
-                  : 'Join thousands of citizens and accredited healthcare providers under one unified medical cloud.' }}
+                ? 'انضم الآن إلى منظومة صحتي واستمتع بسجل طبي موحد مدى الحياة تحت أمان كامل وبدون أوراق.'
+                : 'Join thousands of citizens and accredited healthcare providers under one unified medical cloud.' }}
               </p>
               <div class="cta-buttons-row">
                 <a routerLink="/auth/register" class="btn-cta-primary">
@@ -794,8 +803,8 @@ interface PersonaRole {
               </div>
               <p class="f-desc">
                 {{ langService.isRtl()
-                  ? 'المنظومة الوطنية الموحدة للسجلات الصحية في جمهورية مصر العربية. مريض واحد، سجل طبي موحد، رعاية صحية أفضل.'
-                  : 'The national centralized digital infrastructure linking patient health passports, polyclinics, and emergency triage in Egypt.' }}
+                ? 'المنظومة الوطنية الموحدة للسجلات الصحية في جمهورية مصر العربية. مريض واحد، سجل طبي موحد، رعاية صحية أفضل.'
+                : 'The national centralized digital infrastructure linking patient health passports, polyclinics, and emergency triage in Egypt.' }}
               </p>
               <div class="f-egypt-pill">
                 <span>🇪🇬 Arab Republic of Egypt • 2026</span>
@@ -855,7 +864,8 @@ interface PersonaRole {
         <span class="material-symbols-outlined fab-icon">emergency</span>
       </a>
     </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     /* ==========================================================================
        SEHATI WORLD-CLASS HEALTHCARE LANDING PAGE

@@ -114,11 +114,12 @@ Sehati bridges the communication gap between independent healthcare providers by
 ### Frontend
 | Technology | Purpose |
 |-----------|---------|
-| **Angular 19** | SPA frontend framework |
+| **Angular 22** | SPA frontend framework |
 | **TypeScript** | Typed JavaScript for reliability |
 | **Angular Material / Custom Components** | UI component library |
 | **RxJS** | Reactive state management |
 | **Jasmine + Karma** | Frontend unit testing |
+| **Node.js 24** | Frontend tooling and CI runtime |
 
 ### Infrastructure & Tools
 | Technology | Purpose |

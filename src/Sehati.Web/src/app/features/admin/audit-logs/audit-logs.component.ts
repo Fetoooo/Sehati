@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ClinicalService } from '../../../core/services/clinical.service';
@@ -26,8 +26,8 @@ import { AuditLogDto } from '../../../core/models/clinical.models';
           </div>
           <p class="page-subtitle">
             {{ langService.isRtl()
-              ? 'تتبع كامل لكافة محاولات الوصول إلى بيانات وسجلات المرضى، الروشتات، ومنح وإلغاء الأذونات'
-              : 'End-to-end forensic tracking of patient data accesses, prescriptions, and consent grants/revocations' }}
+            ? 'تتبع كامل لكافة محاولات الوصول إلى بيانات وسجلات المرضى، الروشتات، ومنح وإلغاء الأذونات'
+            : 'End-to-end forensic tracking of patient data accesses, prescriptions, and consent grants/revocations' }}
           </p>
         </div>
 
@@ -86,127 +86,129 @@ import { AuditLogDto } from '../../../core/models/clinical.models';
             type="text"
             [(ngModel)]="searchFilter"
             [placeholder]="langService.isRtl() ? 'بحث بالبريد، اسم الكيان، أو عنوان IP...' : 'Search by email, entity name, action, or client IP...'"
-          />
-        </div>
-
-        <div class="filter-dropdowns">
-          <select [(ngModel)]="entityFilter">
-            <option value="">{{ langService.isRtl() ? 'كل الكيانات (All Entities)' : 'All Entities' }}</option>
-            <option value="Patient">Patient</option>
-            <option value="MedicalRecord">MedicalRecord</option>
-            <option value="Prescription">Prescription</option>
-            <option value="Appointment">Appointment</option>
-            <option value="AccessPermission">AccessPermission</option>
-            <option value="User">User</option>
-          </select>
-
-          <select [(ngModel)]="actionFilter">
-            <option value="">{{ langService.isRtl() ? 'كل العمليات (All Actions)' : 'All Actions' }}</option>
-            <option value="CREATE">CREATE</option>
-            <option value="READ">READ / VIEW</option>
-            <option value="UPDATE">UPDATE</option>
-            <option value="REVOKE">REVOKE</option>
-            <option value="LOGIN">LOGIN</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Audit Log Table -->
-      <div class="table-card">
-        <div class="table-container">
-          <table class="styled-table">
-            <thead>
-              <tr>
-                <th>{{ langService.isRtl() ? 'التوقيت' : 'Timestamp' }}</th>
-                <th>{{ langService.isRtl() ? 'المستخدم / الفاعل' : 'Actor / Email' }}</th>
-                <th>{{ langService.isRtl() ? 'نوع العملية' : 'Action' }}</th>
-                <th>{{ langService.isRtl() ? 'الكيان المتأثر' : 'Entity' }}</th>
-                <th>{{ langService.isRtl() ? 'معرف السجل' : 'Target ID' }}</th>
-                <th>{{ langService.isRtl() ? 'عنوان IP' : 'Client IP' }}</th>
-                <th class="actions-header">{{ langService.isRtl() ? 'تفاصيل' : 'Details' }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of filteredLogs()">
-                <td class="time-cell">
-                  <span class="material-symbols-outlined">schedule</span>
-                  <span>{{ formatTimestamp(item.timestamp) }}</span>
-                </td>
-                <td>
-                  <span class="user-text">{{ item.userEmail || 'system@sehati.internal' }}</span>
-                </td>
-                <td>
-                  <span class="action-tag" [ngClass]="getActionClass(item.action)">
-                    {{ item.action }}
-                  </span>
-                </td>
-                <td class="font-bold">{{ item.entityName }}</td>
-                <td>
-                  <span class="target-id">{{ item.entityId || '—' }}</span>
-                </td>
-                <td>
-                  <span class="ip-code">{{ item.ipAddress || '127.0.0.1' }}</span>
-                </td>
-                <td>
-                  <button class="inspect-btn" (click)="inspectEvent(item)">
-                    <span class="material-symbols-outlined">info</span>
-                    <span>{{ langService.isRtl() ? 'فحص' : 'Inspect' }}</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Event Inspector Modal -->
-      <div class="modal-backdrop" *ngIf="inspectedEvent" (click)="inspectedEvent = null">
-        <div class="modal-dialog" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <div class="title-row">
-              <span class="material-symbols-outlined">security</span>
-              <h3>{{ langService.isRtl() ? 'فحص تفاصيل الحدث الأمني' : 'Security Event Forensic Record' }}</h3>
-            </div>
-            <button class="close-btn" (click)="inspectedEvent = null">
-              <span class="material-symbols-outlined">close</span>
-            </button>
+            />
           </div>
 
-          <div class="modal-body">
-            <div class="meta-grid">
-              <div class="meta-box">
-                <span class="meta-label">Event ID</span>
-                <span class="meta-val font-mono">{{ inspectedEvent.id }}</span>
-              </div>
-              <div class="meta-box">
-                <span class="meta-label">Action</span>
-                <span class="meta-val font-bold">{{ inspectedEvent.action }}</span>
-              </div>
-              <div class="meta-box">
-                <span class="meta-label">Timestamp</span>
-                <span class="meta-val">{{ inspectedEvent.timestamp }}</span>
-              </div>
-              <div class="meta-box">
-                <span class="meta-label">Client IP</span>
-                <span class="meta-val font-mono">{{ inspectedEvent.ipAddress }}</span>
-              </div>
-            </div>
+          <div class="filter-dropdowns">
+            <select [(ngModel)]="entityFilter">
+              <option value="">{{ langService.isRtl() ? 'كل الكيانات (All Entities)' : 'All Entities' }}</option>
+              <option value="Patient">Patient</option>
+              <option value="MedicalRecord">MedicalRecord</option>
+              <option value="Prescription">Prescription</option>
+              <option value="Appointment">Appointment</option>
+              <option value="AccessPermission">AccessPermission</option>
+              <option value="User">User</option>
+            </select>
 
-            <div class="json-inspector">
-              <label>Event Payload & Context Audit Snapshot:</label>
-              <pre>{{ getFormattedPayload(inspectedEvent) }}</pre>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="inspectedEvent = null">
-              <span>{{ langService.isRtl() ? 'إغلاق' : 'Close' }}</span>
-            </button>
+            <select [(ngModel)]="actionFilter">
+              <option value="">{{ langService.isRtl() ? 'كل العمليات (All Actions)' : 'All Actions' }}</option>
+              <option value="CREATE">CREATE</option>
+              <option value="READ">READ / VIEW</option>
+              <option value="UPDATE">UPDATE</option>
+              <option value="REVOKE">REVOKE</option>
+              <option value="LOGIN">LOGIN</option>
+            </select>
           </div>
         </div>
+
+        <!-- Audit Log Table -->
+        <div class="table-card">
+          <div class="table-container">
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  <th>{{ langService.isRtl() ? 'التوقيت' : 'Timestamp' }}</th>
+                  <th>{{ langService.isRtl() ? 'المستخدم / الفاعل' : 'Actor / Email' }}</th>
+                  <th>{{ langService.isRtl() ? 'نوع العملية' : 'Action' }}</th>
+                  <th>{{ langService.isRtl() ? 'الكيان المتأثر' : 'Entity' }}</th>
+                  <th>{{ langService.isRtl() ? 'معرف السجل' : 'Target ID' }}</th>
+                  <th>{{ langService.isRtl() ? 'عنوان IP' : 'Client IP' }}</th>
+                  <th class="actions-header">{{ langService.isRtl() ? 'تفاصيل' : 'Details' }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of filteredLogs(); track item) {
+                  <tr>
+                    <td class="time-cell">
+                      <span class="material-symbols-outlined">schedule</span>
+                      <span>{{ formatTimestamp(item.timestamp) }}</span>
+                    </td>
+                    <td>
+                      <span class="user-text">{{ item.userEmail || 'system@sehati.internal' }}</span>
+                    </td>
+                    <td>
+                      <span class="action-tag" [ngClass]="getActionClass(item.action)">
+                        {{ item.action }}
+                      </span>
+                    </td>
+                    <td class="font-bold">{{ item.entityName }}</td>
+                    <td>
+                      <span class="target-id">{{ item.entityId || '—' }}</span>
+                    </td>
+                    <td>
+                      <span class="ip-code">{{ item.ipAddress || '127.0.0.1' }}</span>
+                    </td>
+                    <td>
+                      <button class="inspect-btn" (click)="inspectEvent(item)">
+                        <span class="material-symbols-outlined">info</span>
+                        <span>{{ langService.isRtl() ? 'فحص' : 'Inspect' }}</span>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Event Inspector Modal -->
+        @if (inspectedEvent) {
+          <div class="modal-backdrop" (click)="inspectedEvent = null">
+            <div class="modal-dialog" (click)="$event.stopPropagation()">
+              <div class="modal-header">
+                <div class="title-row">
+                  <span class="material-symbols-outlined">security</span>
+                  <h3>{{ langService.isRtl() ? 'فحص تفاصيل الحدث الأمني' : 'Security Event Forensic Record' }}</h3>
+                </div>
+                <button class="close-btn" (click)="inspectedEvent = null">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="meta-grid">
+                  <div class="meta-box">
+                    <span class="meta-label">Event ID</span>
+                    <span class="meta-val font-mono">{{ inspectedEvent.id }}</span>
+                  </div>
+                  <div class="meta-box">
+                    <span class="meta-label">Action</span>
+                    <span class="meta-val font-bold">{{ inspectedEvent.action }}</span>
+                  </div>
+                  <div class="meta-box">
+                    <span class="meta-label">Timestamp</span>
+                    <span class="meta-val">{{ inspectedEvent.timestamp }}</span>
+                  </div>
+                  <div class="meta-box">
+                    <span class="meta-label">Client IP</span>
+                    <span class="meta-val font-mono">{{ inspectedEvent.ipAddress }}</span>
+                  </div>
+                </div>
+                <div class="json-inspector">
+                  <label>Event Payload & Context Audit Snapshot:</label>
+                  <pre>{{ getFormattedPayload(inspectedEvent) }}</pre>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="inspectedEvent = null">
+                  <span>{{ langService.isRtl() ? 'إغلاق' : 'Close' }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
       </div>
-    </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .audit-page {
       display: flex;

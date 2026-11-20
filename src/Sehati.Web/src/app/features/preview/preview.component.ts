@@ -1,8 +1,8 @@
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
 import { RouterLink } from '@angular/router';
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { HttpClient } from '@angular/common/http';
 
 interface HealthResponse {
@@ -27,8 +27,9 @@ interface PortalRole {
 @Component({
   selector: 'app-preview',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './preview.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './preview.component.scss'
 })
 export class PreviewComponent implements OnInit {

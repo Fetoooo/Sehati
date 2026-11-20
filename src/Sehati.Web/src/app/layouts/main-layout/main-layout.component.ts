@@ -1,5 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
@@ -15,11 +15,13 @@ interface NavItem {
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
     <div class="app-layout" [class.rtl]="langService.isRtl()">
       <!-- Mobile Sidebar Overlay Backdrop -->
-      <div class="mobile-overlay" *ngIf="isMobileSidebarOpen()" (click)="closeMobileSidebar()"></div>
+      @if (isMobileSidebarOpen()) {
+        <div class="mobile-overlay" (click)="closeMobileSidebar()"></div>
+      }
 
       <!-- Sidebar Navigation Drawer -->
       <aside class="app-sidebar" [class.mobile-open]="isMobileSidebarOpen()">
@@ -40,7 +42,9 @@ interface NavItem {
         <!-- Current User Role & Unified ID Pill -->
         <div class="user-role-badge">
           <span class="role-pill">{{ userRole() || 'Healthcare' }}</span>
-          <span class="unified-id" *ngIf="user()?.unifiedPatientId">{{ user()?.unifiedPatientId }}</span>
+          @if (user()?.unifiedPatientId) {
+            <span class="unified-id">{{ user()?.unifiedPatientId }}</span>
+          }
         </div>
 
         <nav class="sidebar-nav">
@@ -48,20 +52,22 @@ interface NavItem {
             {{ langService.isRtl() ? 'القائمة الرئيسية' : 'MAIN MENU' }}
           </div>
           <ul class="nav-list">
-            <ng-container *ngFor="let item of navItems">
-              <li *ngIf="isItemVisible(item)">
-                <a
-                  [routerLink]="item.route"
-                  routerLinkActive="active"
-                  [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
-                  class="nav-link"
-                  (click)="closeMobileSidebar()"
-                >
-                  <span class="material-symbols-outlined nav-icon">{{ item.icon }}</span>
-                  <span class="nav-label">{{ langService.t(item.labelKey) }}</span>
-                </a>
-              </li>
-            </ng-container>
+            @for (item of navItems; track item) {
+              @if (isItemVisible(item)) {
+                <li>
+                  <a
+                    [routerLink]="item.route"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
+                    class="nav-link"
+                    (click)="closeMobileSidebar()"
+                    >
+                    <span class="material-symbols-outlined nav-icon">{{ item.icon }}</span>
+                    <span class="nav-label">{{ langService.t(item.labelKey) }}</span>
+                  </a>
+                </li>
+              }
+            }
           </ul>
         </nav>
 
@@ -93,7 +99,7 @@ interface NavItem {
               (click)="themeService.toggleTheme()"
               [title]="themeService.isDark() ? langService.t('themeLight') : langService.t('themeDark')"
               type="button"
-            >
+              >
               <span class="material-symbols-outlined">
                 {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
               </span>
@@ -105,7 +111,7 @@ interface NavItem {
               (click)="langService.toggleLanguage()"
               [title]="langService.currentLang() === 'en' ? 'التحويل للعربية' : 'Switch to English'"
               type="button"
-            >
+              >
               <span class="material-symbols-outlined">translate</span>
               <span class="lang-text">{{ langService.currentLang() === 'en' ? 'العربية' : 'English' }}</span>
             </button>
@@ -132,7 +138,8 @@ interface NavItem {
         </main>
       </div>
     </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .app-layout {
       display: flex;

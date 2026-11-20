@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { ActivatedRoute } from '@angular/router';
 import { PatientService } from '../../../core/services/patient.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -9,24 +9,26 @@ import { EmergencyProfileDto } from '../../../core/models/patient.models';
 @Component({
   selector: 'app-emergency-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="emergency-page" [class.rtl]="langService.isRtl()">
       <!-- Page Header -->
-      <header class="page-header" *ngIf="authService.isAuthenticated()">
-        <div class="header-titles">
-          <h1 class="page-title">{{ langService.isRtl() ? 'بطاقة الطوارئ الرقمية (QR)' : 'Emergency Medical QR Profile' }}</h1>
-          <p class="page-subtitle">
-            {{ langService.isRtl() 
-                ? 'ملف الطوارئ الحيوي المتاح للإسعاف والمستشفيات عبر مسح رمز الاستجابة السريعة (QR) في الحالات الحرجة.' 
-                : 'Life-saving profile instantly accessible by first responders via QR scan without login credentials.' }}
-          </p>
-        </div>
-        <button class="medic-btn btn-secondary" (click)="printCard()">
-          <span class="material-symbols-outlined">print</span>
-          <span>{{ langService.isRtl() ? 'طباعة البطاقة' : 'Print Wallet Card' }}</span>
-        </button>
-      </header>
+      @if (authService.isAuthenticated()) {
+        <header class="page-header">
+          <div class="header-titles">
+            <h1 class="page-title">{{ langService.isRtl() ? 'بطاقة الطوارئ الرقمية (QR)' : 'Emergency Medical QR Profile' }}</h1>
+            <p class="page-subtitle">
+              {{ langService.isRtl()
+              ? 'ملف الطوارئ الحيوي المتاح للإسعاف والمستشفيات عبر مسح رمز الاستجابة السريعة (QR) في الحالات الحرجة.'
+              : 'Life-saving profile instantly accessible by first responders via QR scan without login credentials.' }}
+            </p>
+          </div>
+          <button class="medic-btn btn-secondary" (click)="printCard()">
+            <span class="material-symbols-outlined">print</span>
+            <span>{{ langService.isRtl() ? 'طباعة البطاقة' : 'Print Wallet Card' }}</span>
+          </button>
+        </header>
+      }
 
       <!-- Emergency Banner -->
       <div class="medic-alert alert-error emergency-alert">
@@ -62,10 +64,12 @@ import { EmergencyProfileDto } from '../../../core/models/patient.models';
               <span>{{ langService.isRtl() ? 'حساسية دوائية وغذائية حرجة' : 'Critical Allergies' }}</span>
             </h4>
             <div class="tags-container">
-              <span class="danger-pill" *ngFor="let a of profile()?.allergies">
-                <span class="material-symbols-outlined">coronavirus</span>
-                <span>{{ a }}</span>
-              </span>
+              @for (a of profile()?.allergies; track a) {
+                <span class="danger-pill">
+                  <span class="material-symbols-outlined">coronavirus</span>
+                  <span>{{ a }}</span>
+                </span>
+              }
             </div>
           </div>
 
@@ -76,10 +80,12 @@ import { EmergencyProfileDto } from '../../../core/models/patient.models';
               <span>{{ langService.isRtl() ? 'الأمراض المزمنة' : 'Chronic Conditions' }}</span>
             </h4>
             <div class="tags-container">
-              <span class="info-pill" *ngFor="let c of profile()?.chronicConditions">
-                <span class="material-symbols-outlined">vital_signs</span>
-                <span>{{ c }}</span>
-              </span>
+              @for (c of profile()?.chronicConditions; track c) {
+                <span class="info-pill">
+                  <span class="material-symbols-outlined">vital_signs</span>
+                  <span>{{ c }}</span>
+                </span>
+              }
             </div>
           </div>
 
@@ -90,10 +96,12 @@ import { EmergencyProfileDto } from '../../../core/models/patient.models';
               <span>{{ langService.isRtl() ? 'الأدوية الحالية المستمرة' : 'Ongoing Medications' }}</span>
             </h4>
             <div class="tags-container">
-              <span class="teal-pill" *ngFor="let m of profile()?.activeMedications">
-                <span class="material-symbols-outlined">pill</span>
-                <span>{{ m }}</span>
-              </span>
+              @for (m of profile()?.activeMedications; track m) {
+                <span class="teal-pill">
+                  <span class="material-symbols-outlined">pill</span>
+                  <span>{{ m }}</span>
+                </span>
+              }
             </div>
           </div>
 
@@ -148,7 +156,8 @@ import { EmergencyProfileDto } from '../../../core/models/patient.models';
         </div>
       </div>
     </div>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .emergency-page {
       display: flex;
