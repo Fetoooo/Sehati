@@ -157,5 +157,90 @@ public class ConsentServiceTests
         var check = await _consentService.CheckAccessAsync(patient.PatientId, doctor.DoctorId, null);
         check.HasAccess.Should().BeFalse();
     }
+
+    [Fact]
+    public async Task GetPatientPermissionsAsync_ReturnsPermissions()
+    {
+        // Arrange
+        var (patient, doctor, clinic) = await SeedBaseEntitiesAsync();
+        _context.AccessPermissions.Add(new AccessPermission
+        {
+            PatientId = patient.PatientId,
+            DoctorId = doctor.DoctorId,
+            AccessType = AccessType.ViewAndAddRecords,
+            GrantedAt = DateTime.UtcNow,
+            Status = AccessPermissionStatus.Active
+        });
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = (await _consentService.GetPatientPermissionsAsync(patient.PatientId)).ToList();
+
+        // Assert
+        result.Should().NotBeEmpty();
+        result[0].PatientId.Should().Be(patient.PatientId);
+        result[0].AccessType.Should().Be(AccessType.ViewAndAddRecords);
+    }
+
+    [Fact]
+    public async Task GetDoctorPermissionsAsync_ReturnsActivePermissions()
+    {
+        // Arrange
+        var (patient, doctor, clinic) = await SeedBaseEntitiesAsync();
+        _context.AccessPermissions.Add(new AccessPermission
+        {
+            PatientId = patient.PatientId,
+            DoctorId = doctor.DoctorId,
+            AccessType = AccessType.ViewOnly,
+            GrantedAt = DateTime.UtcNow,
+            Status = AccessPermissionStatus.Active
+        });
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = (await _consentService.GetDoctorPermissionsAsync(doctor.DoctorId)).ToList();
+
+        // Assert
+        result.Should().NotBeEmpty();
+        result[0].DoctorId.Should().Be(doctor.DoctorId);
+    }
+
+    [Fact]
+    public async Task CheckAccessAsync_WithExpiredPermission_ReturnsFalse()
+    {
+        // Arrange
+        var (patient, doctor, clinic) = await SeedBaseEntitiesAsync();
+        _context.AccessPermissions.Add(new AccessPermission
+        {
+            PatientId = patient.PatientId,
+            DoctorId = doctor.DoctorId,
+            AccessType = AccessType.ViewAndAddRecords,
+            GrantedAt = DateTime.UtcNow.AddDays(-10),
+            ExpiresAt = DateTime.UtcNow.AddDays(-1), // Expired yesterday
+            Status = AccessPermissionStatus.Active
+        });
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _consentService.CheckAccessAsync(patient.PatientId, doctor.DoctorId, null);
+
+        // Assert
+        result.HasAccess.Should().BeFalse();
+        result.Reason.Should().Contain("No active consent");
+    }
+
+    [Fact]
+    public async Task CheckAccessAsync_WithNeitherDoctorNorClinic_ReturnsFalse()
+    {
+        // Arrange
+        var (patient, _, _) = await SeedBaseEntitiesAsync();
+
+        // Act
+        var result = await _consentService.CheckAccessAsync(patient.PatientId, null, null);
+
+        // Assert
+        result.HasAccess.Should().BeFalse();
+        result.Reason.Should().Contain("Neither doctor nor clinic");
+    }
 }
 
