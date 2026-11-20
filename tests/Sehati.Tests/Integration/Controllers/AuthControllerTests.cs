@@ -27,7 +27,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             {
                 { "UseInMemoryDatabase", "true" },
                 { "InMemoryDbName", "SehatiIntegrationSharedDb" },
-                { "JwtSettings:Secret", "SehatiIntegrationTestOnlySecretKeyForSigningTokens123456" }
+                { "JwtSettings:Secret", "SehatiIntegrationTestOnlySecretKeyForSigningTokens123456" },
+                { "RateLimiting:Disabled", "true" }
             });
         });
     }

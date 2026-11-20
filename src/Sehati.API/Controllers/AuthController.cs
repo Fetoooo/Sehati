@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Sehati.Application.Common.Interfaces;
 using Sehati.Application.DTOs.Auth;
 
@@ -9,6 +10,7 @@ namespace Sehati.API.Controllers;
 [ApiController]
 [Route("api/v1/auth")]
 [Produces("application/json")]
+[EnableRateLimiting("auth-policy")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;

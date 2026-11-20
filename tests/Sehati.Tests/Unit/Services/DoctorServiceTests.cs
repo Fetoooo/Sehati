@@ -199,5 +199,72 @@ public class DoctorServiceTests
         result.Slots[0].StartTime.Should().Be(new TimeOnly(9, 0));
         result.Slots[1].StartTime.Should().Be(new TimeOnly(11, 0));
     }
+
+    [Fact]
+    public async Task SearchDoctorsAsync_WithQuery_ReturnsMatchingDoctors()
+    {
+        // Arrange
+        var user = new User { Email = "doc.search@test.com", Phone = "+201088881111", RoleId = 2, PasswordHash = "hash" };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        var doctor = new Doctor
+        {
+            UserId = user.UserId,
+            FullName = "Dr. Hossam Cardiologist",
+            Specialty = "Cardiology",
+            LicenseNumber = "LIC-CARDIO-88",
+            Phone = "+201088881111",
+            Email = "doc.search@test.com"
+        };
+        _context.Doctors.Add(doctor);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var results = (await _doctorService.SearchDoctorsAsync("Cardiologist")).ToList();
+
+        // Assert
+        results.Should().NotBeEmpty();
+        results.Any(d => d.DoctorId == doctor.DoctorId).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task UpdateDoctorAsync_WithValidData_UpdatesDoctor()
+    {
+        // Arrange
+        var user = new User { Email = "doc.update@test.com", Phone = "+201088882222", RoleId = 2, PasswordHash = "hash" };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        var doctor = new Doctor
+        {
+            UserId = user.UserId,
+            FullName = "Dr. Mona Original",
+            Specialty = "General",
+            LicenseNumber = "LIC-GEN-99",
+            Phone = "+201088882222",
+            Email = "doc.update@test.com"
+        };
+        _context.Doctors.Add(doctor);
+        await _context.SaveChangesAsync();
+
+        var dto = new UpdateDoctorDto
+        {
+            FullName = "Dr. Mona Updated",
+            Specialty = "Pediatrics",
+            LicenseNumber = "LIC-PED-99",
+            Phone = "+201088883333",
+            Email = "doc.updated@test.com"
+        };
+
+        // Act
+        var result = await _doctorService.UpdateDoctorAsync(doctor.DoctorId, dto);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.FullName.Should().Be("Dr. Mona Updated");
+        result.Specialty.Should().Be("Pediatrics");
+        result.Email.Should().Be("doc.updated@test.com");
+    }
 }
 

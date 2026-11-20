@@ -291,5 +291,132 @@ public class ClinicServiceTests
         receptionistInDb.Should().NotBeNull();
         receptionistInDb!.User.RoleId.Should().Be(3); // Receptionist
     }
+
+    [Fact]
+    public async Task UpdateClinicAsync_WithValidData_UpdatesClinic()
+    {
+        // Arrange
+        var clinic = new Clinic
+        {
+            ClinicName = "Original Clinic",
+            Specialty = "General",
+            Address = "Address 1",
+            Phone = "+201012345678",
+            Email = "original@test.com",
+            WorkingHours = "09:00 - 17:00",
+            Status = ClinicStatus.Active
+        };
+        _context.Clinics.Add(clinic);
+        await _context.SaveChangesAsync();
+
+        var dto = new UpdateClinicDto
+        {
+            ClinicName = "Updated Clinic Name",
+            Specialty = "Cardiology",
+            Address = "New Address 2",
+            Phone = "+201099998888",
+            Email = "updated@test.com",
+            WorkingHours = "10:00 - 18:00",
+            Status = ClinicStatus.Active
+        };
+
+        // Act
+        var result = await _clinicService.UpdateClinicAsync(clinic.ClinicId, dto);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.ClinicName.Should().Be("Updated Clinic Name");
+        result.Specialty.Should().Be("Cardiology");
+        result.Email.Should().Be("updated@test.com");
+    }
+
+    [Fact]
+    public async Task GetClinicDoctorsAsync_ReturnsAffiliatedDoctors()
+    {
+        // Arrange
+        var clinic = new Clinic
+        {
+            ClinicName = "Alexandria Clinic",
+            Specialty = "Dentistry",
+            Address = "Alexandria",
+            Phone = "+201044445555",
+            Email = "alex@test.com",
+            WorkingHours = "09:00 - 17:00",
+            Status = ClinicStatus.Active
+        };
+        _context.Clinics.Add(clinic);
+        await _context.SaveChangesAsync();
+
+        var doctor = new Doctor
+        {
+            FullName = "Dr. Tarek Dentist",
+            Email = "tarek@dentist.com",
+            Phone = "+201044445556",
+            Specialty = "Dentistry",
+            LicenseNumber = "LIC-DENT-01"
+        };
+        _context.Doctors.Add(doctor);
+        await _context.SaveChangesAsync();
+
+        _context.ClinicDoctors.Add(new ClinicDoctor
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            Status = ClinicStatus.Active
+        });
+        await _context.SaveChangesAsync();
+
+        // Act
+        var doctors = (await _clinicService.GetClinicDoctorsAsync(clinic.ClinicId)).ToList();
+
+        // Assert
+        doctors.Should().HaveCount(1);
+        doctors[0].DoctorName.Should().Be("Dr. Tarek Dentist");
+    }
+
+    [Fact]
+    public async Task RemoveDoctorAffiliationAsync_RemovesAffiliation()
+    {
+        // Arrange
+        var clinic = new Clinic
+        {
+            ClinicName = "Mansoura Clinic",
+            Specialty = "Orthopedics",
+            Address = "Mansoura",
+            Phone = "+201066667777",
+            Email = "mansoura@test.com",
+            WorkingHours = "09:00 - 17:00",
+            Status = ClinicStatus.Active
+        };
+        _context.Clinics.Add(clinic);
+        await _context.SaveChangesAsync();
+
+        var doctor = new Doctor
+        {
+            FullName = "Dr. Sherif Ortho",
+            Email = "sherif@ortho.com",
+            Phone = "+201066667778",
+            Specialty = "Orthopedics",
+            LicenseNumber = "LIC-ORTHO-01"
+        };
+        _context.Doctors.Add(doctor);
+        await _context.SaveChangesAsync();
+
+        var affiliation = new ClinicDoctor
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            Status = ClinicStatus.Active
+        };
+        _context.ClinicDoctors.Add(affiliation);
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _clinicService.RemoveDoctorAffiliationAsync(clinic.ClinicId, doctor.DoctorId);
+
+        // Assert
+        var exists = await _context.ClinicDoctors.AnyAsync(cd => cd.ClinicId == clinic.ClinicId && cd.DoctorId == doctor.DoctorId);
+        exists.Should().BeFalse();
+    }
 }
 

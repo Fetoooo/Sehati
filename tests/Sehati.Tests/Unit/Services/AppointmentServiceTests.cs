@@ -355,5 +355,161 @@ public class AppointmentServiceTests
         inDb.Should().NotBeNull();
         inDb!.Notes.Should().Be("Re-check blood pressure");
     }
+
+    [Fact]
+    public async Task GetAppointmentByIdAsync_WithValidId_ReturnsAppointment()
+    {
+        // Arrange
+        var (clinic, doctor, patient) = await SeedBaseEntitiesAsync();
+        var tomorrow = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var appt = new Appointment
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            AppointmentDate = tomorrow,
+            StartTime = new TimeOnly(11, 0),
+            EndTime = new TimeOnly(11, 30),
+            Status = AppointmentStatus.Confirmed
+        };
+        _context.Appointments.Add(appt);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _appointmentService.GetAppointmentByIdAsync(appt.AppointmentId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.AppointmentId.Should().Be(appt.AppointmentId);
+        result.PatientName.Should().Be(patient.FullName);
+        result.DoctorName.Should().Be(doctor.FullName);
+        result.ClinicName.Should().Be(clinic.ClinicName);
+    }
+
+    [Fact]
+    public async Task GetAppointmentByIdAsync_WithInvalidId_ThrowsNotFoundException()
+    {
+        // Act
+        var act = async () => await _appointmentService.GetAppointmentByIdAsync(99999);
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
+    }
+
+    [Fact]
+    public async Task GetAppointmentsAsync_ReturnsPaginatedList()
+    {
+        // Arrange
+        var (clinic, doctor, patient) = await SeedBaseEntitiesAsync();
+        var tomorrow = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        _context.Appointments.Add(new Appointment
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            AppointmentDate = tomorrow,
+            StartTime = new TimeOnly(14, 0),
+            EndTime = new TimeOnly(14, 30),
+            Status = AppointmentStatus.Pending
+        });
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _appointmentService.GetAppointmentsAsync(
+            clinicId: clinic.ClinicId,
+            doctorId: doctor.DoctorId,
+            patientId: patient.PatientId,
+            date: tomorrow,
+            pageNumber: 1,
+            pageSize: 10);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Items.Should().NotBeEmpty();
+        result.TotalCount.Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public async Task GetFollowUpByIdAsync_WithValidId_ReturnsFollowUp()
+    {
+        // Arrange
+        var (clinic, doctor, patient) = await SeedBaseEntitiesAsync();
+        var visit = new Visit
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            VisitDate = DateTime.UtcNow,
+            ChiefComplaint = "Test check"
+        };
+        _context.Visits.Add(visit);
+        await _context.SaveChangesAsync();
+
+        var followUp = new FollowUp
+        {
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            VisitId = visit.VisitId,
+            FollowUpDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(5)),
+            Status = FollowUpStatus.Scheduled,
+            Notes = "Checkup"
+        };
+        _context.FollowUps.Add(followUp);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _appointmentService.GetFollowUpByIdAsync(followUp.FollowUpId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.FollowUpId.Should().Be(followUp.FollowUpId);
+        result.Notes.Should().Be("Checkup");
+    }
+
+    [Fact]
+    public async Task GetFollowUpByIdAsync_WithInvalidId_ThrowsNotFoundException()
+    {
+        // Act
+        var act = async () => await _appointmentService.GetFollowUpByIdAsync(99999);
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
+    }
+
+    [Fact]
+    public async Task UpdateFollowUpStatusAsync_WithValidStatus_UpdatesStatus()
+    {
+        // Arrange
+        var (clinic, doctor, patient) = await SeedBaseEntitiesAsync();
+        var visit = new Visit
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            VisitDate = DateTime.UtcNow,
+            ChiefComplaint = "Test"
+        };
+        _context.Visits.Add(visit);
+        await _context.SaveChangesAsync();
+
+        var followUp = new FollowUp
+        {
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            VisitId = visit.VisitId,
+            FollowUpDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
+            Status = FollowUpStatus.Scheduled
+        };
+        _context.FollowUps.Add(followUp);
+        await _context.SaveChangesAsync();
+
+        var dto = new UpdateFollowUpStatusDto { Status = FollowUpStatus.Completed };
+
+        // Act
+        var result = await _appointmentService.UpdateFollowUpStatusAsync(followUp.FollowUpId, dto);
+
+        // Assert
+        result.Status.Should().Be(FollowUpStatus.Completed);
+    }
 }
 

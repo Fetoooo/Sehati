@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -78,6 +80,64 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// Configure Rate Limiting
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.ContentType = "application/json";
+        await context.HttpContext.Response.WriteAsync(
+            System.Text.Json.JsonSerializer.Serialize(new
+            {
+                statusCode = StatusCodes.Status429TooManyRequests,
+                message = "Too many requests. Please try again later."
+            }), token);
+    };
+
+    options.AddPolicy("auth-policy", httpContext =>
+    {
+        var config = httpContext.RequestServices.GetRequiredService<IConfiguration>();
+        if (config.GetValue<bool>("RateLimiting:Disabled"))
+        {
+            return RateLimitPartition.GetNoLimiter("no-limit");
+        }
+
+        var limit = config.GetValue<int?>("RateLimiting:AuthPermitLimit") ?? 10;
+        var window = config.GetValue<int?>("RateLimiting:AuthWindowSeconds") ?? 60;
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(clientIp, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = limit,
+            Window = TimeSpan.FromSeconds(window),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        var config = httpContext.RequestServices.GetRequiredService<IConfiguration>();
+        if (config.GetValue<bool>("RateLimiting:Disabled"))
+        {
+            return RateLimitPartition.GetNoLimiter("no-limit");
+        }
+
+        var limit = config.GetValue<int?>("RateLimiting:PermitLimit") ?? 100;
+        var window = config.GetValue<int?>("RateLimiting:WindowSeconds") ?? 60;
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(clientIp, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = limit,
+            Window = TimeSpan.FromSeconds(window),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+});
+
 // Configure Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -118,6 +178,9 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+// Security Headers
+app.UseMiddleware<SecurityHeadersMiddleware>();
+
 // Global Exception Handler
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -137,6 +200,8 @@ app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -193,5 +193,140 @@ public class VisitServiceTests
         var treatments = await _visitService.GetVisitTreatmentsAsync(visit.VisitId);
         treatments.Should().HaveCount(1);
     }
+
+    [Fact]
+    public async Task GetVisitByIdAsync_WithValidId_ReturnsVisitDetails()
+    {
+        // Arrange
+        var (clinic, doctor, patient) = await SeedBaseEntitiesAsync();
+        var visit = new Visit
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            ChiefComplaint = "Chest pain",
+            Notes = "ECG recommended",
+            Status = VisitStatus.CheckedIn
+        };
+        _context.Visits.Add(visit);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _visitService.GetVisitByIdAsync(visit.VisitId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.VisitId.Should().Be(visit.VisitId);
+        result.PatientName.Should().Be("Mariam Samir");
+        result.DoctorName.Should().Be("Dr. Hazem Internal");
+        result.ClinicName.Should().Be("Al-Nour Medical Center");
+    }
+
+    [Fact]
+    public async Task GetVisitByIdAsync_WithInvalidId_ThrowsNotFoundException()
+    {
+        // Act
+        var act = async () => await _visitService.GetVisitByIdAsync(99999);
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
+    }
+
+    [Fact]
+    public async Task UpdateVisitAsync_WithValidData_UpdatesVisit()
+    {
+        // Arrange
+        var (clinic, doctor, patient) = await SeedBaseEntitiesAsync();
+        var visit = new Visit
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            ChiefComplaint = "Old complaint",
+            Status = VisitStatus.CheckedIn
+        };
+        _context.Visits.Add(visit);
+        await _context.SaveChangesAsync();
+
+        var dto = new UpdateVisitDto
+        {
+            ChiefComplaint = "Updated headache",
+            Notes = "Patient resting well",
+            Status = VisitStatus.Completed
+        };
+
+        // Act
+        var result = await _visitService.UpdateVisitAsync(visit.VisitId, dto);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.ChiefComplaint.Should().Be("Updated headache");
+        result.Notes.Should().Be("Patient resting well");
+        result.Status.Should().Be(VisitStatus.Completed);
+    }
+
+    [Fact]
+    public async Task DeleteDiagnosisAsync_RemovesDiagnosis()
+    {
+        // Arrange
+        var (clinic, doctor, patient) = await SeedBaseEntitiesAsync();
+        var visit = new Visit
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            ChiefComplaint = "Fever"
+        };
+        _context.Visits.Add(visit);
+        await _context.SaveChangesAsync();
+
+        var diagnosis = new Diagnosis
+        {
+            VisitId = visit.VisitId,
+            DiagnosisName = "Seasonal Flu",
+            DiagnosisDate = DateTime.UtcNow
+        };
+        _context.Diagnoses.Add(diagnosis);
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _visitService.DeleteDiagnosisAsync(visit.VisitId, diagnosis.DiagnosisId);
+
+        // Assert
+        var exists = await _context.Diagnoses.AnyAsync(d => d.DiagnosisId == diagnosis.DiagnosisId);
+        exists.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task DeleteTreatmentAsync_RemovesTreatment()
+    {
+        // Arrange
+        var (clinic, doctor, patient) = await SeedBaseEntitiesAsync();
+        var visit = new Visit
+        {
+            ClinicId = clinic.ClinicId,
+            DoctorId = doctor.DoctorId,
+            PatientId = patient.PatientId,
+            ChiefComplaint = "Back pain"
+        };
+        _context.Visits.Add(visit);
+        await _context.SaveChangesAsync();
+
+        var treatment = new Treatment
+        {
+            VisitId = visit.VisitId,
+            TreatmentDescription = "Rest",
+            StartDate = DateOnly.FromDateTime(DateTime.UtcNow)
+        };
+        _context.Treatments.Add(treatment);
+        await _context.SaveChangesAsync();
+
+        // Act
+        await _visitService.DeleteTreatmentAsync(visit.VisitId, treatment.TreatmentId);
+
+        // Assert
+        var exists = await _context.Treatments.AnyAsync(t => t.TreatmentId == treatment.TreatmentId);
+        exists.Should().BeFalse();
+    }
 }
 
