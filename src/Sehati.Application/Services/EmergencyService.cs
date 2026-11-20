@@ -29,7 +29,7 @@ public class EmergencyService : IEmergencyService
             .Include(p => p.Allergies)
             .Include(p => p.Medications)
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.UnifiedPatientId.ToUpper() == normalizedId, cancellationToken);
+            .FirstOrDefaultAsync(p => p.UnifiedPatientId == normalizedId, cancellationToken);
 
         if (patient == null)
         {

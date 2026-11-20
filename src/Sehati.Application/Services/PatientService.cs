@@ -114,7 +114,7 @@ public class PatientService : IPatientService
             .Include(p => p.Scans)
             .Include(p => p.Visits)
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.UnifiedPatientId.ToUpper() == normalizedId, cancellationToken);
+            .FirstOrDefaultAsync(p => p.UnifiedPatientId == normalizedId, cancellationToken);
 
         return patient == null ? null : MapToDetailDto(patient);
     }
