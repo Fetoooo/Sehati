@@ -23,10 +23,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
 
-      - name: Set up .NET 9
+      - name: Set up .NET 10
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Restore packages and fail on high severity advisories
         run: dotnet restore Sehati.sln "-warnaserror:NU1903;NU1904"

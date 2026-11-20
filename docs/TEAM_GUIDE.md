@@ -30,10 +30,10 @@ Install the following tools before starting:
 | Tool | Version | Download Link |
 |------|---------|---------------|
 | **Git** | Latest | [git-scm.com](https://git-scm.com/downloads) |
-| **.NET SDK** | 9.0+ | [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/9.0) |
-| **Node.js** | 20 LTS+ | [nodejs.org](https://nodejs.org/) |
-| **Angular CLI** | 19+ | Run: `npm install -g @angular/cli` |
-| **SQL Server** | 2019+ | [SQL Server Downloads](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) — use Developer or Express edition |
+| **.NET SDK** | 10.0 LTS | [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/10.0) |
+| **Node.js** | 24 LTS | [nodejs.org](https://nodejs.org/) |
+| **Angular CLI** | 22+ | Run: `npm install -g @angular/cli` |
+| **SQL Server** | 2022+ | [SQL Server Downloads](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) — use Developer or Express edition |
 | **SQL Server Management Studio (SSMS)** | Latest | [SSMS Download](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms) |
 | **Visual Studio 2022** | Latest | [visualstudio.microsoft.com](https://visualstudio.microsoft.com/) — Community edition is free |
 | **VS Code** (alternative) | Latest | [code.visualstudio.com](https://code.visualstudio.com/) |
@@ -44,7 +44,7 @@ Open a terminal and run:
 
 ```bash
 git --version          # Should print git version
-dotnet --version       # Should print 9.0.x
+dotnet --version       # Should print 10.0.x
 node --version         # Should print v20.x or higher
 npm --version          # Should print 10.x or higher
 ng version             # Should print Angular CLI 19.x

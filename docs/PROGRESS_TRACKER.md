@@ -1,7 +1,7 @@
 # 📊 SEHATI — Progress Tracker
 
 > **Last Updated:** November 20, 2026
-> **Current Phase:** Phase 10 (Testing, Security & Performance) Complete -> Phase 11 Next
+> **Current Phase:** Phase 11 (Deployment & Final Documentation) In Progress
 > **Overall Completion:** 92%
 
 ---
@@ -20,7 +20,7 @@ Phase  7: Core Backend — Rx, Consent & Audit    ██████████
 Phase  8: Frontend Foundation & UI              ████████████████████ 100%
 Phase  9: Frontend–Backend Integration          ████████████████████ 100%
 Phase 10: Testing, Security & Performance       ████████████████████ 100%
-Phase 11: Deployment & Final Documentation      ░░░░░░░░░░░░░░░░░░░░   0%
+Phase 11: Deployment & Final Documentation      █████████████░░░░░░░  65%
 ```
 
 ---
@@ -156,13 +156,24 @@ Phase 11: Deployment & Final Documentation      ░░░░░░░░░░�
 - [x] Angular dependencies upgraded to supported Angular 22; npm audit reports 0 vulnerabilities
 - [x] Frontend validation after upgrade: 27/27 tests passing and production build succeeds
 
-### ⬜ Phase 11: Deployment & Final Documentation — PENDING
+### 🟡 Phase 11: Deployment & Final Documentation — IN PROGRESS
 
-- [ ] Deployment configuration
-- [ ] Production database migration plan
-- [ ] All documentation finalized
+- [x] Dockerfiles and Compose configuration for API and frontend
+- [x] `docker compose config --quiet` passes with validation-only settings
+- [x] Azure Container Apps template with ACR, managed image-pull identity, and internal API ingress
+- [x] Azure Bicep template builds and lints; sample parameter file compiles
+- [x] Production database migration and recovery plan documented
+- [x] Upgraded solution, packages, CI, and API container to .NET 10 LTS
+- [x] .NET 10 Release build succeeds with 0 warnings after pointing NuGet package and HTTP caches to the writable workspace
+- [x] NuGet vulnerability metadata restored successfully; NU1900 is resolved
+- [x] Backend test suite passes on .NET 10 (156/156)
+- [ ] Production database provisioned and migration executed by operator
+- [x] Build both Docker images; Compose smoke check returns API health and frontend HTTP 200, and temporary containers are removed afterward
+- [x] Run backend test suite and complete vulnerability metadata review on .NET 10
+- [ ] Deployment configuration applied to an Azure subscription and smoke checked
+- [x] All current setup and deployment documentation reviewed and updated
 - [ ] Code cleanup
-- [ ] Final test run
+- [x] Final backend, container, Compose, and Azure template validation completed
 - [ ] Release tagged
 
 ---
@@ -187,12 +198,13 @@ Phase 11: Deployment & Final Documentation      ░░░░░░░░░░�
 
 | Metric | Value |
 |--------|-------|
-| **Latest Successful Build** | .NET solution and Angular production build succeeded; Angular reported bundle-size budget warnings |
-| **Latest Test Run** | 156 backend tests and 27 frontend tests passed; 0 failed, 0 skipped |
-| **Backend Test Count** | 156 |
-| **Frontend Test Count** | 27 |
-| **Latest GitHub Commit** | Phase 10 completion changes on the feature branch |
-| **GitHub Branch** | `fix/security-jwt-and-ci-setup` |
+| **Latest Successful Build** | .NET 10 Release solution build succeeded; 0 warnings, 0 errors |
+| **Latest Test Run** | 156 backend tests passed on .NET 10; 27 frontend tests passed after Angular 22 upgrade |
+| **Backend Test Count** | 156 (latest run on .NET 10) |
+| **Frontend Test Count** | 27 (last run) |
+| **Container Validation** | API and web images build; smoke test returns `Healthy` and HTTP 200 |
+| **Latest GitHub Commit** | Phase 10 completion changes on the feature branch; Phase 11 changes are ready for commit after final validation |
+| **GitHub Branch** | `feature/phase-10-security-performance` |
 
 ---
 

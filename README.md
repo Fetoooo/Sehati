@@ -6,10 +6,10 @@
 
 *"One Patient, One Medical History, Better Healthcare."*
 
-[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Angular](https://img.shields.io/badge/Angular-19-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.dev/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Angular](https://img.shields.io/badge/Angular-22-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.dev/)
 [![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/en-us/sql-server)
-[![EF Core](https://img.shields.io/badge/EF%20Core-9.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://learn.microsoft.com/en-us/ef/core/)
+[![EF Core](https://img.shields.io/badge/EF%20Core-10.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://learn.microsoft.com/en-us/ef/core/)
 [![License](https://img.shields.io/badge/License-Private-gray?style=for-the-badge)](LICENSE)
 
 </div>
@@ -100,9 +100,9 @@ Sehati bridges the communication gap between independent healthcare providers by
 ### Backend
 | Technology | Purpose |
 |-----------|---------|
-| **C# / .NET 9.0** | Core backend language and framework |
+| **C# / .NET 10 LTS** | Core backend language and framework |
 | **ASP.NET Core Web API** | RESTful API layer |
-| **Entity Framework Core 9.0** | ORM and database access |
+| **Entity Framework Core 10.0** | ORM and database access |
 | **SQL Server 2022** | Primary relational database |
 | **ASP.NET Core Identity** | User authentication infrastructure |
 | **JWT (JSON Web Tokens)** | Stateless authentication & authorization |
@@ -208,10 +208,10 @@ Sehati/
 
 | Tool | Version | Download |
 |------|---------|----------|
-| **.NET SDK** | 9.0+ | [Download](https://dotnet.microsoft.com/download/dotnet/9.0) |
-| **Node.js** | 20 LTS+ | [Download](https://nodejs.org/) |
-| **Angular CLI** | 19+ | `npm install -g @angular/cli` |
-| **SQL Server** | 2019+ | [Download](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) |
+| **.NET SDK** | 10.0 LTS | [Download](https://dotnet.microsoft.com/download/dotnet/10.0) |
+| **Node.js** | 24 LTS | [Download](https://nodejs.org/) |
+| **Angular CLI** | 22+ | `npm install -g @angular/cli` |
+| **SQL Server** | 2022+ | [Download](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) |
 | **SQL Server Management Studio** | Latest | [Download](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms) |
 | **Git** | Latest | [Download](https://git-scm.com/) |
 | **Visual Studio 2022** or **VS Code** | Latest | [VS 2022](https://visualstudio.microsoft.com/) / [VS Code](https://code.visualstudio.com/) |
@@ -285,6 +285,9 @@ cd src/Sehati.Web && ng test   # Frontend tests
 ---
 
 ## Documentation
+
+- [Deployment Guide (Docker and Azure Container Apps)](docs/DEPLOYMENT.md)
+- [Azure infrastructure template](infra/azure/main.bicep)
 
 | Document | Description |
 |----------|-------------|
