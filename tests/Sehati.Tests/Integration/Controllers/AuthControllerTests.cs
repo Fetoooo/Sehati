@@ -5,8 +5,12 @@ using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Sehati.Application.DTOs.Auth;
 using Sehati.Domain.Entities;
 using Sehati.Domain.Enums;
@@ -30,6 +34,18 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 { "JwtSettings:Secret", "SehatiIntegrationTestOnlySecretKeyForSigningTokens123456" },
                 { "RateLimiting:Disabled", "true" }
             });
+        });
+
+        // Ensure integration tests always use the in-memory provider. With the
+        // minimal hosting model, app configuration may already have selected
+        // SQL Server before ConfigureAppConfiguration is applied.
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll<SehatiDbContext>();
+            services.RemoveAll<DbContextOptions<SehatiDbContext>>();
+            services.RemoveAll<IDbContextOptionsConfiguration<SehatiDbContext>>();
+            services.AddDbContext<SehatiDbContext>(options =>
+                options.UseInMemoryDatabase("SehatiIntegrationSharedDb"));
         });
     }
 
