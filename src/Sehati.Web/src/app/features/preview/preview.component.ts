@@ -202,7 +202,7 @@ export class PreviewComponent implements OnInit {
       name: 'Sehati.Web',
       roleEn: 'Frontend SPA Client',
       roleAr: 'واجهة المستخدم التفاعلية',
-      tech: 'Angular 19, Angular Material, RxJS, SCSS, Bilingual i18n',
+      tech: 'Angular 22, Angular Material, RxJS, SCSS, Bilingual i18n',
       detailsEn: 'Responsive role-driven portals, real-time queues, Arabic RTL typography, and medical passport visualization.',
       detailsAr: 'تطبيق أحادي الصفحة متجاوب، يدعم العربية والإنجليزية بالكامل مع خطوط القاهرة وبلاس جاكرتا.'
     }

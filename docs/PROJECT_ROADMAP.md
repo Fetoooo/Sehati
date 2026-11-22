@@ -21,8 +21,8 @@
 | **Phase 7** | Core Backend — Prescriptions, Consent & Emergency | ✅ Complete | Phase 6 |
 | **Phase 8** | Frontend Foundation & UI Framework | ✅ Complete | Phase 4 |
 | **Phase 9** | Frontend–Backend Integration & Feature Screens | ✅ Complete | Phases 7, 8 |
-| **Phase 10** | Testing, Security Hardening & Performance | ⬜ Pending | Phase 9 |
-| **Phase 11** | Deployment, Final Documentation & Handover | ⬜ Pending | Phase 10 |
+| **Phase 10** | Testing, Security Hardening & Performance | ✅ Complete | Phase 9 |
+| **Phase 11** | Deployment, Final Documentation & Handover | 🟡 In Progress | Phase 10 |
 
 ---
 
@@ -606,23 +606,23 @@ test(qa): complete testing suite, security hardening, and performance optimizati
 **Objective:** Prepare for production deployment, finalize all documentation, and hand over the project.
 
 ### Deliverables
-- [ ] Deployment configuration (Docker or Azure)
-- [ ] Production database migration plan
-- [ ] Final README with complete setup instructions
+- [x] Deployment configuration (Docker and Azure Container Apps)
+- [x] Production database migration plan documented; production execution remains an operator action
+- [x] README setup prerequisites updated for .NET 10 LTS and Angular 22; deployment guide linked
 - [ ] All documentation updated to reflect final implementation
 - [ ] Code cleanup and refactoring
 - [ ] Final changelog entry
 - [ ] Project presentation materials
 
 ### Tasks
-1. [ ] Create Dockerfile / docker-compose (if applicable)
-2. [ ] Configure production environment settings
-3. [ ] Create deployment documentation
+1. [x] Create Dockerfiles and docker-compose
+2. [x] Configure production environment settings through deployment secrets
+3. [x] Create deployment documentation
 4. [ ] Review and update all docs files
 5. [ ] Code cleanup (remove TODOs, dead code)
 6. [ ] Final comprehensive test run
 7. [ ] Tag release version
-8. [ ] Update CHANGELOG.md
+8. [ ] Finalize the Phase 11 CHANGELOG.md entry
 9. [ ] Final push to GitHub
 
 ### Dependencies

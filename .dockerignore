@@ -1,0 +1,13 @@
+.git
+.github
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.angular
+**/coverage
+**/TestResults
+artifacts
+docs/original
+*.user
+*.suo

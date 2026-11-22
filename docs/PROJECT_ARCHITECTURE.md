@@ -100,9 +100,9 @@ Sehati follows a **Clean Architecture** (also known as Onion Architecture) patte
 
 | Layer | Technology | Version | Justification |
 |-------|-----------|---------|---------------|
-| **Runtime** | .NET | 9.0 LTS | Current LTS release; long-term support, performance, and modern C# features |
-| **Web Framework** | ASP.NET Core Web API | 9.0 | Industry standard for building RESTful APIs in .NET |
-| **ORM** | Entity Framework Core | 9.0 | Code-first approach with migrations; strong SQL Server support |
+| **Runtime** | .NET | 10.0 LTS | Current LTS release; long-term support, performance, and modern C# features |
+| **Web Framework** | ASP.NET Core Web API | 10.0 | Industry standard for building RESTful APIs in .NET |
+| **ORM** | Entity Framework Core | 10.0 | Code-first approach with migrations; strong SQL Server support |
 | **Database** | Microsoft SQL Server | 2022 | Mandatory requirement; enterprise-grade RDBMS with excellent .NET integration |
 | **Authentication** | ASP.NET Core Identity + JWT | — | Robust user management with stateless token-based authentication |
 | **Validation** | FluentValidation | Latest | Fluent, testable validation rules separated from models |
@@ -396,7 +396,7 @@ The UI follows the **MedicPro** design language defined in the project documenta
 ### 6.1 Database Engine
 
 - **Engine:** Microsoft SQL Server 2022 (mandatory requirement)
-- **ORM:** Entity Framework Core 9.0 (Code-First)
+- **ORM:** Entity Framework Core 10.0 (Code-First)
 - **Approach:** Code-First with Fluent API configurations
 - **Migrations:** Version-controlled via EF Core Migrations
 
@@ -572,8 +572,8 @@ Access is enforced at the controller level using `[Authorize]` attributes and cu
 ```
 Developer Machine
 ├── SQL Server (LocalDB or Developer Edition)
-├── .NET 9.0 SDK → dotnet run (Kestrel, https://localhost:7001)
-├── Node.js 20+ → ng serve (http://localhost:4200)
+├── .NET 10 SDK → dotnet run (Kestrel, https://localhost:7001)
+├── Node.js 24 LTS → ng serve (http://localhost:4200)
 └── Angular proxies API calls to backend
 ```
 
