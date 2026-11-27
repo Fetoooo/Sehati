@@ -610,7 +610,7 @@ test(qa): complete testing suite, security hardening, and performance optimizati
 - [x] Production database migration plan documented; production execution remains an operator action
 - [x] README setup prerequisites updated for .NET 10 LTS and Angular 22; deployment guide linked
 - [ ] All documentation updated to reflect final implementation (remaining consistency review)
-- [ ] Code cleanup and refactoring
+- [ ] Code cleanup and refactoring (no TODO/FIXME/HACK or debug markers found; dead-code review remains)
 - [x] Phase 11 deployment and CI changes recorded in the unreleased changelog
 - [ ] Project presentation materials
 
@@ -619,7 +619,7 @@ test(qa): complete testing suite, security hardening, and performance optimizati
 2. [x] Configure production environment settings through deployment secrets
 3. [x] Create deployment documentation
 4. [ ] Review and update all docs files
-5. [ ] Code cleanup (remove TODOs, dead code)
+5. [ ] Code cleanup (no TODO/FIXME/HACK or debug markers found; review for unused code remains)
 6. [x] Final backend, frontend, container, and Azure-template validation recorded; latest GitHub Actions run passed
 7. [ ] Tag release version
 8. [x] Record Phase 11 deployment preparation and CI fixes in `CHANGELOG.md`

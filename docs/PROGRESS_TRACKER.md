@@ -205,9 +205,9 @@ Phase 11: Deployment & Final Documentation      ██████████�
 | **Container Validation** | API and web images build; smoke test returns `Healthy` and HTTP 200 |
 | **Latest deployment commit** | `9820274` — Docker and Azure Container Apps support |
 | **Latest main commit** | `b3a39b3` — PR #3 merge; contains deployment preparation |
-| **Feature branch** | `feature/phase-10-security-performance` at `9820274` |
+| **Feature branch** | `feature/phase-10-security-performance` at `94ff9fd` |
 | **Latest GitHub Actions** | Passed on `main` (`b3a39b3`, November 22, 2026): backend and frontend jobs succeeded |
-| **Current checkout** | Synced to the feature branch through `9820274`; keep new development on this branch |
+| **Current checkout** | Synced to the feature branch through `94ff9fd`; keep new development on this branch |
 
 The recorded test counts and coverage are the latest project measurements, not a newly generated report for this documentation update. Production Azure deployment, production database provisioning/migration, browser E2E tests, and production-scale load testing remain outstanding.
 
