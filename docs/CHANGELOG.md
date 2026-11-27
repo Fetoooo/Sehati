@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
+### Fixed
+- CI integration tests now explicitly replace SQL Server registration with EF Core InMemory, so tests do not require a SQL Server instance on the GitHub runner.
+
 ### Added
 - Phase 11 deployment preparation: Docker images and Compose stack for the API and Angular frontend, plus an Azure Container Apps Bicep template using managed ACR pulls and an internal API.
 - Docker Compose configuration validation, both container image builds, and a temporary API/frontend smoke test pass; Azure Bicep build/lint/parameter-file validation also pass.

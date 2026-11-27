@@ -1,8 +1,8 @@
 # 📊 SEHATI — Progress Tracker
 
-> **Last Updated:** November 20, 2026
+> **Last Updated:** November 28, 2026
 > **Current Phase:** Phase 11 (Deployment & Final Documentation) In Progress
-> **Overall Completion:** 92%
+> **Overall Completion:** 97% (phase-weighted average; Phase 11 is 65% complete)
 
 ---
 
@@ -141,14 +141,14 @@ Phase 11: Deployment & Final Documentation      ██████████�
 - [x] System Admin Audit feature screens (Immutable security audit trail, multi-criteria filtering, forensic event inspector, CSV export)
 - [x] Bilingual localization (English/Arabic) with dynamic RTL layout mirroring and Cairo/Plus Jakarta typography
 - [x] Dual Light/Dark themes with Light mode as default per MedicPro aesthetic specification
-- [x] Full Angular DTO models and typed HTTP services connected to backend ASP.NET Core 9 APIs
+- [x] Full Angular DTO models and typed HTTP services connected to backend APIs (now ASP.NET Core 10)
 - [x] Production build validation (`ng build` passing with 0 errors) and all 134 backend tests passing
 
 ### ✅ Phase 10: Testing, Security & Performance — COMPLETE
 
 - [x] Backend test coverage ≥ 80% (Achieved: 87.71%, 156/156 tests passing)
 - [x] Frontend test coverage ≥ 70% (Achieved: 74.46%, 27/27 tests passing)
-- [x] Rate limiting configured (ASP.NET Core 9 Rate Limiter with auth and general policies)
+- [x] Rate limiting configured (ASP.NET Core 10 Rate Limiter with auth and general policies)
 - [x] Security headers middleware (nosniff, DENY, strict-origin, CSP)
 - [x] Profiled patient ID lookup, clinic appointment listing, visit history, and latest audit logs on local SQL Server; local tables are small, so this is a baseline rather than a production-scale load test
 - [x] Optimized patient ID lookups to preserve the UnifiedPatientId index seek
@@ -203,8 +203,13 @@ Phase 11: Deployment & Final Documentation      ██████████�
 | **Backend Test Count** | 156 (latest run on .NET 10) |
 | **Frontend Test Count** | 27 (last run) |
 | **Container Validation** | API and web images build; smoke test returns `Healthy` and HTTP 200 |
-| **Latest GitHub Commit** | Phase 10 completion changes on the feature branch; Phase 11 changes are ready for commit after final validation |
-| **GitHub Branch** | `feature/phase-10-security-performance` |
+| **Latest deployment commit** | `9820274` — Docker and Azure Container Apps support |
+| **Latest main commit** | `b3a39b3` — PR #3 merge; contains deployment preparation |
+| **Feature branch** | `feature/phase-10-security-performance` at `9820274` |
+| **Latest GitHub Actions** | Passed on `main` (`b3a39b3`, November 22, 2026): backend and frontend jobs succeeded |
+| **Current checkout** | Synced to the feature branch through `9820274`; keep new development on this branch |
+
+The recorded test counts and coverage are the latest project measurements, not a newly generated report for this documentation update. Production Azure deployment, production database provisioning/migration, browser E2E tests, and production-scale load testing remain outstanding.
 
 ---
 

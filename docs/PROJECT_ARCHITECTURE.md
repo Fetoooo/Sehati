@@ -1,8 +1,8 @@
 # 🏗️ SEHATI — Project Architecture
 
 > **Document Version:** 1.0.0
-> **Last Updated:** November 2, 2026
-> **Status:** Approved — Phase 0 (Initial Setup)
+> **Last Updated:** November 28, 2026
+> **Status:** Current implementation baseline; production deployment is not yet complete
 
 ---
 
@@ -114,9 +114,9 @@ Sehati follows a **Clean Architecture** (also known as Onion Architecture) patte
 
 | Technology | Version | Justification |
 |-----------|---------|---------------|
-| **Angular** | 19 | Comprehensive SPA framework; strong TypeScript support; matches team expertise per project documentation |
+| **Angular** | 22 | SPA framework used by the implemented frontend; strong TypeScript support |
 | **TypeScript** | 5.x | Type safety, improved developer experience, and tooling |
-| **Angular Material** | 19 | Consistent, accessible UI components aligned with Material Design |
+| **Angular Material** | 22 | Consistent, accessible UI components aligned with Material Design |
 | **RxJS** | 7.x | Reactive programming for HTTP calls, real-time updates, and state management |
 | **Jasmine + Karma** | Latest | Angular's default testing framework |
 
@@ -125,8 +125,8 @@ Sehati follows a **Clean Architecture** (also known as Onion Architecture) patte
 | Technology | Purpose |
 |-----------|---------|
 | **Git & GitHub** | Version control, pull requests, and code review |
-| **Docker** | Containerized development and deployment (optional) |
-| **Azure App Service / VM** | Cloud hosting target |
+| **Docker** | Container images and Compose deployment configuration are available |
+| **Azure Container Apps** | Documented deployment target; not yet deployed to a live subscription |
 | **Azure SQL Database** | Managed SQL Server in production |
 | **GitHub Actions** | CI/CD pipeline automation |
 

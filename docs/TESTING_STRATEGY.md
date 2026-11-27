@@ -1,7 +1,7 @@
 # 🧪 SEHATI — Testing Strategy
 
 > **Document Version:** 1.0.0  
-> **Last Updated:** November 2, 2026
+> **Last Updated:** November 28, 2026
 
 ---
 
@@ -240,9 +240,9 @@ For each endpoint, verify:
 | **Emergency Access** | Scan QR / Enter Unified ID → View Emergency Profile |
 | **Appointment Flow** | Receptionist Books → Patient Sees Appointment → Doctor Completes Visit |
 
-### E2E Testing Tools (Phase 10)
+### E2E Testing Tools (planned; not currently in CI)
 
-- **Cypress** or **Playwright** for browser-based E2E tests
+- **Cypress** or **Playwright** are candidates for browser-based E2E tests; neither is currently configured
 - Focus on the 5 critical journeys above
 
 ---
@@ -329,6 +329,10 @@ public async Task GetPatient_AsDifferentPatient_Returns403()
 | Performance | Patient lookup < 1.5s, API p95 < 500ms |
 
 ---
+
+### Current verification status
+
+The latest recorded GitHub Actions run on `main` passed both backend and frontend jobs. The repository records 156 backend tests with 87.71% line coverage and 27 frontend tests with 74.46% coverage. API integration tests use `WebApplicationFactory` and EF Core InMemory in CI; production SQL Server migration behavior must be reviewed and validated separately. Browser-based E2E journeys and production-scale load tests have not been completed.
 
 ## 12. Test Execution Commands
 

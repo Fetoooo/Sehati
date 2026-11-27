@@ -1,7 +1,7 @@
 # 👥 SEHATI — Team Guide
 
 > **Document Version:** 1.0.0  
-> **Last Updated:** November 2, 2026  
+> **Last Updated:** November 28, 2026
 > **Purpose:** Help all team members set up their development environment and contribute effectively
 
 ---
@@ -45,9 +45,9 @@ Open a terminal and run:
 ```bash
 git --version          # Should print git version
 dotnet --version       # Should print 10.0.x
-node --version         # Should print v20.x or higher
+node --version         # Should print v24.x
 npm --version          # Should print 10.x or higher
-ng version             # Should print Angular CLI 19.x
+ng version             # Should print Angular CLI 22.x
 ```
 
 ---
