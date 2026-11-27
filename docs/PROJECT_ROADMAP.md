@@ -565,13 +565,13 @@ feat(integration): complete frontend-backend integration for all feature modules
 **Objective:** Comprehensive testing, security audit, performance optimization, and bug fixing.
 
 ### Deliverables
-- [x] Complete unit test suite (≥80% coverage; latest recorded backend line coverage: 87.71%)
+- [x] Complete unit test suite (≥80% source line coverage; 88.92% with generated EF migrations excluded by `coverlet.runsettings`)
 - [x] Integration test suite (WebApplicationFactory with EF Core InMemory)
 - [x] API endpoint tests
-- [x] Frontend component tests (latest recorded frontend coverage: 74.46%)
+- [x] Frontend component tests (74.04% line coverage)
 - [x] Security hardening (JWT secret validation, rate limiting, security headers, and consent tests)
 - [x] Performance review and targeted query optimization
-- [x] CI and local test failures resolved; latest recorded suite: 156 backend and 27 frontend tests passing
+- [x] CI and local test failures resolved; latest local suite: 158 backend and 27 frontend tests passing
 
 ### Tasks
 1. [x] Achieve backend and frontend test coverage targets
@@ -645,4 +645,4 @@ docs: finalize documentation and prepare for production deployment
 
 *This roadmap will be updated as development progresses. Each phase requires explicit approval before the next phase begins.*
 
-**Phase 10 evidence and limits:** The progress tracker records 156 backend tests (87.71% line coverage) and 27 frontend tests (74.46% coverage). The latest GitHub Actions run passed on November 22, 2026. Query profiling used a small local SQL Server dataset and is not a production-scale load test. Browser-based E2E tests are not currently part of the CI workflow.
+**Phase 10 evidence and limits:** Local validation on November 28, 2026 passed 158 backend tests (88.92% line coverage with generated EF migration files excluded by `coverlet.runsettings`) and 27 frontend tests (74.04% line coverage). The latest GitHub Actions run passed on `main` on November 22, 2026; it predates the current feature-branch changes. Query profiling used a small local SQL Server dataset and is not a production-scale load test. Browser-based E2E tests are not currently part of the CI workflow.

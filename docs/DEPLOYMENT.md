@@ -85,7 +85,7 @@ Build immutable images from a reviewed commit and record their digests with the 
 
 ## Deployment limitations to close before production
 
-- **Runtime verification:** the API and container configuration now target .NET 10 LTS, and all 156 backend tests pass. Complete the production security review before deployment. See the [official .NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy).
+- **Runtime verification:** the API and container configuration now target .NET 10 LTS, and all 158 backend tests pass locally on the feature branch. Complete the production security review before deployment. See the [official .NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy).
 - Configure private network access from Container Apps to the production SQL database (for example, VNet integration and a private endpoint), or another explicitly reviewed restricted network path. This template does not create or connect a virtual network or SQL firewall rules.
 - Configure a real TLS ingress, domain, certificate renewal, firewall rules, and secrets manager in the selected hosting environment.
 - Azure Container Apps uses separate API liveness and database readiness probes. Configure platform monitoring and alerting before production; the legacy `/api/health` endpoint remains a process-level check.

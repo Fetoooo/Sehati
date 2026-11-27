@@ -332,7 +332,7 @@ public async Task GetPatient_AsDifferentPatient_Returns403()
 
 ### Current verification status
 
-The latest recorded GitHub Actions run on `main` passed both backend and frontend jobs. The repository records 156 backend tests with 87.71% line coverage and 27 frontend tests with 74.46% coverage. API integration tests use `WebApplicationFactory` and EF Core InMemory in CI; production SQL Server migration behavior must be reviewed and validated separately. Browser-based E2E journeys and production-scale load tests have not been completed.
+The latest recorded GitHub Actions run on `main` passed both backend and frontend jobs on November 22, 2026; it predates the current feature-branch changes. Local validation on November 28, 2026 passed 158 backend tests with 88.92% line coverage and 27 frontend tests with 74.04% line coverage. Backend coverage uses the repository's `coverlet.runsettings`, which excludes generated EF Core migration and designer files. API integration tests use `WebApplicationFactory` and EF Core InMemory; production SQL Server migration behavior must be reviewed and validated separately. Browser-based E2E journeys and production-scale load tests have not been completed.
 
 ## 12. Test Execution Commands
 

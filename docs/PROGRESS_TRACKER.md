@@ -146,8 +146,8 @@ Phase 11: Deployment & Final Documentation      ██████████�
 
 ### ✅ Phase 10: Testing, Security & Performance — COMPLETE
 
-- [x] Backend test coverage ≥ 80% (Achieved: 87.71%, 156/156 tests passing)
-- [x] Frontend test coverage ≥ 70% (Achieved: 74.46%, 27/27 tests passing)
+- [x] Backend test coverage ≥ 80% (Achieved: 88.92%, 158/158 tests passing; generated EF migrations excluded by `coverlet.runsettings`)
+- [x] Frontend test coverage ≥ 70% (Achieved: 74.04%, 27/27 tests passing)
 - [x] Rate limiting configured (ASP.NET Core 10 Rate Limiter with auth and general policies)
 - [x] Security headers middleware (nosniff, DENY, strict-origin, CSP)
 - [x] Profiled patient ID lookup, clinic appointment listing, visit history, and latest audit logs on local SQL Server; local tables are small, so this is a baseline rather than a production-scale load test
@@ -167,7 +167,7 @@ Phase 11: Deployment & Final Documentation      ██████████�
 - [x] Upgraded solution, packages, CI, and API container to .NET 10 LTS
 - [x] .NET 10 Release build succeeds with 0 warnings after pointing NuGet package and HTTP caches to the writable workspace
 - [x] NuGet vulnerability metadata restored successfully; NU1900 is resolved
-- [x] Backend test suite passes on .NET 10 (156/156)
+- [x] Backend test suite passes on .NET 10 (158/158; coverage run uses the repository's migration exclusions)
 - [ ] Production database provisioned and migration executed by operator
 - [x] Build both Docker images; Compose smoke check returns API health and frontend HTTP 200, and temporary containers are removed afterward
 - [x] Run backend test suite and complete vulnerability metadata review on .NET 10
@@ -200,16 +200,17 @@ Phase 11: Deployment & Final Documentation      ██████████�
 | Metric | Value |
 |--------|-------|
 | **Latest Successful Build** | .NET 10 Release solution build succeeded; 0 warnings, 0 errors |
-| **Latest Test Run** | 156 backend tests passed on .NET 10; 27 frontend tests passed after Angular 22 upgrade |
-| **Backend Test Count** | 156 (latest run on .NET 10) |
-| **Frontend Test Count** | 27 (last run) |
+| **Latest Test Run** | 158 backend tests passed on .NET 10; 27 frontend tests passed after Angular 22 upgrade |
+| **Backend Test Count** | 158; 88.92% line coverage with generated EF migrations excluded |
+| **Frontend Test Count** | 27; 74.04% line coverage |
+| **Frontend Initial Bundle** | 341.32 kB raw after lazy-loading page routes; landing stylesheet remains above its 25 kB component budget (30.13 kB) |
 | **Container Validation** | API and web images build; smoke test returns `Healthy` and HTTP 200 |
 | **Latest deployment commit** | `9820274` — Docker and Azure Container Apps support |
 | **Latest main commit** | `b3a39b3` — PR #3 merge; contains deployment preparation |
 | **Active feature branch** | `feature/phase-10-security-performance` |
 | **Latest GitHub Actions** | Passed on `main` (`b3a39b3`, November 22, 2026): backend and frontend jobs succeeded |
 
-The recorded test counts and coverage are the latest project measurements, not a newly generated report for this documentation update. Production Azure deployment, production database provisioning/migration, browser E2E tests, and production-scale load testing remain outstanding.
+Local validation on November 28, 2026: .NET 10 Release build succeeded with 0 warnings/errors; 158/158 backend tests passed with 88.92% line coverage using the repository's `coverlet.runsettings` exclusions for generated EF migrations; 27/27 frontend tests passed with 74.04% line coverage; Angular production build passed with a 341.32 kB raw initial bundle; npm audit found 0 vulnerabilities; Azure Bicep build, lint, and sample parameter compilation passed. GitHub Actions has not run on these unpushed changes. Production Azure deployment, production database provisioning/migration, browser E2E tests, and production-scale load testing remain outstanding.
 
 ---
 

@@ -12,13 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI integration tests now explicitly replace SQL Server registration with EF Core InMemory, so tests do not require a SQL Server instance on the GitHub runner.
 
 ### Added
+- Added separate liveness and database readiness controller tests; backend coverage is 88.92% with generated EF migration files excluded by the committed Coverlet settings (158/158 tests pass).
+- Lazy-loaded Angular page routes, reducing the raw initial bundle from 898.00 kB to 341.32 kB; all 27 frontend tests pass and measured line coverage is 74.04%.
+- Latest local verification: .NET 10 Release build, Angular production build, npm audit (0 vulnerabilities), and Azure Bicep build/lint/sample-parameter validation pass. GitHub Actions has not run against these feature-branch changes.
 - Phase 11 deployment preparation: Docker images and Compose stack for the API and Angular frontend, plus an Azure Container Apps Bicep template using managed ACR pulls and an internal API.
 - Azure Container Apps API probes now distinguish process liveness from database readiness; the readiness endpoint returns service unavailable when the database cannot be reached.
 - Docker Compose configuration validation, both container image builds, and a temporary API/frontend smoke test pass; Azure Bicep build/lint/parameter-file validation also pass.
-- The Angular production build and npm audit pass with 0 vulnerabilities; Angular reports bundle-size warnings for the initial chunk (898 kB raw against a 500 kB warning budget) and landing styles (30.13 kB against 25 kB).
+- The Angular production build and npm audit pass with 0 vulnerabilities; after route lazy-loading, the initial bundle is 341.32 kB raw. The landing component stylesheet remains over its 25 kB component budget at 30.13 kB.
 - Deployment guide covering Azure setup, secret configuration, production database migration review, backup, rollout, and rollback procedures.
 - Upgraded the solution and API container from .NET 9 to .NET 10 LTS; updated EF Core and ASP.NET Core packages and the CI SDK.
-- .NET 10 Release build succeeds with 0 warnings; NuGet vulnerability metadata fetch succeeds and all 156 backend tests pass.
+- .NET 10 Release build succeeds with 0 warnings; NuGet vulnerability metadata fetch succeeds and all 158 backend tests pass.
 
 - Phase 9: Frontend–Backend Integration & Feature Screens
   - Patient Portal screens:

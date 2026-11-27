@@ -1,64 +1,100 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
-import { LandingComponent } from './features/landing/landing.component';
-import { LoginComponent } from './features/auth/login/login.component';
-import { RegisterComponent } from './features/auth/register/register.component';
-import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { PreviewComponent } from './features/preview/preview.component';
-import { PassportComponent } from './features/patient/passport/passport.component';
-import { ConsentComponent } from './features/patient/consent/consent.component';
-import { EmergencyCardComponent } from './features/patient/emergency-card/emergency-card.component';
-import { AppointmentsComponent } from './features/appointments/appointments.component';
-import { DoctorQueueComponent } from './features/doctor/doctor-queue/doctor-queue.component';
-import { EncounterBuilderComponent } from './features/doctor/encounter-builder/encounter-builder.component';
-import { ReceptionistDeskComponent } from './features/receptionist/receptionist-desk/receptionist-desk.component';
-import { ClinicAdminComponent } from './features/clinic/clinic-admin/clinic-admin.component';
-import { AuditLogsComponent } from './features/admin/audit-logs/audit-logs.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: LandingComponent,
+    loadComponent: () => import('./features/landing/landing.component').then((module) => module.LandingComponent),
     pathMatch: 'full',
     title: 'Sehati - Unified Digital Health Platform | صِحّتي'
   },
   {
     path: 'auth',
-    component: AuthLayoutComponent,
+    loadComponent: () => import('./layouts/auth-layout/auth-layout.component').then((module) => module.AuthLayoutComponent),
     children: [
-      { path: 'login', component: LoginComponent, title: 'Sehati - Login | تسجيل الدخول' },
-      { path: 'register', component: RegisterComponent, title: 'Sehati - Register | إنشاء حساب' },
+      {
+        path: 'login',
+        loadComponent: () => import('./features/auth/login/login.component').then((module) => module.LoginComponent),
+        title: 'Sehati - Login | تسجيل الدخول'
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('./features/auth/register/register.component').then((module) => module.RegisterComponent),
+        title: 'Sehati - Register | إنشاء حساب'
+      },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
   },
   {
     path: 'emergency-public/:id',
-    component: EmergencyCardComponent,
+    loadComponent: () => import('./features/patient/emergency-card/emergency-card.component').then((module) => module.EmergencyCardComponent),
     title: 'Sehati - Emergency Medical Profile'
   },
   {
     path: '',
-    component: MainLayoutComponent,
+    loadComponent: () => import('./layouts/main-layout/main-layout.component').then((module) => module.MainLayoutComponent),
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent, title: 'Sehati - Dashboard' },
-      { path: 'passport', component: PassportComponent, title: 'Sehati - Medical Passport' },
-      { path: 'appointments', component: AppointmentsComponent, title: 'Sehati - Appointments & Scheduling' },
-      { path: 'consent', component: ConsentComponent, title: 'Sehati - Consent & Permissions' },
-      { path: 'emergency', component: EmergencyCardComponent, title: 'Sehati - Emergency Card' },
-      { path: 'doctor/queue', component: DoctorQueueComponent, title: 'Sehati - Doctor Patient Queue' },
-      { path: 'doctor/encounter', component: EncounterBuilderComponent, title: 'Sehati - Clinical Encounter & Rx' },
-      { path: 'doctor/encounter/:id', component: EncounterBuilderComponent, title: 'Sehati - Clinical Encounter & Rx' },
-      { path: 'receptionist', component: ReceptionistDeskComponent, title: 'Sehati - Receptionist Desk' },
-      { path: 'clinic/admin', component: ClinicAdminComponent, title: 'Sehati - Clinic Administration' },
-      { path: 'admin/audit', component: AuditLogsComponent, title: 'Sehati - Security Audit Trail' }
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard.component').then((module) => module.DashboardComponent),
+        title: 'Sehati - Dashboard'
+      },
+      {
+        path: 'passport',
+        loadComponent: () => import('./features/patient/passport/passport.component').then((module) => module.PassportComponent),
+        title: 'Sehati - Medical Passport'
+      },
+      {
+        path: 'appointments',
+        loadComponent: () => import('./features/appointments/appointments.component').then((module) => module.AppointmentsComponent),
+        title: 'Sehati - Appointments & Scheduling'
+      },
+      {
+        path: 'consent',
+        loadComponent: () => import('./features/patient/consent/consent.component').then((module) => module.ConsentComponent),
+        title: 'Sehati - Consent & Permissions'
+      },
+      {
+        path: 'emergency',
+        loadComponent: () => import('./features/patient/emergency-card/emergency-card.component').then((module) => module.EmergencyCardComponent),
+        title: 'Sehati - Emergency Card'
+      },
+      {
+        path: 'doctor/queue',
+        loadComponent: () => import('./features/doctor/doctor-queue/doctor-queue.component').then((module) => module.DoctorQueueComponent),
+        title: 'Sehati - Doctor Patient Queue'
+      },
+      {
+        path: 'doctor/encounter',
+        loadComponent: () => import('./features/doctor/encounter-builder/encounter-builder.component').then((module) => module.EncounterBuilderComponent),
+        title: 'Sehati - Clinical Encounter & Rx'
+      },
+      {
+        path: 'doctor/encounter/:id',
+        loadComponent: () => import('./features/doctor/encounter-builder/encounter-builder.component').then((module) => module.EncounterBuilderComponent),
+        title: 'Sehati - Clinical Encounter & Rx'
+      },
+      {
+        path: 'receptionist',
+        loadComponent: () => import('./features/receptionist/receptionist-desk/receptionist-desk.component').then((module) => module.ReceptionistDeskComponent),
+        title: 'Sehati - Receptionist Desk'
+      },
+      {
+        path: 'clinic/admin',
+        loadComponent: () => import('./features/clinic/clinic-admin/clinic-admin.component').then((module) => module.ClinicAdminComponent),
+        title: 'Sehati - Clinic Administration'
+      },
+      {
+        path: 'admin/audit',
+        loadComponent: () => import('./features/admin/audit-logs/audit-logs.component').then((module) => module.AuditLogsComponent),
+        title: 'Sehati - Security Audit Trail'
+      }
     ]
   },
   {
     path: 'preview',
-    component: PreviewComponent,
+    loadComponent: () => import('./features/preview/preview.component').then((module) => module.PreviewComponent),
     title: 'Sehati - Architecture & UI Showcase'
   },
   {
