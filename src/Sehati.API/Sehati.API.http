@@ -4,6 +4,14 @@
 GET {{Sehati.API_HostAddress}}/api/health
 Accept: application/json
 
+### Liveness Probe
+GET {{Sehati.API_HostAddress}}/api/health/live
+Accept: application/json
+
+### Readiness Probe (requires a reachable database)
+GET {{Sehati.API_HostAddress}}/api/health/ready
+Accept: application/json
+
 ### Register New Patient
 POST {{Sehati.API_HostAddress}}/api/v1/auth/register
 Content-Type: application/json

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Phase 11 deployment preparation: Docker images and Compose stack for the API and Angular frontend, plus an Azure Container Apps Bicep template using managed ACR pulls and an internal API.
+- Azure Container Apps API probes now distinguish process liveness from database readiness; the readiness endpoint returns service unavailable when the database cannot be reached.
 - Docker Compose configuration validation, both container image builds, and a temporary API/frontend smoke test pass; Azure Bicep build/lint/parameter-file validation also pass.
 - The Angular production build and npm audit pass with 0 vulnerabilities; Angular reports bundle-size warnings for the initial chunk (898 kB raw against a 500 kB warning budget) and landing styles (30.13 kB against 25 kB).
 - Deployment guide covering Azure setup, secret configuration, production database migration review, backup, rollout, and rollback procedures.

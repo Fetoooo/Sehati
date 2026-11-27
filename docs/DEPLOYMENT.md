@@ -52,7 +52,7 @@ $env:SEHATI_PUBLIC_ORIGIN = 'https://sehati.example.com'
 az deployment group create --resource-group "<resource-group>" --template-file infra/azure/main.bicep --parameters infra/azure/main.example.bicepparam --parameters namePrefix='<namePrefix>' imageTag='<release-tag>'
 ```
 
-The deployment outputs the frontend and API URLs. Only the frontend URL is public. Configure custom DNS and confirm HTTPS, `/api/health`, container logs, and an application smoke check before sending users to the release. The template uses baseline Basic ACR and small container sizes; adjust capacity, networking, retention, alerting, and cost controls for the selected environment.
+The deployment outputs the frontend and API URLs. Only the frontend URL is public. The API uses separate liveness (`/api/health/live`) and database readiness (`/api/health/ready`) probes. Configure custom DNS and confirm HTTPS, `/api/health`, both probe states, container logs, and an application smoke check before sending users to the release. The template uses baseline Basic ACR and small container sizes; adjust capacity, networking, retention, alerting, and cost controls for the selected environment.
 
 To roll forward, build new images under a new immutable tag and redeploy with that tag. Preserve the previous tag for application rollback. Database recovery remains a separate operator-led action.
 
@@ -88,6 +88,6 @@ Build immutable images from a reviewed commit and record their digests with the 
 - **Runtime verification:** the API and container configuration now target .NET 10 LTS, and all 156 backend tests pass. Complete the production security review before deployment. See the [official .NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy).
 - Configure private network access from Container Apps to the production SQL database (for example, VNet integration and a private endpoint), or another explicitly reviewed restricted network path. This template does not create or connect a virtual network or SQL firewall rules.
 - Configure a real TLS ingress, domain, certificate renewal, firewall rules, and secrets manager in the selected hosting environment.
-- Add platform-native readiness/liveness probes and monitoring/alerting. The current health endpoint reports API process availability only; it does not validate database readiness.
+- Azure Container Apps uses separate API liveness and database readiness probes. Configure platform monitoring and alerting before production; the legacy `/api/health` endpoint remains a process-level check.
 - Validate capacity, backups/restore, privacy and regulatory obligations, and the selected hosting region with the operating team.
 - Pin container base images to approved immutable digests as part of the release pipeline.

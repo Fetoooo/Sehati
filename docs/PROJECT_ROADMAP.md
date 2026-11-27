@@ -607,6 +607,7 @@ test(qa): complete testing suite, security hardening, and performance optimizati
 
 ### Deliverables
 - [x] Deployment configuration (Docker and Azure Container Apps)
+- [x] Azure API liveness and database readiness probes
 - [x] Production database migration plan documented; production execution remains an operator action
 - [x] README setup prerequisites updated for .NET 10 LTS and Angular 22; deployment guide linked
 - [ ] All documentation updated to reflect final implementation (remaining consistency review)

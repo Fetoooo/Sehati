@@ -161,6 +161,7 @@ Phase 11: Deployment & Final Documentation      ██████████�
 - [x] Dockerfiles and Compose configuration for API and frontend
 - [x] `docker compose config --quiet` passes with validation-only settings
 - [x] Azure Container Apps template with ACR, managed image-pull identity, and internal API ingress
+- [x] Separate API liveness and database readiness endpoints configured as Azure Container Apps probes
 - [x] Azure Bicep template builds and lints; sample parameter file compiles
 - [x] Production database migration and recovery plan documented
 - [x] Upgraded solution, packages, CI, and API container to .NET 10 LTS
@@ -205,9 +206,8 @@ Phase 11: Deployment & Final Documentation      ██████████�
 | **Container Validation** | API and web images build; smoke test returns `Healthy` and HTTP 200 |
 | **Latest deployment commit** | `9820274` — Docker and Azure Container Apps support |
 | **Latest main commit** | `b3a39b3` — PR #3 merge; contains deployment preparation |
-| **Feature branch** | `feature/phase-10-security-performance` at `94ff9fd` |
+| **Active feature branch** | `feature/phase-10-security-performance` |
 | **Latest GitHub Actions** | Passed on `main` (`b3a39b3`, November 22, 2026): backend and frontend jobs succeeded |
-| **Current checkout** | Synced to the feature branch through `94ff9fd`; keep new development on this branch |
 
 The recorded test counts and coverage are the latest project measurements, not a newly generated report for this documentation update. Production Azure deployment, production database provisioning/migration, browser E2E tests, and production-scale load testing remain outstanding.
 
